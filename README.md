@@ -22,13 +22,6 @@ For the Direct IP authentication method you need to find your token manually:
 
 https://support.plex.tv/articles/204059436-finding-an-authentication-token-x-plex-token/
 
-
-```
-[ANILIST]
-username = GoblinSlayer
-access_token = 1234etc..
-```
-
 ### AniList
 For AniList you need get a so called 'access_token', you can retrieve that here and if not logged in will ask you to do so:
 
@@ -71,7 +64,7 @@ In ``PlexAniSync.py`` there's a variable called 'emulate_list_updates' which you
 
 Support thread is located on Plex Forums:
 
-N/A yet
+https://forums.plex.tv/t/plexanisync-sync-your-plex-library-to-anilist/365826
 
 ## Planned
 
