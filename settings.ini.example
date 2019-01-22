@@ -14,5 +14,6 @@ myplex_user = John
 myplex_password = Doe
 
 [ANILIST]
+skip_list_update = False
 username = SomeUsername
 access_token = SomeVeryLongAccessToken

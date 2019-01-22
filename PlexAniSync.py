@@ -700,7 +700,7 @@ def anilist_find_id_best_match(title, year):
 
 
 def anilist_series_update(mediaId, progress, status):
-    if emulate_list_updates:
+    if anilist_settings['skip_list_update'].lower() == 'true':
         return
 
     query = '''
@@ -734,6 +734,9 @@ def anilist_series_update(mediaId, progress, status):
 
 def start():
     # AniList
+    if anilist_settings['skip_list_update'].lower() == 'true':
+        logger.warning('AniList skip list update enabled in settings, will match but NOT update your  list')
+
     anilist_username = anilist_settings['username']
     anilist_series = anilist_user_list(anilist_username)
 
