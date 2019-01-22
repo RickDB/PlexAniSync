@@ -473,7 +473,7 @@ def match_anilist_to_plex(anilist_series, plex_series_all, plex_series_watched):
                 if not media_id_search:
                     # try alternative search title (remove year for instance in case of Plex title)
                     logger.warning('[AniList] Trying alternative title for search: %s' % (plex_title_clean))
-                    media_id_search = anilist_find_id_best_match(plex_title_clean_without_year, year)
+                    media_id_search = anilist_find_id_best_match(plex_title_clean_without_year, plex_year)
                 if media_id_search:
                     logger.warning('[AniList] Adding new series id to list: %s | Plex episodes watched: %s' % (media_id_search, plex_watched_episode_count))
                     anilist_series_update(media_id_search, plex_watched_episode_count, "CURRENT")
