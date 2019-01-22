@@ -1,0 +1,18 @@
+[PLEX]
+anime_section = Anime
+
+ # Choose 'direct' or 'myplex'
+authentication_method = direct
+
+# Direct IP
+base_url = http://127.0.0.1:32400
+token = abcdef123456789
+
+# MyPlex
+server = Sadala
+myplex_user = John
+myplex_password = Doe
+
+[ANILIST]
+username = SomeUsername
+access_token = SomeVeryLongAccessToken
