@@ -151,6 +151,20 @@ def to_object(o):
     return collections.namedtuple('X', keys)(*values)
 
 
+def int_to_roman_numeral(input):
+    if not isinstance(input, type(1)):
+        return input
+    if not 0 < input < 4000:
+        return input
+    ints = (1000, 900,  500, 400, 100,  90, 50,  40, 10,  9,   5,  4,   1)
+    nums = ('M',  'CM', 'D', 'CD','C', 'XC','L','XL','X','IX','V','IV','I')
+    result = []
+    for i in range(len(ints)):
+        count = int(input / ints[i])
+        result.append(nums[i] * count)
+        input -= ints[i] * count
+    return ''.join(result)
+
 class anilist_series:
   def __init__(self, id, sType,  sFormat, source, status, media_status, progress, season, episodes, title_english, title_romaji, started_year, ended_year):
     self.id = id
@@ -599,20 +613,15 @@ def anilist_find_id_season_best_match(title, season, year):
     match_title =  re.sub('[^A-Za-z0-9]+', '', title).lower().strip()
     match_year = str(year)
 
-    season_numeral = ''
-    counter = 0
-    while counter < int(season):
-        season_numeral  += 'I'
-        counter += 1
-
-    match_title_season_suffix1 =  '%s %s' % (match_title, season_numeral)
+    match_title_season_suffix1 =  '%s %s' % (match_title, int_to_roman_numeral(season))
     match_title_season_suffix2=  '%s season %s' % (match_title, season)
     match_title_season_suffix3=  '%s %s' % (match_title, season)
 
     potential_titles = [
         match_title_season_suffix1.lower().strip(),
         match_title_season_suffix2.lower().strip(),
-        match_title_season_suffix3.lower().strip()]
+        match_title_season_suffix3.lower().strip()
+        ]
 
     list_items = anilist_search_by_name(title)
     if list_items:
@@ -636,7 +645,7 @@ def anilist_find_id_season_best_match(title, season, year):
 
                     for potential_title in potential_titles:
                         potential_title =  re.sub('[^A-Za-z0-9]+', '', potential_title).lower().strip()
-                        #print('Comparing AniList: %s | %s[%s] <===> %s' % (title_english, title_english, started_year, potential_title))
+                        #logger.info('Comparing AniList: %s | %s[%s] <===> %s' % (title_english, title_romaji, started_year, potential_title))
                         if title_english ==  potential_title:
                             media_id = media_item.id
                             logger.info('[AniList] Found match: %s [%s]' % (title_english, media_id))
@@ -652,7 +661,7 @@ def anilist_find_id_season_best_match(title, season, year):
 
 def anilist_find_id_best_match(title, year):
     media_id = None
-    logger.warning('[AniList] Searching  AniList for title: %s' % (title))
+    #logger.warning('[AniList] Searching  AniList for title: %s' % (title))
     match_title =  re.sub('[^A-Za-z0-9]+', '', title).lower().strip()
     match_year = str(year)
 
@@ -676,7 +685,7 @@ def anilist_find_id_best_match(title, year):
                     if hasattr(media_item.startDate, 'year'):
                         started_year = str(media_item.startDate.year)
 
-                    #print('Comparing AniList: %s | %s[%s] <===> %s[%s]' % (title_english, title_romaji, started_year, match_title, match_year))
+                    #logger.info('Comparing AniList: %s | %s[%s] <===> %s[%s]' % (title_english, title_romaji, started_year, match_title, match_year))
                     if match_title == title_english and match_year == started_year:
                         media_id = media_item.id
                         logger.info('[AniList] Found match: %s [%s]' % (title_english, media_id))
@@ -724,8 +733,6 @@ def anilist_series_update(mediaId, progress, status):
 ## Startup section
 
 def start():
-    logger.info('Plex to AniList sync started')
-
     # AniList
     anilist_username = anilist_settings['username']
     anilist_series = anilist_user_list(anilist_username)
