@@ -19,10 +19,7 @@ coloredlogs.install(fmt='%(asctime)s %(message)s', logger=logger)
 # coloredlogs.install(level='DEBUG')
 
 
-## Settings section
-
-# when enabled will not update your lists (for testing purposes)
-emulate_list_updates = False
+## Settings section ##
 
 def read_settings(file):
     # File exists
@@ -38,10 +35,11 @@ settings_file = 'settings.ini'
 settings = read_settings(settings_file)
 anilist_settings = settings['ANILIST']
 plex_settings = settings['PLEX']
+
+ANILIST_SKIP_UPDATE = anilist_settings['skip_list_update'].lower()
 ANILIST_ACCESS_TOKEN = anilist_settings['access_token']
 
-
-## Plex section
+## Plex section ##
 
 class plex_watched_series:
   def __init__(self, title, year, episodes_watched,  total_seasons):
@@ -124,6 +122,7 @@ def plex_get_watched_shows(shows):
     logger.info('[PLEX] Retrieving watch count for shows finished')
     return watched_shows
 
+
 def plex_get_watched_episodes_for_show_season(shows, watched_show_title, watched_season):
     logger.info('[PLEX] Retrieving episode watch count for show: %s | season: %s' % (watched_show_title, watched_season))
     
@@ -143,7 +142,8 @@ def plex_get_watched_episodes_for_show_season(shows, watched_show_title, watched
     #logger.info('[PLEX] %s episodes watched for season: %s' % (episodes_watched, watched_season))
     return episodes_watched
 
-## Anilist section
+
+## Anilist section ##
 
 def to_object(o):
     keys, values = zip(*o.items())
@@ -165,6 +165,7 @@ def int_to_roman_numeral(input):
         input -= ints[i] * count
     return ''.join(result)
 
+
 class anilist_series:
   def __init__(self, id, sType,  sFormat, source, status, media_status, progress, season, episodes, title_english, title_romaji, started_year, ended_year):
     self.id = id
@@ -184,32 +185,32 @@ class anilist_series:
 
 def anilist_search_by_id(anilist_id):
     query = '''
-    query ($id: Int) { # Define which variables will be used in the query (id)
-    Media (id: $id, type: ANIME) { # Insert our variables into the query arguments (id) (type: ANIME is hard-coded in the query)
-        id
-        type
-        format
-        source
-        season
-        episodes
-        title {
-        romaji
-        english
-        native
+        query ($id: Int) { # Define which variables will be used in the query (id)
+        Media (id: $id, type: ANIME) { # Insert our variables into the query arguments (id) (type: ANIME is hard-coded in the query)
+            id
+            type
+            format
+            source
+            season
+            episodes
+            title {
+                romaji
+                english
+                native
+            }
+            startDate {
+                year
+                month
+                day
+            }
+            endDate {
+                year
+                month
+                day
+            }
         }
-        startDate {
-        year
-        month
-        day
         }
-        endDate {
-        year
-        month
-        day
-        }
-    }
-    }
-    '''
+        '''
 
     variables = {
         'id': anilist_id
@@ -251,14 +252,14 @@ def anilist_search_by_name(anilist_show_name):
                         native
                     }
                     startDate {
-                    year
-                    month
-                    day
+                        year
+                        month
+                        day
                     }
                     endDate {
-                    year
-                    month
-                    day
+                        year
+                        month
+                        day
                     }
                 }
             }
@@ -279,6 +280,7 @@ def anilist_search_by_name(anilist_show_name):
 
     response = requests.post(url,headers=headers, json={'query': query, 'variables': variables})
     return json.loads(response.content, object_hook=to_object)
+
 
 def fetch_anilist_list(username):
     query = '''
@@ -306,12 +308,17 @@ def fetch_anilist_list(username):
                     month
                     day
                 }
-                title { romaji, english, native}
+                title {
+                    romaji
+                    english
+                    native
+                }
             }
             }
         }
         }
         '''
+
     variables = {
         'username': username
     }
@@ -700,7 +707,7 @@ def anilist_find_id_best_match(title, year):
 
 
 def anilist_series_update(mediaId, progress, status):
-    if anilist_settings['skip_list_update'].lower() == 'true':
+    if ANILIST_SKIP_UPDATE == 'true':
         return
 
     query = '''
@@ -730,11 +737,11 @@ def anilist_series_update(mediaId, progress, status):
     response = requests.post(url,headers=headers, json={'query': query, 'variables': variables})
     #print(response.content)
 
-## Startup section
+## Startup section ##
 
 def start():
     # AniList
-    if anilist_settings['skip_list_update'].lower() == 'true':
+    if ANILIST_SKIP_UPDATE == 'true':
         logger.warning('AniList skip list update enabled in settings, will match but NOT update your  list')
 
     anilist_username = anilist_settings['username']
