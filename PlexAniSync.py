@@ -93,7 +93,7 @@ def plex_get_watched_shows(shows):
         episodes_watched = 0
         for episode in show.episodes():
             try:
-                # If not season defined, season 1
+                # If season not defined set to season 1
                 season = 1 if not episode.seasonNumber else episode.seasonNumber
                 n_episode = episode.index
                 if episode.isWatched and n_episode:
