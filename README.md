@@ -13,7 +13,14 @@ This version is based on my previous project  [PlexMalSync](https://github.com/R
 
 # Setup
 
-## Step 1 - Configuration
+## Step 1 - Download project files
+
+Get the latest version using your favorite git client or by downloading the latest release from here:
+
+https://github.com/RickDB/PlexAniSync/archive/master.zip
+
+
+## Step 2 - Configuration
 
 From the project directory copy the example settings file `settings.ini.example` to `settings.ini`, open `settings.ini` with your favorite editor and edit where needed.
 
@@ -38,19 +45,19 @@ username = GoblinSlayer
 access_token = iLikeToastyGoblins.
 ```
 
-## Step 2 - Install requirements
+## Step 3 - Install requirements
 
-Install requirements using this python command in the project folder:
+Make sure you have Python 3.6 or higher installed and install the addtional requirements using this Python command from within the project folder:
 
 `pip install -r requirements.txt`
 
-## Step 3 - Start syncing
+## Step 4 - Start syncing
 
 Now that configuration is finished and requirements have been installed we can finally start the sync script:
 
 `python PlexAniSync.py`
 
-Depending on library size and server can take a few minutes to finish.
+Depending on library size and server can take a few minutes to finish, for scheduled syncing you can create a cronjob or windows task which runs it every 30 minutes for instance.
 
 ## Addtional options
 
