@@ -21,14 +21,14 @@ coloredlogs.install(fmt='%(asctime)s %(message)s', logger=logger)
 
 ## Settings section ##
 
-def read_settings(file):
+def read_settings(settings_file):
     # File exists
-    if not os.path.isfile(file):
+    if not os.path.isfile(settings_file):
         logger.critical(
-            '[CONFIG] Settings file file not found: {}'.format(file))
+            '[CONFIG] Settings file file not found: %s' % (settings_file))
         sys.exit()
     settings = configparser.ConfigParser()
-    settings.read(file)
+    settings.read(settings_file)
     return settings
 
 
@@ -42,7 +42,6 @@ ANILIST_SKIP_UPDATE = anilist_settings['skip_list_update'].lower()
 ANILIST_ACCESS_TOKEN = anilist_settings['access_token'].strip()
 
 ## Plex section ##
-
 
 class plex_watched_series:
     def __init__(self, title, year, episodes_watched, total_seasons):
@@ -82,8 +81,7 @@ def plex_get_anime_shows():
     logger.info('[PLEX] Retrieving anime series from section: %s' % (section))
     series = plex.library.section(section).search()
     logger.info(
-        '[PLEX] Retrieving of {} anime series completed'.format(
-            len(series)))
+        '[PLEX] Retrieving of %s anime series completed' % (len(series)))
     return series
 
 
@@ -122,10 +120,10 @@ def plex_get_watched_shows(shows):
             watched_series.append(watched_show)
 
             # logger.info(
-            #    'Watched {} episodes of show: {}'.format(
+            #    'Watched %s episodes of show: %s' % (
             #        episodes_watched, show.title))
 
-    logger.info('[PLEX] Found {} watched series'.format(len(watched_series)))
+    logger.info('[PLEX] Found %s watched series' % (len(watched_series)))
     return watched_series
 
 
@@ -432,8 +430,7 @@ def anilist_user_list(username):
             (username))
 
     logger.info(
-        '[ANILIST] Found {} anime series on list'.format(
-            len(anilist_series)))
+        '[ANILIST] Found %s anime series on list' % (len(anilist_series)))
     return anilist_series
 
 
@@ -917,8 +914,8 @@ def anilist_series_update(mediaId, progress, status):
             'query': query, 'variables': variables})
     # print(response.content)
 
-## Startup section ##
 
+## Startup section ##
 
 def start():
     # AniList
