@@ -61,7 +61,7 @@ Depending on library size and server can take a few minutes to finish, for sched
 
 ## Addtional options
 
-In your settings file there's a setting called 'skip_list_update' which you can set to True or False, if set to True it will **NOT** update your AniList which is useful if you want to do a test run to check if everything lines up properly.
+In your settings file there's a setting called `skip_list_update` which you can set to True or False, if set to True it will **NOT** update your AniList which is useful if you want to do a test run to check if everything lines up properly.
 
 ## Requirements
 
