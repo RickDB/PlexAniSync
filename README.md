@@ -34,7 +34,7 @@ For AniList you need get a so called 'access_token', you can retrieve that here 
 
 https://anilist.co/api/v2/oauth/authorize?client_id=1549&response_type=token
 
-Make sure copy the entire key as it is pretty long and paste that in the settings file under 'access_token', no need to enclose it just paste it as-is.
+Make sure to copy the entire key as it is pretty long and paste that in the settings file under 'access_token', no need to enclose it just paste it as-is.
 
 Afterwards make sure to also fill in your AniList username as well which is your actual username not your e-mail address.
 Example AniList config:
