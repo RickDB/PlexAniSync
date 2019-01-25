@@ -494,6 +494,7 @@ def match_anilist_to_plex(
         anilist_series,
         plex_series_all,
         plex_series_watched):
+    logger.info('[ANILIST] Matching Plex series to Anilist')
     for plex_series in plex_series_watched:
         plex_title = plex_series.title
         plex_title_clean = re.sub(
@@ -521,6 +522,7 @@ def match_anilist_to_plex(
             plex_title_clean,
             plex_title_clean_without_year]
 
+        logger.info('--------------------------------------------------')
         if(plex_total_seasons == 1):
             for series in anilist_series:
                 if series.title_english:
