@@ -602,7 +602,8 @@ def match_anilist_series_with_seasons(
         plex_title,
         plex_year,
         plex_total_seasons):
-        #logger.info('[ANILIST] Plex series has more than 1 season, using alternative season search for total of %s seasons' % (plex_total_seasons))
+        #logger.info('[ANILIST] Plex series has more than 1 season, using alternative season search for total of %s seasons' %
+        #  (plex_total_seasons))
     counter_season = 1
     while counter_season <= plex_total_seasons:
         plex_watched_episode_count = plex_get_watched_episodes_for_show_season(
@@ -684,7 +685,8 @@ def match_anilist_series_with_seasons(
                 series_already_listed = False
                 for series in anilist_series:
                     if series.id == media_id_search:
-                        #logger.warning('[ANILIST] Plex series has more than 1 season and is already on list: %s <===>%s ' % (series.id,media_id_search))
+                        #logger.warning('[ANILIST] Plex series has more than 1 season and is already on list: %s <===>%s ' %
+                        #  (series.id,media_id_search))
                         series_already_listed = True
                         if series.title_english is not None:
                             plex_title = series.title_english
@@ -814,7 +816,8 @@ def anilist_find_id_season_best_match(title, season, year):
                     for potential_title in potential_titles:
                         potential_title = re.sub(
                             '[^A-Za-z0-9]+', '', potential_title).lower().strip()
-                        #logger.info('Comparing AniList: %s | %s[%s] <===> %s' % (title_english_for_matching, title_romaji_for_matching, started_year, potential_title))
+                        #logger.info('Comparing AniList: %s | %s[%s] <===> %s' %
+                        #  (title_english_for_matching, title_romaji_for_matching, started_year, potential_title))
                         if title_english_for_matching == potential_title:
                             media_id = media_item.id
                             logger.info(
@@ -862,7 +865,8 @@ def anilist_find_id_best_match(title, year):
                     if hasattr(media_item.startDate, 'year'):
                         started_year = str(media_item.startDate.year)
 
-                    #logger.info('Comparing AniList: %s | %s[%s] <===> %s[%s]' % (title_english, title_romaji, started_year, match_title, match_year))
+                    #logger.info('Comparing AniList: %s | %s[%s] <===> %s[%s]' %
+                    #  (title_english, title_romaji, started_year, match_title, match_year))
                     if match_title == title_english_for_matching and match_year == started_year:
                         media_id = media_item.id
                         logger.info(
