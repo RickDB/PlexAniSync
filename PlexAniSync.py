@@ -33,7 +33,6 @@ def read_settings(settings_file):
 
 
 settings_file = 'settings.ini'
-
 settings = read_settings(settings_file)
 anilist_settings = settings['ANILIST']
 plex_settings = settings['PLEX']
@@ -547,8 +546,8 @@ def match_anilist_to_plex(
 
             # Series not listed so search for it
             if not all(matched_anilist_series) or not matched_anilist_series:
-                logger.error(
-                    '[ANILIST] Plex series was not on your AniList list')
+                logger.warning(
+                    '[ANILIST] Plex series was not on your AniList list: %s' % (plex_title))
                 logger.warning(
                     '[ANILIST] Searching best title / year match for: %s' %
                     (plex_title))
@@ -773,7 +772,7 @@ def anilist_find_id_season_best_match(title, season, year):
     media_id = None
     #logger.warning('[ANILIST] Searching  AniList for title: %s | season: %s' % (title, season))
     match_title = re.sub('[^A-Za-z0-9]+', '', title).lower().strip()
-    match_year = str(year)
+    match_year = int(year)
 
     match_title_season_suffix1 = '%s %s' % (
         match_title, int_to_roman_numeral(season))
@@ -808,7 +807,7 @@ def anilist_find_id_season_best_match(title, season, year):
                             title_romaji_for_matching = re.sub(
                                 '[^A-Za-z0-9]+', '', title_romaji).lower().strip()
                     if hasattr(media_item.startDate, 'year'):
-                        started_year = str(media_item.startDate.year)
+                        started_year = int(media_item.startDate.year)
 
                     for potential_title in potential_titles:
                         potential_title = re.sub(
@@ -816,17 +815,25 @@ def anilist_find_id_season_best_match(title, season, year):
                         #logger.info('Comparing AniList: %s | %s[%s] <===> %s' %
                         #  (title_english_for_matching, title_romaji_for_matching, started_year, potential_title))
                         if title_english_for_matching == potential_title:
-                            media_id = media_item.id
-                            logger.info(
-                                '[ANILIST] Found match: %s [%s]' %
-                                (title_english, media_id))
-                            break
+                            if started_year < match_year:
+                                logger.info('[ANILIST] Found match: %s [%s] | skipping as it was released before first season (%s <==> %s)' %
+                                 (title_english, media_id, started_year, match_year))
+                            else:
+                                media_id = media_item.id
+                                logger.info(
+                                    '[ANILIST] Found match: %s [%s]' %
+                                    (title_english, media_id))
+                                break
                         if title_romaji_for_matching == potential_title:
-                            media_id = media_item.id
-                            logger.info(
-                                '[ANILIST] Found match: %s [%s]' %
-                                (title_romaji, media_id))
-                            break
+                            if started_year < match_year:
+                                logger.info('[ANILIST] Found match: %s [%s] | skipping as it was released before first season (%s <==> %s)' %
+                                 (title_english, media_id, started_year, match_year))
+                            else:
+                                media_id = media_item.id
+                                logger.info(
+                                    '[ANILIST] Found match: %s [%s]' %
+                                    (title_romaji, media_id))
+                                break
     if media_id == 0:
         logger.error('[ANILIST] No match found for title: %s' % (title))
     return media_id
@@ -866,13 +873,13 @@ def anilist_find_id_best_match(title, year):
                     #  (title_english, title_romaji, started_year, match_title, match_year))
                     if match_title == title_english_for_matching and match_year == started_year:
                         media_id = media_item.id
-                        logger.info(
+                        logger.warning(
                             '[ANILIST] Found match: %s [%s]' %
                             (title_english, media_id))
                         break
                     if match_title == title_romaji_for_matching and match_year == started_year:
                         media_id = media_item.id
-                        logger.info(
+                        logger.warning(
                             '[ANILIST] Found match: %s [%s]' %
                             (title_romaji, media_id))
                         break
