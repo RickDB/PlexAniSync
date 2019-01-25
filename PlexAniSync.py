@@ -816,7 +816,7 @@ def anilist_find_id_season_best_match(title, season, year):
                         #  (title_english_for_matching, title_romaji_for_matching, started_year, potential_title))
                         if title_english_for_matching == potential_title:
                             if started_year < match_year:
-                                logger.info('[ANILIST] Found match: %s [%s] | skipping as it was released before first season (%s <==> %s)' %
+                                logger.warning('[ANILIST] Found match: %s [%s] | skipping as it was released before first season (%s <==> %s)' %
                                  (title_english, media_id, started_year, match_year))
                             else:
                                 media_id = media_item.id
@@ -826,8 +826,8 @@ def anilist_find_id_season_best_match(title, season, year):
                                 break
                         if title_romaji_for_matching == potential_title:
                             if started_year < match_year:
-                                logger.info('[ANILIST] Found match: %s [%s] | skipping as it was released before first season (%s <==> %s)' %
-                                 (title_english, media_id, started_year, match_year))
+                                logger.warning('[ANILIST] Found match: %s [%s] | skipping as it was released before first season (%s <==> %s)' %
+                                 (title_romaji, media_id, started_year, match_year))
                             else:
                                 media_id = media_item.id
                                 logger.info(
