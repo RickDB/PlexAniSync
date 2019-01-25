@@ -585,7 +585,7 @@ def match_anilist_to_plex(
                 matched_anilist_series = []
         elif not all(matched_anilist_series) or not matched_anilist_series and plex_total_seasons > 1:
             logger.info(
-                'Found multiple seasons so using season search instead')
+                'Found multiple seasons so using season search instead for: %s' % (plex_title))
             match_anilist_series_with_seasons(
                 anilist_series,
                 plex_series_all,
