@@ -69,7 +69,11 @@ In your settings file there's a setting called `skip_list_update` which you can 
 
 ## Support
 
-Support thread is located on Plex Forums:
+Support thread is located on AniList:
+
+https://anilist.co/forum/thread/6443
+
+Optionally also on Plex forums but less active there:
 
 https://forums.plex.tv/t/plexanisync-sync-your-plex-library-to-anilist/365826
 
