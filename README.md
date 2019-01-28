@@ -32,24 +32,34 @@ The Direct IP authentication method is preferred as it's the fastest method, for
 
 https://support.plex.tv/articles/204059436-finding-an-authentication-token-x-plex-token/
 
-Afterwards can enter your full site url and above authentication token like for example:
+Afterwards can enter your full Plex site url and above authentication token, for example:
+
+```
+[PLEX]
+anime_section = Anime
+authentication_method = direct
+
+base_url = http://192.168.1.234:32400
+token = abcdef123456789
+```
+
+#### MyPlex authentication
+
+For MyPlex authentication you will need your Plex server name and Plex account login information, for example:
 
 ```
 [PLEX]
 anime_section = Anime
 authentication_method = myplex
 
-base_url = http://127.0.0.1:32400
-token = abcdef123456789
+server = Sadala
+myplex_user = Goku
+myplex_password = kamehameha
 ```
-
-#### MyPlex authentication
-
-For MyPlex authentication you will need your Plex server name and Plex account login information.
 
 #### Section configuration
 
-In the settings file enter your Plex library / section name containing your Anime like for example:
+In the settings file enter your Plex library / section name containing your Anime, for example:
 
 ```
 [PLEX]
@@ -110,8 +120,8 @@ https://forums.plex.tv/t/plexanisync-sync-your-plex-library-to-anilist/365826
 
 Currently planned for future releases:
 
-- [ ] Improve error handling
 - [ ] Code cleanup and refactoring
+- [ ] Improve error handling
 
 ## Credits
 
