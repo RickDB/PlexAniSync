@@ -25,19 +25,48 @@ https://github.com/RickDB/PlexAniSync/archive/master.zip
 From the project directory copy the example settings file `settings.ini.example` to `settings.ini`, open `settings.ini` with your favorite editor and edit where needed.
 
 ### Plex
-For the Direct IP authentication method you need to find your token manually:
+
+#### Direct IP authentication
+
+The Direct IP authentication method is preferred as it's the fastest method, for this you need to find your token manually:
 
 https://support.plex.tv/articles/204059436-finding-an-authentication-token-x-plex-token/
 
+Afterwards can enter your full site url and above authentication token like for example:
+
+```
+[PLEX]
+anime_section = Anime
+authentication_method = myplex
+
+base_url = http://127.0.0.1:32400
+token = abcdef123456789
+```
+
+#### MyPlex authentication
+
+For MyPlex authentication you will need your Plex server name and Plex account login information.
+
+#### Section configuration
+
+In the settings file enter your Plex library / section name containing your Anime like for example:
+
+```
+[PLEX]
+anime_section = Anime
+```
+
+Multiple libraries are not supported however if requested might be added at a later date.
+
 ### AniList
-For AniList you need get a so called 'access_token', you can retrieve that here and if not logged in will ask you to do so:
+
+For AniList you need get a so called `access_token` which you can retrieve via this link and if not logged in will ask you to do so:
 
 https://anilist.co/api/v2/oauth/authorize?client_id=1549&response_type=token
 
 Make sure to copy the entire key as it is pretty long and paste that in the settings file under 'access_token', no need to enclose it just paste it as-is.
 
-Afterwards make sure to also fill in your AniList username as well which is your actual username not your e-mail address.
-Example AniList config:
+Afterwards make sure to also fill in your AniList username as well which is your actual username not your e-mail address like for example:
 
 ```
 [ANILIST]
