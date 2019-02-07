@@ -11,7 +11,7 @@ Unwatched Anime in Plex will not be synced so only those that have at least one 
 This version is based on my previous project  [PlexMalSync](https://github.com/RickDB/PlexMALSync) which due to MAL closing their API is no longer working, this might change in the future and if it does will resume working on that again as as well.
 
 
-**Disclaimer: Since this is the first public release bugs may occur so be careful and if you want to test it out first without updating your actual AniList entries check out the ``addtional options`` section from this readme.**
+**Disclaimer: Since this is the first public release bugs may occur so be careful and if you want to test it out first without updating your actual AniList entries check out the ``optional features`` section from this readme.**
 
 # Setup
 
@@ -100,10 +100,29 @@ Now that configuration is finished and requirements have been installed we can f
 
 Depending on library size and server can take a few minutes to finish, for scheduled syncing you can create a cronjob or windows task which runs it every 30 minutes for instance.
 
-## Addtional options
+## Optional features
+
+### Skip list updating for testing
 
 In your settings file there's a setting called `skip_list_update` which you can set to True or False, if set to True it will **NOT** update your AniList which is useful if you want to do a test run to check if everything lines up properly.
 
+### Custom anime mapping
+
+You can manually link a Plex title and season to an AniList ID, to do so:
+
+- From the project folder copy `custom_mappings.ini.example` to `custom_mappings.ini`
+- Add new entries there in the following format:
+
+`Plex title for series`^`Plex season`^`AniList series ID`
+
+As shown above the values are seperated by a ^
+
+- To find out the AniList ID you can visit the series page and copy it from the site url, like for example My Shield hero has ID 99263:
+
+https://anilist.co/anime/99263/Tate-no-Yuusha-no-Nariagari
+
+- You can remove any existing entries from the example file as they are purely instructional
+- Upon startup it will list all valid custom mappings, incorrect onces are shown as errors and are skipped
 ## Requirements
 
 [Python 3 (tested with 3.6.4)](https://www.python.org/)
