@@ -1,4 +1,6 @@
 # Plex to AniList Sync
+[![Build Status](https://travis-ci.org/RickDB/PlexAniSync.svg?branch=master)](https://travis-ci.org/RickDB/PlexAniSync)
+
 ![Logo](logo.png)
 
 If you manage your Anime with Plex this will allow you to sync your libraries to [AniList](https://anilist.co)  , recommend using Plex with the [HAMA agent](https://github.com/ZeroQI/Hama.bundle) for best Anime name matches.
