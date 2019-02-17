@@ -264,6 +264,7 @@ def anilist_search_by_id(anilist_id):
             id
             type
             format
+            status
             source
             season
             episodes
@@ -319,6 +320,7 @@ def anilist_search_by_name(anilist_show_name):
                     id
                     type
                     format
+                    status
                     source
                     season
                     episodes
@@ -474,6 +476,15 @@ def anilist_user_list(username):
     return anilist_series
 
 
+def anilist_search_item_to_obj(item):
+    try:
+        if(item):
+            return anilist_single_mediaitem_to_object(item.data)
+    except BaseException:
+        pass
+    return None
+
+
 def anilist_mediaitem_to_object(media_item):
     id = media_item.media.id
     sType = ''
@@ -513,6 +524,63 @@ def anilist_mediaitem_to_object(media_item):
         started_year = media_item.media.startDate.year
     if hasattr(media_item.media.endDate, 'year'):
         ended_year = media_item.media.endDate.year
+
+    series = anilist_series(
+        id,
+        sType,
+        sFormat,
+        source,
+        status,
+        media_status,
+        progress,
+        season,
+        episodes,
+        title_english,
+        title_romaji,
+        started_year,
+        ended_year)
+    return series
+
+
+def anilist_single_mediaitem_to_object(media_item):
+    id = media_item.Media.id
+    sType = ''
+    sFormat = ''
+    source = ''
+    status = ''
+    media_status = ''
+    progress = ''
+    season = ''
+    episodes = ''
+    title_english = ''
+    title_romaji = ''
+    started_year = ''
+    ended_year = ''
+
+    if hasattr(media_item, 'status'):
+        status = media_item.status
+    if hasattr(media_item, 'progress'):
+        progress = media_item.progress
+    if hasattr(media_item.Media, 'status'):
+        media_status = media_item.Media.status
+    if hasattr(media_item.Media, 'type'):
+        sType = media_item.Media.type
+    if hasattr(media_item.Media, 'format'):
+        sFormat = media_item.Media.format
+    if hasattr(media_item.Media, 'source'):
+        source = media_item.Media.source
+    if hasattr(media_item.Media, 'season'):
+        season = media_item.Media.season
+    if hasattr(media_item.Media, 'episodes'):
+        episodes = media_item.Media.episodes
+    if hasattr(media_item.Media.title, 'english'):
+        title_english = media_item.Media.title.english
+    if hasattr(media_item.Media.title, 'romaji'):
+        title_romaji = media_item.Media.title.romaji
+    if hasattr(media_item.Media.startDate, 'year'):
+        started_year = media_item.Media.startDate.year
+    if hasattr(media_item.Media.endDate, 'year'):
+        ended_year = media_item.Media.endDate.year
 
     series = anilist_series(
         id,
@@ -608,8 +676,11 @@ def match_anilist_to_plex(
                     logger.warning(
                         '[ANILIST] Adding new series id to list: %s | Plex episodes watched: %s' %
                         (custom_mapping_id, plex_watched_episode_count))
-                    anilist_series_update(
-                        custom_mapping_id, plex_watched_episode_count, "CURRENT")
+                    anilist_add_by_id(
+                        custom_mapping_id,
+                        plex_title,
+                        plex_year,
+                        plex_watched_episode_count)
                 else:
                     logger.warning(
                         '[ANILIST] Searching best title / year match for: %s' %
@@ -629,8 +700,11 @@ def match_anilist_to_plex(
                         logger.warning(
                             '[ANILIST] Adding new series id to list: %s | Plex episodes watched: %s' %
                             (media_id_search, plex_watched_episode_count))
-                        anilist_series_update(
-                            media_id_search, plex_watched_episode_count, "CURRENT")
+                        anilist_add_by_id(
+                            media_id_search,
+                            plex_title,
+                            plex_year,
+                            plex_watched_episode_count)
                     else:
                         logger.error(
                             '[ANILIST] Failed to find valid match on AniList for: %s' %
@@ -730,9 +804,11 @@ def match_anilist_series_with_seasons(
                     logger.warning(
                         '[ANILIST] Adding new series id to list: %s | Plex episodes watched: %s' %
                         (custom_mapping_id, plex_watched_episode_count))
-
-                    anilist_series_update(
-                        custom_mapping_id, plex_watched_episode_count, "CURRENT")
+                    anilist_add_by_id(
+                        custom_mapping_id,
+                        plex_title,
+                        plex_year,
+                        plex_watched_episode_count)
                 else:
                     logger.warning(
                         '[ANILIST] Searching best title / year match for: %s' %
@@ -752,8 +828,11 @@ def match_anilist_series_with_seasons(
                         logger.warning(
                             '[ANILIST] Adding new series id to list: %s | Plex episodes watched: %s' %
                             (media_id_search, plex_watched_episode_count))
-                        anilist_series_update(
-                            media_id_search, plex_watched_episode_count, "CURRENT")
+                        anilist_add_by_id(
+                            media_id_search,
+                            plex_title,
+                            plex_year,
+                            plex_watched_episode_count)
                     else:
                         logger.error(
                             '[ANILIST] Failed to find valid match on AniList for: %s' %
@@ -797,8 +876,11 @@ def match_anilist_series_with_seasons(
                     logger.warning(
                         '[ANILIST] Adding new series id to list: %s | Plex episodes watched: %s' %
                         (media_id_search, plex_watched_episode_count))
-                    anilist_series_update(
-                        media_id_search, plex_watched_episode_count, "CURRENT")
+                    anilist_add_by_id(
+                        media_id_search,
+                        plex_title,
+                        plex_year,
+                        plex_watched_episode_count)
             else:
                 logger.error(
                     '[ANILIST] Failed to find valid season title match on AniList for: %s' %
@@ -817,42 +899,46 @@ def update_anilist_entry(
         logger.info(
             '[ANILIST] Found AniList entry for Plex title: %s' %
             (title))
-        if series.status:
+        if hasattr(series, 'status'):
             status = series.status
         if status == "COMPLETED":
             logger.info(
                 '[ANILIST] Series is already marked as completed on AniList so skipping update')
             continue
 
-        if year != series.started_year:
-            logger.error(
-                '[ANILIST] Series year did not match (skipping update) => Plex has %s and AniList has %s' %
-                (year, series.started_year))
-            continue
+        if hasattr(series, 'started_year'):
+            if year != series.started_year:
+                logger.error(
+                    '[ANILIST] Series year did not match (skipping update) => Plex has %s and AniList has %s' %
+                    (year, series.started_year))
+                continue
 
         anilist_total_episodes = 0
         anilist_episodes_watched = 0
         anilist_media_status = ''
 
-        if series.media_status:
+        if hasattr(series, 'media_status'):
             anilist_media_status = series.media_status
-        if series.episodes:
+        if hasattr(series, 'episodes'):
             anilist_total_episodes = int(series.episodes)
-        if series.progress:
-            anilist_episodes_watched = int(series.progress)
+        if hasattr(series, 'progress'):
+            try:
+                anilist_episodes_watched = int(series.progress)
+            except BaseException:
+                pass
 
         if watched_episode_count >= anilist_total_episodes and anilist_total_episodes is not 0 and anilist_media_status == 'FINISHED':
             # series completed watched
             logger.warning(
-                '[ANILIST] Plex episode watch count %s was higher than the one on AniList total episodes for that series %s, gonna update AniList entry to completed' %
+                '[ANILIST] Plex episode watch count [%s] was higher than the one on AniList total episodes for that series [%s] | gonna update AniList entry to completed' %
                 (watched_episode_count, anilist_total_episodes))
             anilist_series_update(
                 series.id, watched_episode_count, "COMPLETED")
         elif watched_episode_count > anilist_episodes_watched:
             # episode watch count higher than plex
             logger.warning(
-                '[ANILIST] Plex episode watch count %s was higher than the one on AniList %s, gonna update AniList entry to currently watching' %
-                (watched_episode_count, anilist_episodes_watched))
+                '[ANILIST] Plex episode watch count [%s] was higher than the one on AniList [%s] which has total of %s episodes | gonna update AniList entry to currently watching' %
+                (watched_episode_count, anilist_episodes_watched, anilist_total_episodes))
             anilist_series_update(series.id, watched_episode_count, "CURRENT")
         elif watched_episode_count == anilist_episodes_watched:
             logger.info(
@@ -984,6 +1070,31 @@ def anilist_find_id_best_match(title, year):
     return media_id
 
 
+def anilist_add_by_id(
+        anilist_id,
+        plex_title,
+        plex_year,
+        plex_watched_episode_count):
+    matched_anilist_series = []
+    media_lookup_result = anilist_search_by_id(anilist_id)
+    if(media_lookup_result):
+        anilist_obj = anilist_search_item_to_obj(media_lookup_result)
+        if(anilist_obj):
+            matched_anilist_series.append(anilist_obj)
+            update_anilist_entry(
+                plex_title,
+                plex_year,
+                plex_watched_episode_count,
+                matched_anilist_series)
+        else:
+            logger.error(
+                '[ANILIST] failed to get anilist object for list adding, skipping series')
+    else:
+        logger.error(
+            '[ANILIST] failed to get anilist search result for id: %s' %
+            (anilist_id))
+
+
 def anilist_series_update(mediaId, progress, status):
     if ANILIST_SKIP_UPDATE == 'true':
         return
@@ -1034,7 +1145,7 @@ def start():
     # AniList
     if ANILIST_SKIP_UPDATE == 'true':
         logger.warning(
-            'AniList skip list update enabled in settings, will match but NOT update your  list')
+            'AniList skip list update enabled in settings, will match but NOT update your list')
 
     anilist_username = anilist_settings['username']
     anilist_series = anilist_user_list(anilist_username)
