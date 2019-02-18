@@ -16,6 +16,7 @@ coloredlogs.install(fmt='%(asctime)s %(message)s', logger=logger)
 
 plex_settings = dict()
 
+
 class plex_watched_series:
     def __init__(self, title, year, episodes_watched, total_seasons):
         self.series_id = id
@@ -23,6 +24,7 @@ class plex_watched_series:
         self.year = year
         self.episodes_watched = episodes_watched
         self.total_seasons = total_seasons
+
 
 def authenticate():
     method = plex_settings['authentication_method'].lower()
@@ -43,6 +45,7 @@ def authenticate():
             '[PLEX] Failed to authenticate due to invalid settings or authentication info, exiting...')
         sys.exit()
     return plex
+
 
 def get_anime_shows():
     section = plex_settings['anime_section']

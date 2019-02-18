@@ -12,7 +12,7 @@ from plexapi.myplex import MyPlexAccount
 from plexapi.server import PlexServer
 
 import anilist
-import  plexmodule
+import plexmodule
 
 # Logger settings
 logger = logging.getLogger('PlexAniSync')
@@ -23,6 +23,7 @@ coloredlogs.install(fmt='%(asctime)s %(message)s', logger=logger)
 
 ## Settings section ##
 
+
 def read_settings(settings_file):
     if not os.path.isfile(settings_file):
         logger.critical(
@@ -31,6 +32,7 @@ def read_settings(settings_file):
     settings = configparser.ConfigParser()
     settings.read(settings_file)
     return settings
+
 
 settings_file = 'settings.ini'
 settings = read_settings(settings_file)
@@ -42,6 +44,7 @@ ANILIST_ACCESS_TOKEN = anilist_settings['access_token'].strip()
 
 mapping_file = 'custom_mappings.ini'
 custom_mappings = []
+
 
 def read_custom_mappings(mapping_file):
     if not os.path.isfile(mapping_file):
@@ -66,9 +69,10 @@ def read_custom_mappings(mapping_file):
             except BaseException:
                 logger.error(
                     '[MAPPING] Invalid entry found for line: %s' %
-                    (line))                 
+                    (line))
 
 ## Startup section ##
+
 
 def start():
     if ANILIST_SKIP_UPDATE == 'true':
@@ -88,7 +92,7 @@ def start():
             'Unable to retrieve AniList list, check your username and access token')
     else:
         plexmodule.plex_settings = plex_settings
-        plex_anime_series =plexmodule.get_anime_shows()
+        plex_anime_series = plexmodule.get_anime_shows()
         plex_series_watched = plexmodule.get_watched_shows(plex_anime_series)
         anilist.match_to_plex(
             anilist_series,

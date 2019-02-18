@@ -18,6 +18,7 @@ custom_mappings = []
 ANILIST_ACCESS_TOKEN = ''
 ANILIST_SKIP_UPDATE = 'false'
 
+
 def to_object(o):
     keys, values = zip(*o.items())
     #print(keys, values)
