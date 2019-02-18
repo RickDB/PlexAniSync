@@ -141,7 +141,7 @@ https://forums.plex.tv/t/plexanisync-sync-your-plex-library-to-anilist/365826
 
 Currently planned for future releases:
 
-- [ ] Code cleanup and refactoring
+- [ ] Ignore anime list support (based on content rating and / or title)
 - [ ] Improve error handling
 
 ## Credits
