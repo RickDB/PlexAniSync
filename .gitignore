@@ -3,3 +3,5 @@ custom_mappings.ini
 settings\.ini
 
 logo\.psd
+
+__pycache__/
