@@ -770,14 +770,31 @@ def update_entry(
             logger.warning(
                 '[ANILIST] Plex episode watch count [%s] was higher than the one on AniList total episodes for that series [%s] | gonna update AniList entry to completed' %
                 (watched_episode_count, anilist_total_episodes))
-            update_series(
-                series.id, watched_episode_count, "COMPLETED")
+
+            # calculate episode difference and iterate up so activity stream lists episodes watched
+            episode_difference = watched_episode_count - anilist_episodes_watched
+            if episode_difference == 1:
+                update_series(series.id, watched_episode_count, "COMPLETED")
+            else:
+                current_episodes_watched = anilist_episodes_watched + 1
+                while(current_episodes_watched <= watched_episode_count):      
+                    update_series(series.id, current_episodes_watched, "COMPLETED")
+                    current_episodes_watched += 1
         elif watched_episode_count > anilist_episodes_watched:
             # episode watch count higher than plex
             logger.warning(
                 '[ANILIST] Plex episode watch count [%s] was higher than the one on AniList [%s] which has total of %s episodes | gonna update AniList entry to currently watching' %
                 (watched_episode_count, anilist_episodes_watched, anilist_total_episodes))
-            update_series(series.id, watched_episode_count, "CURRENT")
+
+            # calculate episode difference and iterate up so activity stream lists episodes watched
+            episode_difference = watched_episode_count - anilist_episodes_watched
+            if episode_difference == 1:
+                update_series(series.id, watched_episode_count, "CURRENT")
+            else:
+                current_episodes_watched = anilist_episodes_watched + 1
+                while(current_episodes_watched <= watched_episode_count):
+                    update_series(series.id, current_episodes_watched, "CURRENT")
+                    current_episodes_watched += 1
         elif watched_episode_count == anilist_episodes_watched:
             logger.info(
                 '[ANILIST] Episodes watched was the same on AniList and Plex so skipping update')
@@ -936,7 +953,6 @@ def add_by_id(
 def update_series(mediaId, progress, status):
     if ANILIST_SKIP_UPDATE == 'true':
         return
-
     query = '''
         mutation ($mediaId: Int, $status: MediaListStatus, $progress: Int) {
             SaveMediaListEntry (mediaId: $mediaId, status: $status, progress: $progress) {
