@@ -75,6 +75,14 @@ def read_custom_mappings(mapping_file):
 
 
 def start():
+    if len(sys.argv) < 2:
+        logger.error(
+            'No show title specified in arguments so cancelling updating')
+        sys.exit()
+    else:
+        show_title = sys.argv[1]
+        logger.info('Updating single show: %s' % (show_title))
+
     if ANILIST_SKIP_UPDATE == 'true':
         logger.warning(
             'AniList skip list update enabled in settings, will match but NOT update your list')
@@ -92,7 +100,7 @@ def start():
             'Unable to retrieve AniList list, check your username and access token')
     else:
         plexmodule.plex_settings = plex_settings
-        plex_anime_series = plexmodule.get_anime_shows()
+        plex_anime_series = plexmodule.get_anime_shows_filter(show_title)
         plex_series_watched = plexmodule.get_watched_shows(plex_anime_series)
         anilist.match_to_plex(
             anilist_series,

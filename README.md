@@ -123,6 +123,19 @@ https://anilist.co/anime/99263/Tate-no-Yuusha-no-Nariagari
 
 - You can remove any existing entries from the example file as they are purely instructional
 - Upon startup it will list all valid custom mappings, incorrect onces are shown as errors and are skipped
+
+### Tautulli Sync Helper script
+
+In the project folder you will find `TautulliSyncHelper.py` which you can use to sync a single Plex show to AniList for use in Tautulli script notifcations (trigger on watched).
+Usage is as follows:
+
+`TautulliSyncHelper.py <plex show name>`
+
+Depending on your OS make sure to place the show name between single or double quotes, a detailed explanation on custom script usage is located here:
+
+https://github.com/Tautulli/Tautulli-Wiki/wiki/Custom-Scripts
+
+
 ## Requirements
 
 [Python 3 (tested with 3.6.4)](https://www.python.org/)

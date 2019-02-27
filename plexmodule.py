@@ -51,10 +51,48 @@ def get_anime_shows():
     section = plex_settings['anime_section']
     logger.info('[PLEX] Retrieving anime series from section: %s' % (section))
     plex = authenticate()
-    series = plex.library.section(section).search()
+    shows = plex.library.section(section).search()
     logger.info(
         '[PLEX] Found %s anime series' % (len(series)))
-    return series
+    return shows
+
+
+def get_anime_shows_filter(show_name):
+    section = plex_settings['anime_section']
+    logger.info(
+        '[PLEX] Selecting %s from anime series in section: %s' %
+        (show_name, section))
+    plex = authenticate()
+    shows = plex.library.section(section).search()
+    shows_filtered = []
+    for show in shows:
+        show_title_clean_without_year = show.title
+        filter_title_clean_without_year = re.sub(
+            '[^A-Za-z0-9]+', '', show_name)
+
+        try:
+            if '(' in show.title and ')' in show.title:
+                year = re.search(r"(\d{4})", show.title).group(1)
+                yearString = '(%s)' % (year)
+                show_title_clean_without_year = show.title.replace(
+                    yearString, '').strip()
+                show_title_clean_without_year = re.sub(
+                    '[^A-Za-z0-9]+', '', show_title_clean_without_year)
+        except BaseException:
+            pass
+
+        if show.title.lower().strip() == show_name.lower().strip():
+            shows_filtered.append(show)
+        elif show_title_clean_without_year.lower().strip() == filter_title_clean_without_year.lower().strip():
+            shows_filtered.append(show)
+
+    if len(shows_filtered) > 0:
+        logger.info(
+            '[PLEX] Found matching anime series')
+    else:
+        logger.info(
+            '[PLEX] Did not find %s in anime series' % (show_name))
+    return shows_filtered
 
 
 def get_watched_shows(shows):
