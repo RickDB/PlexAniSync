@@ -53,7 +53,7 @@ def get_anime_shows():
     plex = authenticate()
     shows = plex.library.section(section).search()
     logger.info(
-        '[PLEX] Found %s anime series' % (len(series)))
+        '[PLEX] Found %s anime series' % (len(shows)))
     return shows
 
 
