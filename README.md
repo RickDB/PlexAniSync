@@ -13,22 +13,22 @@ This version is based on my previous project  [PlexMalSync](https://github.com/R
 
 **Disclaimer: Since this is the first public release bugs may occur so be careful and if you want to test it out first without updating your actual AniList entries check out the ``optional features`` section from this readme.**
 
-# Setup
+## Setup
 
-## Step 1 - Download project files
+### Step 1 - Download project files
 
 Get the latest version using your favorite git client or by downloading the latest release from here:
 
 https://github.com/RickDB/PlexAniSync/archive/master.zip
 
 
-## Step 2 - Configuration
+### Step 2 - Configuration
 
 From the project directory copy the example settings file `settings.ini.example` to `settings.ini`, open `settings.ini` with your favorite editor and edit where needed.
 
-### Plex
+#### Plex
 
-#### Direct IP authentication
+##### Direct IP authentication
 
 The Direct IP authentication method is preferred as it's the fastest method, for this you need to find your token manually:
 
@@ -45,7 +45,7 @@ base_url = http://192.168.1.234:32400
 token = abcdef123456789
 ```
 
-#### MyPlex authentication
+##### MyPlex authentication
 
 For MyPlex authentication you will need your Plex server name and Plex account login information, for example:
 
@@ -59,7 +59,7 @@ myplex_user = Goku
 myplex_password = kamehameha
 ```
 
-#### Section configuration
+##### Section configuration
 
 In the settings file enter your Plex library / section name containing your Anime, for example:
 
@@ -70,7 +70,7 @@ anime_section = Anime
 
 Multiple libraries are not supported however if requested might be added at a later date.
 
-### AniList
+#### AniList
 
 For AniList you need get a so called `access_token` which you can retrieve via this link and if not logged in will ask you to do so:
 
@@ -86,13 +86,13 @@ username = GoblinSlayer
 access_token = iLikeToastyGoblins.
 ```
 
-## Step 3 - Install requirements
+### Step 3 - Install requirements
 
 Make sure you have Python 3.6 or higher installed and install the addtional requirements using this Python command from within the project folder:
 
 `pip install -r requirements.txt`
 
-## Step 4 - Start syncing
+### Step 4 - Start syncing
 
 Now that configuration is finished and requirements have been installed we can finally start the sync script:
 
