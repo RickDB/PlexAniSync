@@ -134,7 +134,7 @@ Usage is as follows:
 
 Depending on your OS make sure to place the show name between single or double quotes, for more information see the wiki page:
 
-https://github.com/RickDB/PlexAniSync/wiki/Tautulli-Sync
+https://github.com/RickDB/PlexAniSync/wiki/Tautulli-sync-script
 
 
 ## Requirements
