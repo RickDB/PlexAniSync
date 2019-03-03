@@ -126,15 +126,15 @@ https://anilist.co/anime/99263/Tate-no-Yuusha-no-Nariagari
 
 ### Tautulli Sync Helper script
 
-In the project folder you will find `TautulliSyncHelper.py` which you can use to sync a single Plex show to AniList for use in Tautulli script notifcations (trigger on watched).
+In the project folder you will find `TautulliSyncHelper.py` which you can use to sync a single Plex show to AniList for use in Tautulli script notifcations (trigger on playback stop).
 
 Usage is as follows:
 
 `TautulliSyncHelper.py <plex show name>`
 
-Depending on your OS make sure to place the show name between single or double quotes, a detailed explanation on custom script usage is located here:
+Depending on your OS make sure to place the show name between single or double quotes, for more information see the wiki page:
 
-https://github.com/Tautulli/Tautulli-Wiki/wiki/Custom-Scripts
+https://github.com/RickDB/PlexAniSync/wiki/Tautulli-Sync
 
 
 ## Requirements
