@@ -800,7 +800,7 @@ def update_entry(
                 '[ANILIST] Episodes watched was the same on AniList and Plex so skipping update')
         elif anilist_episodes_watched > watched_episode_count:
             logger.info(
-                '[ANILIST] Episodes watched was higher on AniList than on Plex so skipping update')
+                '[ANILIST] Episodes watched was higher on AniList [%s] than on Plex [%s] so skipping update' % (anilist_episodes_watched, watched_episode_count))
 
 
 def find_id_season_best_match(title, season, year):

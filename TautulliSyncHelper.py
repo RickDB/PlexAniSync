@@ -7,6 +7,7 @@ import os
 import re
 import requests
 import sys
+from time import sleep
 from guessit import guessit
 from plexapi.myplex import MyPlexAccount
 from plexapi.server import PlexServer
@@ -86,6 +87,9 @@ def start():
     if ANILIST_SKIP_UPDATE == 'true':
         logger.warning(
             'AniList skip list update enabled in settings, will match but NOT update your list')
+
+    # Wait a few a seconds to make sure Plex has processed watched states
+    sleep(5.0)
 
     # Anilist
     anilist_username = anilist_settings['username']
