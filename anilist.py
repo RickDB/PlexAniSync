@@ -204,11 +204,16 @@ def fetch_user_list(username):
     query = '''
         query ($username: String) {
         MediaListCollection(userName: $username, type: ANIME) {
-            statusLists {
-            progress
+            lists {
+            name
             status
-            repeat
-            media {
+            isCustomList
+            entries {
+                id
+                progress
+                status
+                repeat
+                media{
                 id
                 type
                 format
@@ -231,6 +236,7 @@ def fetch_user_list(username):
                     english
                     native
                 }
+                }
             }
             }
         }
@@ -252,7 +258,6 @@ def fetch_user_list(username):
     response = requests.post(
         url, headers=headers, json={
             'query': query, 'variables': variables})
-    # print(response.content)
     return json.loads(response.content, object_hook=to_object)
 
 
@@ -267,43 +272,40 @@ def process_user_list(username):
                 (username))
         else:
             for item in list_items:
-                for mediaCollection in item.MediaListCollection:
-                    if hasattr(mediaCollection, 'completed'):
-                        for media_item in mediaCollection.completed:
-                            if media_item is not None:
-                                series_obj = mediaitem_to_object(
-                                    media_item)
-                                anilist_series.append(series_obj)
-                    if hasattr(mediaCollection, 'current'):
-                        for media_item in mediaCollection.current:
-                            if media_item is not None:
-                                series_obj = mediaitem_to_object(
-                                    media_item)
-                                anilist_series.append(series_obj)
-                    if hasattr(mediaCollection, 'dropped'):
-                        for media_item in mediaCollection.dropped:
-                            if media_item is not None:
-                                series_obj = mediaitem_to_object(
-                                    media_item)
-                                anilist_series.append(series_obj)
-                    if hasattr(mediaCollection, 'paused'):
-                        for media_item in mediaCollection.paused:
-                            if media_item is not None:
-                                series_obj = mediaitem_to_object(
-                                    media_item)
-                                anilist_series.append(series_obj)
-                    if hasattr(mediaCollection, 'planning'):
-                        for media_item in mediaCollection.planning:
-                            if media_item is not None:
-                                series_obj = mediaitem_to_object(
-                                    media_item)
-                                anilist_series.append(series_obj)
-                    if hasattr(mediaCollection, 'repeating'):
-                        for media_item in mediaCollection.repeating:
-                            if media_item is not None:
-                                series_obj = mediaitem_to_object(
-                                    media_item)
-                                anilist_series.append(series_obj)
+                for mediaCollection in item.MediaListCollection.lists:
+                    if hasattr(mediaCollection, 'entries'):
+                        for list_entry in mediaCollection.entries:
+                            if hasattr(list_entry, 'status'):
+                                if list_entry.status == 'CURRENT':
+                                    if list_entry.media is not None:
+                                        series_obj = mediaitem_to_object(
+                                            list_entry)
+                                        anilist_series.append(series_obj)
+                                if list_entry.status == 'PLANNING':
+                                    if list_entry.media is not None:
+                                        series_obj = mediaitem_to_object(
+                                            list_entry)
+                                        anilist_series.append(series_obj)
+                                if list_entry.status == 'COMPLETED':
+                                    if list_entry.media is not None:
+                                        series_obj = mediaitem_to_object(
+                                            list_entry)
+                                        anilist_series.append(series_obj)
+                                if list_entry.status == 'DROPPED':
+                                    if list_entry.media is not None:
+                                        series_obj = mediaitem_to_object(
+                                            list_entry)
+                                        anilist_series.append(series_obj)
+                                if list_entry.status == 'PAUSED':
+                                    if list_entry.media is not None:
+                                        series_obj = mediaitem_to_object(
+                                            list_entry)
+                                        anilist_series.append(series_obj)
+                                if list_entry.status == 'REPEATING':
+                                    if list_entry.media is not None:
+                                        series_obj = mediaitem_to_object(
+                                            list_entry)
+                                        anilist_series.append(series_obj)
     except BaseException:
         logger.critical(
             '[ANILIST] Failed to return list for user: %s' %
