@@ -908,8 +908,7 @@ def find_id_best_match(title, year):
                     if hasattr(media_item.startDate, 'year'):
                         started_year = str(media_item.startDate.year)
 
-                    # logger.info('Comparing AniList: %s | %s[%s] <===> %s[%s]' %
-                    #  (title_english, title_romaji, started_year, match_title, match_year))
+                    #logger.info('Comparing AniList: %s | %s[%s] <===> %s[%s]' % (title_english, title_romaji, started_year, match_title, match_year))
                     if match_title == title_english_for_matching and match_year == started_year:
                         media_id = media_item.id
                         logger.warning(
@@ -922,6 +921,14 @@ def find_id_best_match(title, year):
                             '[ANILIST] Found match: %s [%s]' %
                             (title_romaji, media_id))
                         break
+                    if match_title == title_romaji_for_matching and match_year != started_year:
+                        logger.info(
+                            '[ANILIST] Found match however started year is a mismatch: %s [AL: %s <==> Plex: %s] ' %
+                            (title_romaji, started_year, match_year))
+                    elif match_title == title_english_for_matching and match_year != started_year:
+                        logger.info(
+                            '[ANILIST] Found match however started year is a mismatch: %s [AL: %s <==> Plex: %s] ' %
+                            (title_english, started_year, match_year))
     if media_id == 0:
         logger.error('[ANILIST] No match found for title: %s' % (title))
     return media_id
