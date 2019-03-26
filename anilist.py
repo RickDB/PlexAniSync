@@ -760,7 +760,15 @@ def update_entry(
         if hasattr(series, 'media_status'):
             anilist_media_status = series.media_status
         if hasattr(series, 'episodes'):
-            anilist_total_episodes = int(series.episodes)
+            if series.episodes is not None:
+                try:
+                    anilist_total_episodes = int(series.episodes)
+                except BaseException:
+                    logger.error('Series has unknown total total episodes on AniList (not an Integer), will most likely not match up properly')
+                    anilist_total_episodes = 0
+            else:
+                logger.error('Series had no total episodes or invalid info on AniList (NoneType), will most likely not match up properly')
+                anilist_total_episodes = 0
         if hasattr(series, 'progress'):
             try:
                 anilist_episodes_watched = int(series.progress)
