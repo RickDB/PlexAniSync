@@ -1,6 +1,7 @@
 import collections
 import configparser
 import coloredlogs
+import inflect
 import json
 import logging
 import os
@@ -828,10 +829,19 @@ def find_id_season_best_match(title, season, year):
     match_title_season_suffix2 = '%s season %s' % (match_title, season)
     match_title_season_suffix3 = '%s %s' % (match_title, season)
 
+    # oridinal season (1st 2nd etc..)
+    try:
+        pEngine= inflect.engine()
+        match_title_season_suffix4 = '%s %s season' % (match_title, pEngine.ordinal(season))
+    except:
+        logger.error('Error while converting season to ordinal string, make sure Inflect pip package is installed')
+        match_title_season_suffix4 = match_title_season_suffix2
+
     potential_titles = [
         match_title_season_suffix1.lower().strip(),
         match_title_season_suffix2.lower().strip(),
-        match_title_season_suffix3.lower().strip()
+        match_title_season_suffix3.lower().strip(),
+        match_title_season_suffix4.lower().strip()
     ]
 
     list_items = search_by_name(title)
