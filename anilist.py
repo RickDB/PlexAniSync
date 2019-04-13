@@ -768,8 +768,8 @@ def update_entry(
                     logger.error('Series has unknown total total episodes on AniList (not an Integer), will most likely not match up properly')
                     anilist_total_episodes = 0
             else:
-                logger.error('Series had no total episodes or invalid info on AniList (NoneType), will most likely not match up properly')
-                anilist_total_episodes = 0
+                logger.error('Series had no total episodes or invalid info on AniList (NoneType), using Plex watched count as fallback')
+                anilist_total_episodes = watched_episode_count
         if hasattr(series, 'progress'):
             try:
                 anilist_episodes_watched = int(series.progress)
