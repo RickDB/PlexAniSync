@@ -11,7 +11,7 @@ Unwatched Anime in Plex will not be synced so only those that have at least one 
 This version is based on my previous project  [PlexMalSync](https://github.com/RickDB/PlexMALSync) which due to MAL closing their API is no longer working, this might change in the future and if it does will resume working on that again as as well.
 
 
-**Disclaimer: Since this is the first public release bugs may occur so be careful and if you want to test it out first without updating your actual AniList entries check out the ``optional features`` section from this readme.**
+**If you want test it out first without updating your actual AniList entries check out ``Skip list updating for testing `` from the ``Optional features`` section of this readme**
 
 ## Setup
 
