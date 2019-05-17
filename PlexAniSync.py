@@ -93,7 +93,16 @@ def start():
     else:
         plexmodule.plex_settings = plex_settings
         plex_anime_series = plexmodule.get_anime_shows()
+        if(plex_anime_series is None):
+            logger.error('Found no Plex shows for processing so exiting')
+            return None
+
         plex_series_watched = plexmodule.get_watched_shows(plex_anime_series)
+        if(plex_series_watched is None):
+            logger.error(
+                'Found no watched shows on Plex for processing so exiting')
+            return None
+
         anilist.match_to_plex(
             anilist_series,
             plex_anime_series,

@@ -765,10 +765,12 @@ def update_entry(
                 try:
                     anilist_total_episodes = int(series.episodes)
                 except BaseException:
-                    logger.error('Series has unknown total total episodes on AniList (not an Integer), will most likely not match up properly')
+                    logger.error(
+                        'Series has unknown total total episodes on AniList (not an Integer), will most likely not match up properly')
                     anilist_total_episodes = 0
             else:
-                logger.error('Series had no total episodes or invalid info on AniList (NoneType), using Plex watched count as fallback')
+                logger.error(
+                    'Series had no total episodes or invalid info on AniList (NoneType), using Plex watched count as fallback')
                 anilist_total_episodes = watched_episode_count
         if hasattr(series, 'progress'):
             try:
@@ -783,14 +785,18 @@ def update_entry(
                 (watched_episode_count, anilist_total_episodes))
 
             # calculate episode difference and iterate up so activity stream lists episodes watched
-            # if episode difference exceeds 32 only update most recent as otherwise will flood the notification feed
+            # if episode difference exceeds 32 only update most recent as
+            # otherwise will flood the notification feed
             episode_difference = watched_episode_count - anilist_episodes_watched
             if episode_difference == 1 or episode_difference > 32:
                 update_series(series.id, watched_episode_count, "COMPLETED")
             else:
                 current_episodes_watched = anilist_episodes_watched + 1
-                while(current_episodes_watched <= watched_episode_count):      
-                    update_series(series.id, current_episodes_watched, "COMPLETED")
+                while(current_episodes_watched <= watched_episode_count):
+                    update_series(
+                        series.id,
+                        current_episodes_watched,
+                        "COMPLETED")
                     current_episodes_watched += 1
         elif watched_episode_count > anilist_episodes_watched and anilist_total_episodes is not 0:
             # episode watch count higher than plex
@@ -799,24 +805,28 @@ def update_entry(
                 (watched_episode_count, anilist_episodes_watched, anilist_total_episodes))
 
             # calculate episode difference and iterate up so activity stream lists episodes watched
-            # if episode difference exceeds 32 only update most recent as otherwise will flood the notification feed
+            # if episode difference exceeds 32 only update most recent as
+            # otherwise will flood the notification feed
             episode_difference = watched_episode_count - anilist_episodes_watched
             if episode_difference == 1 or episode_difference > 32:
                 update_series(series.id, watched_episode_count, "CURRENT")
             else:
                 current_episodes_watched = anilist_episodes_watched + 1
                 while(current_episodes_watched <= watched_episode_count):
-                    update_series(series.id, current_episodes_watched, "CURRENT")
+                    update_series(
+                        series.id, current_episodes_watched, "CURRENT")
                     current_episodes_watched += 1
         elif watched_episode_count == anilist_episodes_watched:
             logger.info(
                 '[ANILIST] Episodes watched was the same on AniList and Plex so skipping update')
         elif anilist_episodes_watched > watched_episode_count:
             logger.info(
-                '[ANILIST] Episodes watched was higher on AniList [%s] than on Plex [%s] so skipping update' % (anilist_episodes_watched, watched_episode_count))
+                '[ANILIST] Episodes watched was higher on AniList [%s] than on Plex [%s] so skipping update' %
+                (anilist_episodes_watched, watched_episode_count))
         elif anilist_total_episodes is 0:
             logger.info(
                 '[ANILIST] AniList total episodes was 0 so most likely invalid data')
+
 
 def find_id_season_best_match(title, season, year):
     media_id = None
@@ -831,10 +841,12 @@ def find_id_season_best_match(title, season, year):
 
     # oridinal season (1st 2nd etc..)
     try:
-        pEngine= inflect.engine()
-        match_title_season_suffix4 = '%s %s season' % (match_title, pEngine.ordinal(season))
-    except:
-        logger.error('Error while converting season to ordinal string, make sure Inflect pip package is installed')
+        pEngine = inflect.engine()
+        match_title_season_suffix4 = '%s %s season' % (
+            match_title, pEngine.ordinal(season))
+    except BaseException:
+        logger.error(
+            'Error while converting season to ordinal string, make sure Inflect pip package is installed')
         match_title_season_suffix4 = match_title_season_suffix2
 
     potential_titles = [
@@ -983,6 +995,8 @@ def add_by_id(
 
 def update_series(mediaId, progress, status):
     if ANILIST_SKIP_UPDATE == 'true':
+        logger.warning(
+            'Skip update is enabled in settings so not updating this item')
         return
     query = '''
         mutation ($mediaId: Int, $status: MediaListStatus, $progress: Int) {

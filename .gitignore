@@ -7,3 +7,5 @@ logo\.psd
 __pycache__/
 
 *.pyc
+
+ApplyPEP8\.bat

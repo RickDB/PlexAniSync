@@ -28,33 +28,44 @@ class plex_watched_series:
 
 def authenticate():
     method = plex_settings['authentication_method'].lower()
-    # Direct connection
-    if method == 'direct':
-        base_url = plex_settings['base_url']
-        token = plex_settings['token']
-        plex = PlexServer(base_url, token)
-    # Myplex connection
-    elif method == 'myplex':
-        plex_server = plex_settings['server']
-        plex_user = plex_settings['myplex_user']
-        plex_password = plex_settings['myplex_password']
-        account = MyPlexAccount(plex_user, plex_password)
-        plex = account.resource(plex_server).connect()
-    else:
-        logger.critical(
-            '[PLEX] Failed to authenticate due to invalid settings or authentication info, exiting...')
-        sys.exit()
-    return plex
+
+    try:
+        # Direct connection
+        if method == 'direct':
+            base_url = plex_settings['base_url']
+            token = plex_settings['token']
+            plex = PlexServer(base_url, token)
+        # Myplex connection
+        elif method == 'myplex':
+            plex_server = plex_settings['server']
+            plex_user = plex_settings['myplex_user']
+            plex_password = plex_settings['myplex_password']
+            account = MyPlexAccount(plex_user, plex_password)
+            plex = account.resource(plex_server).connect()
+        else:
+            logger.critical(
+                '[PLEX] Failed to authenticate due to invalid settings or authentication info, exiting...')
+            sys.exit()
+        return plex
+    except Exception as e:
+        logger.error(
+            'Unable to authenticate to Plex Media Server, traceback: %s' %
+            (e))
+        return None
 
 
 def get_anime_shows():
     section = plex_settings['anime_section']
     logger.info('[PLEX] Retrieving anime series from section: %s' % (section))
     plex = authenticate()
-    shows = plex.library.section(section).search()
-    logger.info(
-        '[PLEX] Found %s anime series' % (len(shows)))
-    return shows
+    if(plex is not None):
+        shows = plex.library.section(section).search()
+        logger.info('[PLEX] Found %s anime series' % (len(shows)))
+        return shows
+    else:
+        logger.error(
+            'Plex authentication failed, check access to your Plex Media Server and settings')
+        return None
 
 
 def get_anime_shows_filter(show_name):
@@ -116,8 +127,10 @@ def get_watched_shows(shows):
                         season_total = season
                     else:
                         episodes_watched = 0
-            except BaseException:
-                logger.error('Error during lookup_result processing')
+            except Exception as e:
+                logger.error(
+                    'Error during lookup_result processing, traceback: %s' %
+                    (e))
                 pass
         if episodes_watched > 0:
             # Add year if we have one otherwise fallback
@@ -152,8 +165,10 @@ def get_watched_episodes_for_show_season(
                     if season == watched_season:
                         if episode.isWatched:
                             episodes_watched += 1
-                except BaseException:
-                    logger.error('Error during lookup_result processing')
+                except Exception as e:
+                    logger.error(
+                        'Error during lookup_result processing, traceback: %s' %
+                        (e))
                     pass
 
     #logger.info('[PLEX] %s episodes watched for season: %s' % (episodes_watched, watched_season))
