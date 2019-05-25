@@ -106,6 +106,10 @@ Depending on library size and server can take a few minutes to finish, for sched
 
 In your settings file there's a setting called `skip_list_update` which you can set to True or False, if set to True it will **NOT** update your AniList which is useful if you want to do a test run to check if everything lines up properly.
 
+### Update unwatched series
+
+In your settings file there's a setting called `update_unwatched` which you can set to True or False, if set to True it will update your Plex series that which have not been watched as "Planning" in AniList.
+
 ### Custom anime mapping
 
 You can manually link a Plex title and season to an AniList ID, to do so:

@@ -817,7 +817,16 @@ def update_entry(
                         series.id, current_episodes_watched, "CURRENT")
                     current_episodes_watched += 1
         elif watched_episode_count == anilist_episodes_watched:
-            logger.info(
+            if watched_episode_count is 0:
+                if series.status == "PLANNING":
+                    logger.info(
+                    '[ANILIST] Status already set to "Planning" on AniList so skipping update')
+                elif series.status is '' or series.status is None:
+                    logger.warning(
+                    '[ANILIST] Plex episode watch count is 0 | gonna update AniList entry to planning')
+                    update_series(series.id, watched_episode_count, "PLANNING")
+            else:
+                logger.info(
                 '[ANILIST] Episodes watched was the same on AniList and Plex so skipping update')
         elif anilist_episodes_watched > watched_episode_count:
             logger.info(

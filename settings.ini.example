@@ -15,5 +15,6 @@ myplex_password = Doe
 
 [ANILIST]
 skip_list_update = False
+update_unwatched = False
 username = SomeUsername
 access_token = SomeVeryLongAccessToken

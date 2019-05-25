@@ -41,6 +41,7 @@ plex_settings = settings['PLEX']
 
 ANILIST_SKIP_UPDATE = anilist_settings['skip_list_update'].lower()
 ANILIST_ACCESS_TOKEN = anilist_settings['access_token'].strip()
+ANILIST_UPDATE_UNWATCHED = plexmodule.update_unwatched = anilist_settings['update_unwatched'].lower()
 
 mapping_file = 'custom_mappings.ini'
 custom_mappings = []
@@ -97,16 +98,20 @@ def start():
             logger.error('Found no Plex shows for processing so exiting')
             return None
 
-        plex_series_watched = plexmodule.get_watched_shows(plex_anime_series)
-        if(plex_series_watched is None):
-            logger.error(
-                'Found no watched shows on Plex for processing so exiting')
+        plex_series = plexmodule.get_shows(plex_anime_series)
+        if(plex_series is None):
+            if(ANILIST_UPDATE_UNWATCHED == 'true'):
+                logger.error(
+                    'Found no shows on Plex for processing so exiting')
+            else:
+                logger.error(
+                    'Found no watched shows on Plex for processing so exiting')
             return None
 
         anilist.match_to_plex(
             anilist_series,
             plex_anime_series,
-            plex_series_watched)
+            plex_series)
 
         logger.info('Plex to AniList sync finished')
 

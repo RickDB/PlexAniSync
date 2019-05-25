@@ -106,9 +106,9 @@ def get_anime_shows_filter(show_name):
     return shows_filtered
 
 
-def get_watched_shows(shows):
+def get_shows(shows):
     logger.info('[PLEX] Retrieving watch count for series')
-    watched_series = []
+    series = []
 
     for show in shows:
         season_total = 1
@@ -132,23 +132,26 @@ def get_watched_shows(shows):
                     'Error during lookup_result processing, traceback: %s' %
                     (e))
                 pass
-        if episodes_watched > 0:
+        if ((episodes_watched > 0) or (episodes_watched == 0 and update_unwatched == 'true')):
             # Add year if we have one otherwise fallback
             year = 1970
             if show.year:
                 year = show.year
 
-            watched_show = plex_watched_series(
+            new_show = plex_watched_series(
                 show.title, year, episodes_watched, season_total)
-            watched_series.append(watched_show)
+            series.append(new_show)
 
             # logger.info(
             #    'Watched %s episodes of show: %s' % (
             #        episodes_watched, show.title))
 
-    logger.info('[PLEX] Found %s watched series' % (len(watched_series)))
-    return watched_series
+    if(update_unwatched == 'true'):
+        logger.info('[PLEX] Found %s series' % (len(series)))
+    else:
+        logger.info('[PLEX] Found %s watched series' % (len(series)))
 
+    return series
 
 def get_watched_episodes_for_show_season(
         shows, watched_show_title, watched_season):
