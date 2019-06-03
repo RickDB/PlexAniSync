@@ -68,7 +68,12 @@ In the settings file enter your Plex library / section name containing your Anim
 anime_section = Anime
 ```
 
-Multiple libraries are not supported however if requested might be added at a later date.
+Multiple libraries are now supported and you separate them by using the pipeline ("|") character like so:
+
+```
+[PLEX]
+anime_section = Anime|Anime2
+```
 
 #### AniList
 

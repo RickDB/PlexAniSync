@@ -56,25 +56,56 @@ def authenticate():
 
 def get_anime_shows():
     section = plex_settings['anime_section']
-    logger.info('[PLEX] Retrieving anime series from section: %s' % (section))
     plex = authenticate()
-    if(plex is not None):
-        shows = plex.library.section(section).search()
-        logger.info('[PLEX] Found %s anime series' % (len(shows)))
-        return shows
-    else:
+    if plex is None:
         logger.error(
             'Plex authentication failed, check access to your Plex Media Server and settings')
         return None
+    if '|' in section:
+        sections = section.split('|')
+        shows = []
+        for section_single in sections:
+            logger.info(
+                '[PLEX] Retrieving anime series from section: %s' %
+                (section_single))
+            shows_search = plex.library.section(section_single).search()
+            shows = shows + shows_search
+            logger.info(
+                '[PLEX] Found %s anime series in section: %s' %
+                (len(shows_search), section_single))
+        return shows
+    else:
+        logger.info(
+            '[PLEX] Retrieving anime series from section: %s' %
+            (section))
+        shows = plex.library.section(section).search()
+        logger.info('[PLEX] Found %s anime series' % (len(shows)))
+        return shows
 
 
 def get_anime_shows_filter(show_name):
     section = plex_settings['anime_section']
-    logger.info(
-        '[PLEX] Selecting %s from anime series in section: %s' %
-        (show_name, section))
     plex = authenticate()
-    shows = plex.library.section(section).search()
+    if plex is None:
+        logger.error(
+            'Plex authentication failed, check access to your Plex Media Server and settings')
+        return None
+
+    if '|' in section:
+        sections = section.split('|')
+        shows = []
+        for section_single in sections:
+            logger.info(
+                '[PLEX] Selecting %s from anime series in section: %s' %
+                (show_name, section_single))
+            shows_search = shows + \
+                plex.library.section(section_single).search()
+            shows = shows + shows_search
+    else:
+        logger.info('[PLEX] Selecting %s from anime series in section: %s' %
+                    (show_name, section))
+        shows = plex.library.section(section).search()
+
     shows_filtered = []
     for show in shows:
         show_title_clean_without_year = show.title
@@ -109,44 +140,63 @@ def get_anime_shows_filter(show_name):
 def get_watched_shows(shows):
     logger.info('[PLEX] Retrieving watch count for series')
     watched_series = []
+    ovas_found = 0
 
     for show in shows:
         season_total = 1
         season_watched = 1
         episodes_watched = 0
-        for episode in show.episodes():
-            try:
-                # If season not defined set to season 1
-                season = 1 if not episode.seasonNumber else episode.seasonNumber
-                n_episode = episode.index
-                if episode.isWatched and n_episode:
-                    if (n_episode > episodes_watched and season ==
-                            season_watched) or (season > season_watched):
-                        season_watched = season
-                        episodes_watched = n_episode
-                        season_total = season
-                    else:
-                        episodes_watched = 0
-            except Exception as e:
-                logger.error(
-                    'Error during lookup_result processing, traceback: %s' %
-                    (e))
-                pass
-        if episodes_watched > 0:
-            # Add year if we have one otherwise fallback
-            year = 1970
-            if show.year:
-                year = show.year
 
-            watched_show = plex_watched_series(
-                show.title, year, episodes_watched, season_total)
-            watched_series.append(watched_show)
+        if hasattr(show, 'episodes'):
+            for episode in show.episodes():
+                try:
+                    # If season not defined set to season 1
+                    season = 1 if not episode.seasonNumber else episode.seasonNumber
+                    n_episode = episode.index
+                    if episode.isWatched and n_episode:
+                        if (n_episode > episodes_watched and season ==
+                                season_watched) or (season > season_watched):
+                            season_watched = season
+                            episodes_watched = n_episode
+                            season_total = season
+                        else:
+                            episodes_watched = 0
+                except Exception as e:
+                    logger.error(
+                        'Error during lookup_result processing, traceback: %s' %
+                        (e))
+                    pass
+            if episodes_watched > 0:
+                # Add year if we have one otherwise fallback
+                year = 1970
+                if show.year:
+                    year = show.year
 
-            # logger.info(
-            #    'Watched %s episodes of show: %s' % (
-            #        episodes_watched, show.title))
+                watched_show = plex_watched_series(
+                    show.title, year, episodes_watched, season_total)
+                watched_series.append(watched_show)
+
+                # logger.info(
+                #    'Watched %s episodes of show: %s' % (
+                #        episodes_watched, show.title))
+        else:
+            # Probably OVA but adding as series with 1 episode and season
+            # Needs proper solution later on and requires changing AniList
+            # class to support it properly
+
+            if hasattr(show, 'isWatched'):
+                if show.isWatched:
+                    watched_show = plex_watched_series(show.title, year, 1, 1)
+                    watched_series.append(watched_show)
+                    ovas_found += 1
 
     logger.info('[PLEX] Found %s watched series' % (len(watched_series)))
+
+    if ovas_found > 0:
+        logger.info(
+            '[PLEX] Watched series also contained %s releases with no episode attribute (probably movie / OVA), support for this is still experimental' %
+            (ovas_found))
+
     return watched_series
 
 
