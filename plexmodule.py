@@ -55,56 +55,29 @@ def authenticate():
 
 
 def get_anime_shows():
-    section = plex_settings['anime_section']
     plex = authenticate()
     if plex is None:
         logger.error(
             'Plex authentication failed, check access to your Plex Media Server and settings')
         return None
-    if '|' in section:
-        sections = section.split('|')
-        shows = []
-        for section_single in sections:
-            logger.info(
-                '[PLEX] Retrieving anime series from section: %s' %
-                (section_single))
-            shows_search = plex.library.section(section_single).search()
-            shows = shows + shows_search
-            logger.info(
-                '[PLEX] Found %s anime series in section: %s' %
-                (len(shows_search), section_single))
-        return shows
-    else:
+
+    sections = plex_settings['anime_section'].split('|')
+    shows = []
+    for section in sections:
         logger.info(
             '[PLEX] Retrieving anime series from section: %s' %
-            (section))
-        shows = plex.library.section(section).search()
-        logger.info('[PLEX] Found %s anime series' % (len(shows)))
-        return shows
+            section)
+        shows_search = plex.library.section(section).search()
+        shows += shows_search
+        logger.info(
+            '[PLEX] Found %s anime series in section: %s' %
+            (len(shows_search), section))
+
+    return shows
 
 
 def get_anime_shows_filter(show_name):
-    section = plex_settings['anime_section']
-    plex = authenticate()
-    if plex is None:
-        logger.error(
-            'Plex authentication failed, check access to your Plex Media Server and settings')
-        return None
-
-    if '|' in section:
-        sections = section.split('|')
-        shows = []
-        for section_single in sections:
-            logger.info(
-                '[PLEX] Selecting %s from anime series in section: %s' %
-                (show_name, section_single))
-            shows_search = shows + \
-                plex.library.section(section_single).search()
-            shows = shows + shows_search
-    else:
-        logger.info('[PLEX] Selecting %s from anime series in section: %s' %
-                    (show_name, section))
-        shows = plex.library.section(section).search()
+    shows = get_anime_shows()
 
     shows_filtered = []
     for show in shows:
@@ -155,7 +128,7 @@ def get_watched_shows(shows):
                     n_episode = episode.index
                     if episode.isWatched and n_episode:
                         if (n_episode > episodes_watched and season ==
-                                season_watched) or (season > season_watched):
+                            season_watched) or (season > season_watched):
                             season_watched = season
                             episodes_watched = n_episode
                             season_total = season
