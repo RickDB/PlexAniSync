@@ -87,9 +87,10 @@ def start():
     anilist_series = anilist.process_user_list(anilist_username)
 
     # Plex
-    if not anilist_series:
-        logger.error(
-            'Unable to retrieve AniList list, check your username and access token')
+    if anilist_series is None:
+        logger.error('Unable to retrieve AniList list, check your username and access token')
+    elif not anilist_series:
+        logger.error('No items found on your AniList list to process')
     else:
         plexmodule.plex_settings = plex_settings
         plex_anime_series = plexmodule.get_anime_shows()
@@ -108,7 +109,7 @@ def start():
             plex_anime_series,
             plex_series_watched)
 
-        logger.info('Plex to AniList sync finished')
+    logger.info('Plex to AniList sync finished')
 
 
 if __name__ == '__main__':

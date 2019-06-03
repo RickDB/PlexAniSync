@@ -271,6 +271,7 @@ def process_user_list(username):
             logger.critical(
                 '[ANILIST] Failed to return list for user: %s' %
                 (username))
+            return None
         else:
             for item in list_items:
                 for mediaCollection in item.MediaListCollection.lists:
