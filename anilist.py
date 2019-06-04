@@ -734,7 +734,7 @@ def match_series_with_seasons(
                 error_message = '[ANILIST] Failed to find valid season title match on AniList for: %s' % (plex_title)
                 logger.error(error_message)
 
-                if(ANILIST_LOG_FAILED_MATCHES):
+                if ANILIST_LOG_FAILED_MATCHES:
                     log_to_file(error_message)
 
         counter_season += 1
