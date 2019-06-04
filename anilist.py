@@ -19,6 +19,9 @@ custom_mappings = []
 ANILIST_ACCESS_TOKEN = ''
 ANILIST_SKIP_UPDATE = 'false'
 
+# Set this to True for logging failed AniList matches to failed_matches.txt file
+ANILIST_LOG_FAILED_MATCHES = False
+
 
 def to_object(o):
     keys, values = zip(*o.items())
@@ -548,9 +551,10 @@ def match_to_plex(
                             plex_year,
                             plex_watched_episode_count)
                     else:
-                        logger.error(
-                            '[ANILIST] Failed to find valid match on AniList for: %s' %
-                            (plex_title))
+                        error_message = '[ANILIST] Failed to find valid match on AniList for: %s' % (plex_title)
+                        logger.error(error_message)
+                        if ANILIST_LOG_FAILED_MATCHES:
+                            log_to_file(error_message)
 
             # Series exists on list so checking if update required
             else:
@@ -724,9 +728,11 @@ def match_series_with_seasons(
                         plex_year,
                         plex_watched_episode_count)
             else:
-                logger.error(
-                    '[ANILIST] Failed to find valid season title match on AniList for: %s' %
-                    (plex_title))
+                error_message = '[ANILIST] Failed to find valid season title match on AniList for: %s' % (plex_title)
+                logger.error(error_message)
+
+                if(ANILIST_LOG_FAILED_MATCHES):
+                    log_to_file(error_message)
 
         counter_season += 1
 
@@ -1040,6 +1046,10 @@ def update_series(mediaId, progress, status):
             'query': query, 'variables': variables})
     # print(response.content)
 
+def log_to_file(message):
+    f=open("failed_matches.txt", "a+")
+    f.write(message)
+    f.close()
 
 def retrieve_custom_mapping(title, season):
     if custom_mappings:

@@ -79,6 +79,14 @@ def start():
         logger.warning(
             'AniList skip list update enabled in settings, will match but NOT update your list')
 
+    # Cleanup any old logs
+    exists = os.path.isfile("failed_matches.txt")
+    if exists:
+        try:
+            os.remove("failed_matches.txt")
+        except:
+            pass
+
     # Anilist
     anilist_username = anilist_settings['username']
     anilist.custom_mappings = custom_mappings
