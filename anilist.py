@@ -850,11 +850,22 @@ def find_id_season_best_match(title, season, year):
             'Error while converting season to ordinal string, make sure Inflect pip package is installed')
         match_title_season_suffix4 = match_title_season_suffix2
 
+    # oridinal season - variation 1 (1st 2nd Thread) - see AniList ID: 21000
+    try:
+        pEngine = inflect.engine()
+        match_title_season_suffix5 = '%s %s thread' % (
+            match_title, pEngine.ordinal(season))
+    except BaseException:
+        logger.error(
+            'Error while converting season to ordinal string, make sure Inflect pip package is installed')
+        match_title_season_suffix5 = match_title_season_suffix2
+
     potential_titles = [
         match_title_season_suffix1.lower().strip(),
         match_title_season_suffix2.lower().strip(),
         match_title_season_suffix3.lower().strip(),
-        match_title_season_suffix4.lower().strip()
+        match_title_season_suffix4.lower().strip(),
+        match_title_season_suffix5.lower().strip()
     ]
 
     list_items = search_by_name(title)
@@ -879,7 +890,8 @@ def find_id_season_best_match(title, season, year):
                             title_romaji_for_matching = re.sub(
                                 '[^A-Za-z0-9]+', '', title_romaji).lower().strip()
                     if hasattr(media_item.startDate, 'year'):
-                        started_year = int(media_item.startDate.year)
+                        if media_item.startDate.year is not None:
+                             started_year = int(media_item.startDate.year)
 
                     for potential_title in potential_titles:
                         potential_title = re.sub(
