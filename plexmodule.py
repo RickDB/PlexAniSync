@@ -64,14 +64,19 @@ def get_anime_shows():
     sections = plex_settings['anime_section'].split('|')
     shows = []
     for section in sections:
-        logger.info(
-            '[PLEX] Retrieving anime series from section: %s' %
-            section)
-        shows_search = plex.library.section(section).search()
-        shows += shows_search
-        logger.info(
-            '[PLEX] Found %s anime series in section: %s' %
-            (len(shows_search), section))
+        try:
+            logger.info(
+                '[PLEX] Retrieving anime series from section: %s' %
+                section)
+            shows_search = plex.library.section(section.strip()).search()
+            shows += shows_search
+            logger.info(
+                '[PLEX] Found %s anime series in section: %s' %
+                (len(shows_search), section))
+        except BaseException:
+            logger.error(
+                'Could not find library [%s] on your Plex Server, check the library name in AniList settings file and also verify that your library name in Plex has no trailing spaces in it' %
+                (section))
 
     return shows
 
@@ -128,7 +133,7 @@ def get_watched_shows(shows):
                     n_episode = episode.index
                     if episode.isWatched and n_episode:
                         if (n_episode > episodes_watched and season ==
-                            season_watched) or (season > season_watched):
+                                season_watched) or (season > season_watched):
                             season_watched = season
                             episodes_watched = n_episode
                             season_total = season
@@ -146,7 +151,7 @@ def get_watched_shows(shows):
                     year = show.year
 
                 watched_show = plex_watched_series(
-                    show.title, year, episodes_watched, season_total)
+                    show.title.strip(), year, episodes_watched, season_total)
                 watched_series.append(watched_show)
 
                 # logger.info(
@@ -159,7 +164,8 @@ def get_watched_shows(shows):
 
             if hasattr(show, 'isWatched'):
                 if show.isWatched:
-                    watched_show = plex_watched_series(show.title, year, 1, 1)
+                    watched_show = plex_watched_series(
+                        show.title.strip(), year, 1, 1)
                     watched_series.append(watched_show)
                     ovas_found += 1
 

@@ -88,7 +88,8 @@ def start():
 
     # Plex
     if anilist_series is None:
-        logger.error('Unable to retrieve AniList list, check your username and access token')
+        logger.error(
+            'Unable to retrieve AniList list, check your username and access token')
     elif not anilist_series:
         logger.error('No items found on your AniList list to process')
     else:
