@@ -481,7 +481,7 @@ def match_to_plex(
                 if custom_mapping_id > 0 and series.id == custom_mapping_id:
                     found_match = True
                     logger.info(
-                        '[ANILIST] Used custom mapping id |  title: %s | season: %s | anilist id: %s' %
+                        '[ANILIST] Used custom mapping id | title: %s | season: %s | anilist id: %s' %
                         (plex_title, plex_total_seasons, custom_mapping_id))
                 else:
                     if series.title_english:
