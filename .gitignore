@@ -9,3 +9,5 @@ __pycache__/
 *.pyc
 
 ApplyPEP8\.bat
+
+failed_matches\.txt

@@ -22,7 +22,6 @@ ANILIST_SKIP_UPDATE = 'false'
 # Set this to True for logging failed AniList matches to failed_matches.txt file
 ANILIST_LOG_FAILED_MATCHES = False
 
-
 def to_object(o):
     keys, values = zip(*o.items())
     #print(keys, values)
@@ -56,6 +55,10 @@ def int_to_roman_numeral(input):
         input -= ints[i] * count
     return ''.join(result)
 
+def log_to_file(message):
+    f=open("failed_matches.txt", "a+")
+    f.write('%s\n' % (message))
+    f.close()
 
 class anilist_series:
     def __init__(
@@ -1045,11 +1048,6 @@ def update_series(mediaId, progress, status):
         url, headers=headers, json={
             'query': query, 'variables': variables})
     # print(response.content)
-
-def log_to_file(message):
-    f=open("failed_matches.txt", "a+")
-    f.write(message)
-    f.close()
 
 def retrieve_custom_mapping(title, season):
     if custom_mappings:
