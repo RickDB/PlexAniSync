@@ -99,9 +99,11 @@ def start():
     anilist_series = anilist.process_user_list(anilist_username)
 
     # Plex
-    if not anilist_series:
+    if anilist_series is None:
         logger.error(
             'Unable to retrieve AniList list, check your username and access token')
+    elif not anilist_series:
+        logger.error('No items found on your AniList list to process')
     else:
         plexmodule.plex_settings = plex_settings
         plex_anime_series = plexmodule.get_anime_shows_filter(show_title)
