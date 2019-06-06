@@ -61,6 +61,8 @@ myplex_password = kamehameha
 
 This completes this part and **only** if you want to sync against a specific Plex Home user follow the below instructions:
 
+##### MyPlex - sync with Plex Home user instead
+
 First find your Plex authentication token:
 
 https://support.plex.tv/articles/204059436-finding-an-authentication-token-x-plex-token/
