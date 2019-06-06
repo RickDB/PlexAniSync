@@ -10,7 +10,7 @@ import requests
 import sys
 from guessit import guessit
 
-import Libs.plexmodule  as plexmodule
+import Libs.plexmodule as plexmodule
 
 logger = logging.getLogger('PlexAniSync')
 coloredlogs.install(fmt='%(asctime)s %(message)s', logger=logger)
