@@ -11,8 +11,8 @@ from guessit import guessit
 from plexapi.myplex import MyPlexAccount
 from plexapi.server import PlexServer
 
-import anilist
-import plexmodule
+import Libs.anilist as anilist
+import Libs.plexmodule  as plexmodule
 
 # Logger settings
 logger = logging.getLogger('PlexAniSync')
