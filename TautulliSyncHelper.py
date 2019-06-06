@@ -120,11 +120,22 @@ def start():
     else:
         plexmodule.plex_settings = plex_settings
         plex_anime_series = plexmodule.get_anime_shows_filter(show_title)
-        plex_series_watched = plexmodule.get_watched_shows(plex_anime_series)
-        anilist.match_to_plex(
-            anilist_series,
-            plex_anime_series,
-            plex_series_watched)
+
+        if(plex_anime_series is None):
+            logger.error('Found no Plex shows for processing')
+            plex_series_watched = None
+        else:
+            plex_series_watched = plexmodule.get_watched_shows(
+                plex_anime_series)
+
+        if(plex_series_watched is None):
+            logger.error(
+                'Found no watched shows on Plex for processing')
+        else:
+            anilist.match_to_plex(
+                anilist_series,
+                plex_anime_series,
+                plex_series_watched)
 
         logger.info('Plex to AniList sync finished')
 
