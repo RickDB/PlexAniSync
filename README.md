@@ -59,6 +59,39 @@ myplex_user = Goku
 myplex_password = kamehameha
 ```
 
+This completes this part and **only** if you want to sync against a specific Plex Home user follow the below instructions:
+
+First find your Plex authentication token:
+
+https://support.plex.tv/articles/204059436-finding-an-authentication-token-x-plex-token/
+
+Afterwards you need to use that token and your base url (can be local or remote IP), for example:
+
+```
+[PLEX]
+anime_section = Anime
+
+ # Choose 'direct' or 'myplex'
+authentication_method = myplex
+
+# Direct IP
+base_url = http://127.0.0.1:32400
+token = abcdef123456789
+
+# MyPlex
+server = Sadala
+myplex_user = John
+myplex_password = Doe
+
+# if you enable home_user_sync it will only sync against that specific Plex home user, it requires the same info as direct IP method (url + token)
+# home_username is the actual Plex home username and not their e-mail address, this is also case sensitive
+
+home_user_sync = True
+home_username = Megumin
+home_admin_token = abcdef123456789
+home_server_base_url = http://127.0.0.1:32400
+```
+
 ##### Section configuration
 
 In the settings file enter your Plex library / section name containing your Anime, for example:
@@ -111,6 +144,16 @@ Depending on library size and server can take a few minutes to finish, for sched
 
 In your settings file there's a setting called `skip_list_update` which you can set to True or False, if set to True it will **NOT** update your AniList which is useful if you want to do a test run to check if everything lines up properly.
 
+### Custom settings file location
+
+If you want to load a different settings.in file you can do so by supplying it in the first argument like so:
+
+`python PlexAniSync.py settings_alternate.ini`
+
+In case of the Tautulli sync helper script you can do as well, first argument will then be settings filename and second will be the series name like so:
+
+`python TautulliSyncHelper.py  settings_alternate.ini <plex show name>`
+
 ### Custom anime mapping
 
 You can manually link a Plex title and season to an AniList ID, to do so:
@@ -135,7 +178,7 @@ In the project folder you will find `TautulliSyncHelper.py` which you can use to
 
 Usage is as follows:
 
-`TautulliSyncHelper.py <plex show name>`
+`python TautulliSyncHelper.py <plex show name>`
 
 Depending on your OS make sure to place the show name between single or double quotes, for more information see the wiki page:
 

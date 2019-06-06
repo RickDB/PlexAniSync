@@ -13,6 +13,14 @@ server = Sadala
 myplex_user = John
 myplex_password = Doe
 
+# if you enable home_user_sync it will only sync against that specific Plex home user, it requires the same info as direct IP method (url + token)
+# home_username is the actual Plex home username and not their e-mail address, this is also case sensitive
+
+home_user_sync = False
+home_username = Megumin
+home_admin_token = abcdef123456789
+home_server_base_url = http://127.0.0.1:32400
+
 [ANILIST]
 skip_list_update = False
 username = SomeUsername

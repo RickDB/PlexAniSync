@@ -34,8 +34,12 @@ def read_settings(settings_file):
     settings.read(settings_file)
     return settings
 
+if len(sys.argv) > 2:
+    settings_file = sys.argv[1]
+    logger.warning('Found settings file parameter and using: %s' % (settings_file))
+else:  
+    settings_file = 'settings.ini'
 
-settings_file = 'settings.ini'
 settings = read_settings(settings_file)
 anilist_settings = settings['ANILIST']
 plex_settings = settings['PLEX']
@@ -81,7 +85,12 @@ def start():
             'No show title specified in arguments so cancelling updating')
         sys.exit()
     else:
-        show_title = sys.argv[1]
+        # If we have custom settings file parameter use different arg index to keep legacy method intact
+        if len(sys.argv) > 2:
+            show_title = sys.argv[2]
+        elif len(sys.argv) == 2:
+            show_title = sys.argv[1]   
+
         logger.info('Updating single show: %s' % (show_title))
 
     if ANILIST_SKIP_UPDATE == 'true':

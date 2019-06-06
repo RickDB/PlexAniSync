@@ -28,6 +28,16 @@ class plex_watched_series:
 
 def authenticate():
     method = plex_settings['authentication_method'].lower()
+    try:
+        home_user_sync = plex_settings['home_user_sync'].lower()
+        home_username = plex_settings['home_username']
+        home_admin_token = plex_settings['home_admin_token']
+        home_server_base_url = plex_settings['home_server_base_url']
+    except Exception as e:
+        home_user_sync = 'false'
+        home_username = ''
+        home_admin_token = ''
+        home_server_base_url = ''
 
     try:
         # Direct connection
@@ -35,13 +45,36 @@ def authenticate():
             base_url = plex_settings['base_url']
             token = plex_settings['token']
             plex = PlexServer(base_url, token)
+
         # Myplex connection
         elif method == 'myplex':
             plex_server = plex_settings['server']
             plex_user = plex_settings['myplex_user']
             plex_password = plex_settings['myplex_password']
-            account = MyPlexAccount(plex_user, plex_password)
-            plex = account.resource(plex_server).connect()
+
+            if home_user_sync == 'true':
+                if home_username == '':
+                    logger.error('Home authentication cancelled as home_username value is invalid')
+                    return None
+                try:
+                    logger.warning('Authenticating as admin for MyPlex home user: %s' % (home_username))
+                    plex_server = PlexServer(home_server_base_url, home_admin_token)
+                    plex_account = MyPlexAccount(plex_user, plex_password)
+
+                    logger.warning('Retrieving home user information')
+                    plex_user_account = plex_account.user(home_username)
+
+                    logger.warning('Retrieving user token for MyPlex home user')
+                    plex_user_token = plex_user_account.get_token(plex_server.machineIdentifier)
+
+                    logger.warning('Retrieved user token for MyPlex home user')
+                    plex = PlexServer(home_server_base_url, plex_user_token)
+                    logger.warning('Successfully authenticated for MyPlex home user')
+                except Exception as e:
+                    logger.error('Error occured during Plex Home user lookup or server authentication: %s' (e))
+            else:
+                account = MyPlexAccount(plex_user, plex_password)
+                plex = account.resource(plex_server).connect()
         else:
             logger.critical(
                 '[PLEX] Failed to authenticate due to invalid settings or authentication info, exiting...')
@@ -165,7 +198,7 @@ def get_watched_shows(shows):
             if hasattr(show, 'isWatched'):
                 if show.isWatched:
                     watched_show = plex_watched_series(
-                        show.title.strip(), year, 1, 1)
+                        show.title.strip(), show.year, 1, 1)
                     watched_series.append(watched_show)
                     ovas_found += 1
 
@@ -176,7 +209,10 @@ def get_watched_shows(shows):
             '[PLEX] Watched series also contained %s releases with no episode attribute (probably movie / OVA), support for this is still experimental' %
             (ovas_found))
 
-    return watched_series
+    if watched_series is not None and len(watched_series) == 0:
+        return None
+    else:
+         return watched_series
 
 
 def get_watched_episodes_for_show_season(
