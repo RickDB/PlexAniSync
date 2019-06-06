@@ -136,10 +136,6 @@ Depending on library size and server can take a few minutes to finish, for sched
 
 ## Optional features
 
-### Skip list updating for testing
-
-In your settings file there's a setting called `skip_list_update` which you can set to True or False, if set to True it will **NOT** update your AniList which is useful if you want to do a test run to check if everything lines up properly.
-
 ### Custom settings file location
 
 If you want to load a different settings.in file you can do so by supplying it in the first argument like so:
@@ -167,6 +163,10 @@ https://anilist.co/anime/99263/Tate-no-Yuusha-no-Nariagari
 
 - You can remove any existing entries from the example file as they are purely instructional
 - Upon startup it will list all valid custom mappings, incorrect onces are shown as errors and are skipped
+
+### Skip list updating for testing
+
+In your settings file there's a setting called `skip_list_update` which you can set to True or False, if set to True it will **NOT** update your AniList which is useful if you want to do a test run to check if everything lines up properly.
 
 ### Tautulli Sync Helper script
 
