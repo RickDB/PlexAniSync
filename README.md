@@ -70,13 +70,7 @@ Afterwards you need to use that token and your base url (can be local or remote 
 ```
 [PLEX]
 anime_section = Anime
-
- # Choose 'direct' or 'myplex'
 authentication_method = myplex
-
-# Direct IP
-base_url = http://127.0.0.1:32400
-token = abcdef123456789
 
 # MyPlex
 server = Sadala
