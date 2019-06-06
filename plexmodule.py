@@ -54,7 +54,7 @@ def authenticate():
 
             if home_user_sync == 'true':
                 if home_username == '':
-                    logger.error('Home authentication cancelled as home_username value is invalid')
+                    logger.error('Home authentication cancelled as certain home_user settings are invalid')
                     return None
                 try:
                     logger.warning('Authenticating as admin for MyPlex home user: %s' % (home_username))
