@@ -67,7 +67,7 @@ First find your Plex authentication token:
 
 https://support.plex.tv/articles/204059436-finding-an-authentication-token-x-plex-token/
 
-Afterwards you need to use that token and your base url (can be local or remote IP), for example:
+Afterwards can enter your full Plex site url and above authentication token, for example:
 
 ```
 [PLEX]
