@@ -12,7 +12,7 @@ from plexapi.myplex import MyPlexAccount
 from plexapi.server import PlexServer
 
 import Libs.anilist as anilist
-import Libs.plexmodule  as plexmodule
+import Libs.plexmodule as plexmodule
 
 # Logger settings
 logger = logging.getLogger('PlexAniSync')
@@ -33,9 +33,12 @@ def read_settings(settings_file):
     settings.read(settings_file)
     return settings
 
+
 if len(sys.argv) > 1:
-     settings_file = sys.argv[1]
-     logger.warning('Found settings file parameter and using: %s' % (settings_file))
+    settings_file = sys.argv[1]
+    logger.warning(
+        'Found settings file parameter and using: %s' %
+        (settings_file))
 else:
     settings_file = 'settings.ini'
 
@@ -88,7 +91,7 @@ def start():
     if exists:
         try:
             os.remove("failed_matches.txt")
-        except:
+        except BaseException:
             pass
 
     # Anilist
@@ -112,8 +115,9 @@ def start():
             logger.error('Found no Plex shows for processing')
             plex_series_watched = None
         else:
-            plex_series_watched = plexmodule.get_watched_shows(plex_anime_series)
-    
+            plex_series_watched = plexmodule.get_watched_shows(
+                plex_anime_series)
+
         if(plex_series_watched is None):
             logger.error(
                 'Found no watched shows on Plex for processing')
