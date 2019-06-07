@@ -31,12 +31,10 @@ def authenticate():
     try:
         home_user_sync = plex_settings['home_user_sync'].lower()
         home_username = plex_settings['home_username']
-        home_admin_token = plex_settings['home_admin_token']
         home_server_base_url = plex_settings['home_server_base_url']
     except Exception as e:
         home_user_sync = 'false'
         home_username = ''
-        home_admin_token = ''
         home_server_base_url = ''
 
     try:
@@ -58,20 +56,20 @@ def authenticate():
                     return None
                 try:
                     logger.warning('Authenticating as admin for MyPlex home user: %s' % (home_username))
-                    plex_server = PlexServer(home_server_base_url, home_admin_token)
                     plex_account = MyPlexAccount(plex_user, plex_password)
+                    plex_server_home = PlexServer(home_server_base_url, plex_account.authenticationToken)
 
                     logger.warning('Retrieving home user information')
                     plex_user_account = plex_account.user(home_username)
 
                     logger.warning('Retrieving user token for MyPlex home user')
-                    plex_user_token = plex_user_account.get_token(plex_server.machineIdentifier)
+                    plex_user_token = plex_user_account.get_token(plex_server_home.machineIdentifier)
 
                     logger.warning('Retrieved user token for MyPlex home user')
                     plex = PlexServer(home_server_base_url, plex_user_token)
                     logger.warning('Successfully authenticated for MyPlex home user')
                 except Exception as e:
-                    logger.error('Error occured during Plex Home user lookup or server authentication: %s' (e))
+                    logger.error('Error occured during Plex Home user lookup or server authentication: %s' % (e))
             else:
                 account = MyPlexAccount(plex_user, plex_password)
                 plex = account.resource(plex_server).connect()

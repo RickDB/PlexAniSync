@@ -61,11 +61,7 @@ myplex_password = kamehameha
 
 This completes this part and **only** if you want to sync against a specific Plex Home user follow the below instructions:
 
-First find your Plex authentication token:
-
-https://support.plex.tv/articles/204059436-finding-an-authentication-token-x-plex-token/
-
-Afterwards you need to use that token and your base url (can be local or remote IP), for example:
+For this to work lookup the home username on your Plex server and also fill in your full Plex server URL, for example:
 
 ```
 [PLEX]
@@ -77,12 +73,11 @@ server = Sadala
 myplex_user = John
 myplex_password = Doe
 
-# if you enable home_user_sync it will only sync against that specific Plex home user, it requires the same info as direct IP method (url + token)
+# if you enable home_user_sync it will only sync against that specific Plex home user, it requires the full url of your Plex server just like with the Direct IP method
 # home_username is the actual Plex home username and not their e-mail address, this is also case sensitive
 
 home_user_sync = True
 home_username = Megumin
-home_admin_token = abcdef123456789
 home_server_base_url = http://127.0.0.1:32400
 ```
 
