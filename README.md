@@ -15,14 +15,20 @@ This version is based on my previous project  [PlexMalSync](https://github.com/R
 
 ## Setup
 
-### Step 1 - Download project files
+## Step 1 - install Python 3
+
+Make sure you have Python 3 installed:
+
+[Python 3](https://www.python.org/)
+
+### Step 2 - Download project files
 
 Get the latest version using your favorite git client or by downloading the latest release from here:
 
 https://github.com/RickDB/PlexAniSync/archive/master.zip
 
 
-### Step 2 - Configuration
+### Step 3 - Configuration
 
 From the project directory copy the example settings file `settings.ini.example` to `settings.ini`, open `settings.ini` with your favorite editor and edit where needed.
 
@@ -113,13 +119,13 @@ username = GoblinSlayer
 access_token = iLikeToastyGoblins.
 ```
 
-### Step 3 - Install requirements
+### Step 4 - Install requirements
 
 Make sure you have Python 3.6 or higher installed and install the addtional requirements using this Python command from within the project folder:
 
 `pip install -r requirements.txt`
 
-### Step 4 - Start syncing
+### Step 5 - Start syncing
 
 Now that configuration is finished and requirements have been installed we can finally start the sync script:
 
@@ -175,7 +181,7 @@ https://github.com/RickDB/PlexAniSync/wiki/Tautulli-sync-script
 
 ## Requirements
 
-[Python 3 (tested with 3.6.4)](https://www.python.org/)
+[Python 3](https://www.python.org/)
 
 ## Support
 
