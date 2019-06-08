@@ -30,7 +30,8 @@ https://github.com/RickDB/PlexAniSync/archive/master.zip
 
 ### Step 3 - Configuration
 
-From the project directory copy the example settings file `settings.ini.example` to `settings.ini`, open `settings.ini` with your favorite editor and edit where needed.
+From the project directory rename `settings.ini.example` to `settings.ini`, open `settings.ini` with your favorite text editor and edit where needed.
+
 
 #### Plex
 
@@ -125,6 +126,7 @@ Make sure you have Python 3.6 or higher installed and install the addtional requ
 
 `pip install -r requirements.txt`
 
+
 ### Step 5 - Start syncing
 
 Now that configuration is finished and requirements have been installed we can finally start the sync script:
@@ -132,6 +134,7 @@ Now that configuration is finished and requirements have been installed we can f
 `python PlexAniSync.py`
 
 Depending on library size and server can take a few minutes to finish, for scheduled syncing you can create a cronjob or windows task which runs it every 30 minutes for instance.
+
 
 ## Optional features
 
