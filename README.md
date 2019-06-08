@@ -35,24 +35,9 @@ From the project directory rename `settings.ini.example` to `settings.ini`, open
 
 #### Plex
 
-##### Direct IP authentication
+Only choose one of the authentication methods, MyPlex is the easiest.
 
-The Direct IP authentication method is preferred as it's the fastest method, for this you need to find your token manually:
-
-https://support.plex.tv/articles/204059436-finding-an-authentication-token-x-plex-token/
-
-Afterwards can enter your full Plex site url and above authentication token, for example:
-
-```
-[PLEX]
-anime_section = Anime
-authentication_method = direct
-
-base_url = http://192.168.1.234:32400
-token = abcdef123456789
-```
-
-##### MyPlex authentication
+##### MyPlex authentication (prefered)
 
 For MyPlex authentication you will need your Plex server name and Plex account login information, for example:
 
@@ -86,6 +71,23 @@ myplex_password = Doe
 home_user_sync = True
 home_username = Megumin
 home_server_base_url = http://127.0.0.1:32400
+```
+
+##### Direct Plex authentication (advanced users)
+
+The direct authentication method is for users that don't want to use Plex its online authentication system however is more complex to setup, for this you need to find your token manually:
+
+https://support.plex.tv/articles/204059436-finding-an-authentication-token-x-plex-token/
+
+Afterwards can enter your full Plex site url and above authentication token, for example:
+
+```
+[PLEX]
+anime_section = Anime
+authentication_method = direct
+
+base_url = http://192.168.1.234:32400
+token = abcdef123456789
 ```
 
 ##### Section configuration
