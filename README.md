@@ -51,7 +51,7 @@ myplex_user = Goku
 myplex_password = kamehameha
 ```
 
-This completes this part and **only** if you want to sync against a specific Plex Home user follow the below instructions:
+This completes the MyPlex authentication and **only** if you want to sync against a specific Plex Home user follow the below instructions:
 
 For this to work lookup the home username on your Plex server and also fill in your full Plex server URL, for example:
 
