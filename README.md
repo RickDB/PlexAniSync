@@ -124,7 +124,7 @@ access_token = iLikeToastyGoblins.
 
 ### Step 4 - Install requirements
 
-Make sure you have Python 3.6 or higher installed and install the addtional requirements using this Python command from within the project folder:
+Install the addtional requirements using the Python package installer (pip) from within the project folder:
 
 `pip install -r requirements.txt`
 
