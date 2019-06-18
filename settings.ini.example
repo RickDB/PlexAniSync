@@ -21,6 +21,7 @@ home_username = Megumin
 home_server_base_url = http://127.0.0.1:32400
 
 [ANILIST]
+access_token = SomeVeryLongAccessToken
+plex_episode_count_priority = False
 skip_list_update = False
 username = SomeUsername
-access_token = SomeVeryLongAccessToken

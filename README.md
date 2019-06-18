@@ -21,6 +21,7 @@ Make sure you have Python 3 installed:
 
 [Python homepage](https://www.python.org/)
 
+
 ### Step 2 - Download project files
 
 Get the latest version using your favorite git client or by downloading the latest release from here:
@@ -167,6 +168,13 @@ If you want to load a different settings.in file you can do so by supplying it i
 In case of the Tautulli sync helper script you can do as well, first argument will then be settings filename and second will be the series name like so:
 
 `python TautulliSyncHelper.py  settings_alternate.ini <plex show name>`
+
+### Make Plex watched episode count take priority
+
+By default if AniList episode count watched is higher than that of Plex it will skip over, this can be overriden with the setting `plex_episode_count_priority`
+When set to True it will update the AniList entry if Plex watched episode count is higher than 0 and will not take into account the AniList watched episode count even if that is higher.
+
+Use this with caution as normally this isn't required and only meant for certain use cases.
 
 ### Skip list updating for testing
 

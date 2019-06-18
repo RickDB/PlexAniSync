@@ -18,6 +18,7 @@ coloredlogs.install(fmt='%(asctime)s %(message)s', logger=logger)
 custom_mappings = []
 ANILIST_ACCESS_TOKEN = ''
 ANILIST_SKIP_UPDATE = 'false'
+ANILIST_PLEX_EPISODE_COUNT_PRIORITY = 'false'
 
 # Set this to True for logging failed AniList matches to failed_matches.txt file
 ANILIST_LOG_FAILED_MATCHES = False
@@ -829,6 +830,18 @@ def update_entry(
         elif watched_episode_count == anilist_episodes_watched:
             logger.info(
                 '[ANILIST] Episodes watched was the same on AniList and Plex so skipping update')
+        elif anilist_episodes_watched > watched_episode_count and ANILIST_PLEX_EPISODE_COUNT_PRIORITY == 'true':
+            if watched_episode_count > 0:
+                logger.info(
+                    '[ANILIST] Episodes watched was higher on AniList [%s] than on Plex [%s] however Plex episode count override is active so updating' %
+                    (anilist_episodes_watched, watched_episode_count))
+                
+                # Since AniList episode count is higher we don't loop thru updating the notification feed and just set the AniList episode count once
+                update_series(series.id, watched_episode_count, "CURRENT")
+            else:
+                logger.info(
+                    '[ANILIST] Episodes watched was higher on AniList [%s] than on Plex [%s] with Plex episode count override active however Plex watched count is 0 so skipping update' %
+                    (anilist_episodes_watched, watched_episode_count))
         elif anilist_episodes_watched > watched_episode_count:
             logger.info(
                 '[ANILIST] Episodes watched was higher on AniList [%s] than on Plex [%s] so skipping update' %

@@ -49,6 +49,11 @@ plex_settings = settings['PLEX']
 ANILIST_SKIP_UPDATE = anilist_settings['skip_list_update'].lower()
 ANILIST_ACCESS_TOKEN = anilist_settings['access_token'].strip()
 
+if 'plex_episode_count_priority' in anilist_settings:
+    ANILIST_PLEX_EPISODE_COUNT_PRIORITY = anilist_settings['plex_episode_count_priority'].lower().strip()
+else:
+    ANILIST_PLEX_EPISODE_COUNT_PRIORITY = 'false'
+
 mapping_file = 'custom_mappings.ini'
 custom_mappings = []
 
@@ -98,6 +103,7 @@ def start():
     anilist_username = anilist_settings['username']
     anilist.custom_mappings = custom_mappings
     anilist.ANILIST_ACCESS_TOKEN = ANILIST_ACCESS_TOKEN
+    anilist.ANILIST_PLEX_EPISODE_COUNT_PRIORITY = ANILIST_PLEX_EPISODE_COUNT_PRIORITY
     anilist.ANILIST_SKIP_UPDATE = ANILIST_SKIP_UPDATE
     anilist_series = anilist.process_user_list(anilist_username)
 
