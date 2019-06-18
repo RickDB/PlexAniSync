@@ -172,9 +172,10 @@ In case of the Tautulli sync helper script you can do as well, first argument wi
 ### Make Plex watched episode count take priority
 
 By default if AniList episode count watched is higher than that of Plex it will skip over, this can be overriden with the setting `plex_episode_count_priority`
+
 When set to True it will update the AniList entry if Plex watched episode count is higher than 0 and will not take into account the AniList watched episode count even if that is higher.
 
-Use this with caution as normally this isn't required and only meant for certain use cases.
+**Use this with caution as normally this isn't required and only meant for certain use cases.**
 
 ### Skip list updating for testing
 
