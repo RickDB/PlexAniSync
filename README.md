@@ -15,7 +15,7 @@ This version is based on my previous project  [PlexMalSync](https://github.com/R
 
 ## Setup
 
-## Step 1 - install Python
+### Step 1 - install Python
 
 Make sure you have Python 3 installed:
 
