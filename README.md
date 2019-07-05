@@ -1,5 +1,5 @@
 # Plex to AniList Sync
-[![Build Status](https://travis-ci.org/RickDB/PlexAniSync.svg?branch=master)](https://travis-ci.org/RickDB/PlexAniSync)
+[![Build Status](https://travis-ci.org/RickDB/PlexAniSync.svg?branch=master)](https://travis-ci.org/RickDB/PlexAniSync)[![Build Status](https://img.shields.io/docker/cloud/build/chrus/plexanisync.svg)](https://hub.docker.com/r/chrus/plexanisync)
 
 ![Logo](logo.png)
 
@@ -192,6 +192,12 @@ Usage is as follows:
 Depending on your OS make sure to place the show name between single or double quotes, for more information see the wiki page:
 
 https://github.com/RickDB/PlexAniSync/wiki/Tautulli-sync-script
+
+## Docker
+
+There's also a Dockerized version maintained by [Thundernerd](https://github.com/Thundernerd)  which you can find here:
+
+[Docker](https://hub.docker.com/r/chrus/plexanisync)
 
 ## Requirements
 
