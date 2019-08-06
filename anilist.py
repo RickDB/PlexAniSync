@@ -319,6 +319,7 @@ def process_user_list(username):
         logger.critical(
             '[ANILIST] Failed to return list for user: %s' %
             (username))
+        return None
 
     logger.info(
         '[ANILIST] Found %s anime series on list' % (len(anilist_series)))
