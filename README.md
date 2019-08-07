@@ -63,14 +63,14 @@ authentication_method = myplex
 
 # MyPlex
 server = Sadala
-myplex_user = John
+myplex_user = John # has to be the Plex admin user acount
 myplex_password = Doe
 
 # if you enable home_user_sync it will only sync against that specific Plex home user, it requires the full url of your Plex server just like with the Direct IP method
 # home_username is the actual Plex home username and not their e-mail address, this is also case sensitive
 
 home_user_sync = True
-home_username = Megumin
+home_username = Megumin # the home user account you want to sync with and can not be the admin user
 home_server_base_url = http://127.0.0.1:32400
 ```
 
