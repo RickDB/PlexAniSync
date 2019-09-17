@@ -703,8 +703,13 @@ def match_series_with_seasons(
                     (plex_title, counter_season, custom_mapping_id))
                 media_id_search = custom_mapping_id
             else:
-                media_id_search = find_id_season_best_match(
-                    plex_title, counter_season, plex_year)
+                if plex_year is not None:
+                    media_id_search = find_id_season_best_match(
+                        plex_title, counter_season, plex_year)
+                else:
+                    logger.error(
+                        '[ANILIST] Skipped season lookup as Plex did not supply a show year for %s , recommend checking Plex Web and correcting the show year manually.' %
+                        (plex_title))
 
             if media_id_search:
                 # check if already on anilist list
