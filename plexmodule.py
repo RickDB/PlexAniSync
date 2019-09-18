@@ -177,7 +177,7 @@ def get_watched_shows(shows):
                     pass
             if episodes_watched > 0:
                 # Add year if we have one otherwise fallback
-                year = 1970
+                year = 1900
                 if show.year:
                     year = show.year
 
@@ -195,6 +195,10 @@ def get_watched_shows(shows):
 
             if hasattr(show, 'isWatched'):
                 if show.isWatched:
+                    year = 1900
+                    if show.year:
+                        year = show.year
+
                     watched_show = plex_watched_series(
                         show.title.strip(), show.year, 1, 1)
                     watched_series.append(watched_show)
