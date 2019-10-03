@@ -622,12 +622,25 @@ def match_series_with_seasons(
                 '[ANILIST] Adding new series id to list: %s | Plex episodes watched for all seasons: %s' %
                 (custom_mapping_seasons_anilist_id, plex_watched_episode_count_custom_mapping))
 
-            add_by_id(
-                custom_mapping_seasons_anilist_id,
-                plex_title,
-                plex_year,
-                plex_watched_episode_count_custom_mapping,
-                True)
+            matched_anilist_series = []
+            for series in anilist_series:
+                if(custom_mapping_seasons_anilist_id == series.id):
+                    matched_anilist_series.append(series)
+            
+            if matched_anilist_series:
+                update_entry(
+                    plex_title,
+                    plex_year,
+                    plex_watched_episode_count_custom_mapping,
+                    matched_anilist_series,
+                    False)
+            else:
+                add_by_id(
+                    custom_mapping_seasons_anilist_id,
+                    plex_title,
+                    plex_year,
+                    plex_watched_episode_count_custom_mapping,
+                    True)
 
             if(custom_mapping_season_count == plex_total_seasons):
                 return
@@ -843,7 +856,7 @@ def update_entry(
                     anilist_total_episodes = 0
             else:
                 logger.error(
-                    'Series had no total episodes or invalid info on AniList (NoneType), using Plex watched count as fallback')
+                    'Series has no total episodes which is normal for shows with undetermined end-date otherwise can be invalid info on AniList (NoneType), using Plex watched count as fallback')
                 anilist_total_episodes = watched_episode_count
         if hasattr(series, 'progress'):
             try:
