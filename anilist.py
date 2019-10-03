@@ -593,6 +593,48 @@ def match_series_with_seasons(
         # logger.info('[ANILIST] Plex series has more than 1 season, using alternative season search for total of %s seasons' %
         #  (plex_total_seasons))
     counter_season = 1
+    counter_season_custom_mapping = 1
+    custom_mapping_seasons_anilist_id = 0
+    custom_mapping_season_count = 0
+    plex_watched_episode_count_custom_mapping  = 0
+
+    # Check if we have custom mappings for all seasons (One Piece for example)
+    if(plex_total_seasons > 1):
+        while counter_season_custom_mapping <= plex_total_seasons:
+            matched_id = retrieve_custom_mapping(plex_title, counter_season_custom_mapping)
+            if(matched_id > 0 and matched_id == custom_mapping_seasons_anilist_id):
+                plex_watched_episode_count_custom_mapping += plexmodule.get_watched_episodes_for_show_season(plex_series_all, plex_title, counter_season_custom_mapping)
+                custom_mapping_season_count += 1
+            elif(matched_id > 0 and custom_mapping_seasons_anilist_id == 0):
+                plex_watched_episode_count_custom_mapping += plexmodule.get_watched_episodes_for_show_season(plex_series_all, plex_title, counter_season_custom_mapping)
+                custom_mapping_season_count += 1
+            
+            custom_mapping_seasons_anilist_id = matched_id
+            counter_season_custom_mapping += 1
+
+        # If we had custom mappings for multiple seasons with the same ID use cumulative episode count and skip per season processing
+        if(custom_mapping_season_count > 1):
+            logger.warning(
+            '[ANILIST] Found same custom mapping id for multiple seasons so not using per season processing but updating as one | title: %s anilist id: %s' %
+            (plex_title, custom_mapping_seasons_anilist_id))
+
+            logger.warning(
+                '[ANILIST] Adding new series id to list: %s | Plex episodes watched for all seasons: %s' %
+                (custom_mapping_seasons_anilist_id, plex_watched_episode_count_custom_mapping))
+
+            add_by_id(
+                custom_mapping_seasons_anilist_id,
+                plex_title,
+                plex_year,
+                plex_watched_episode_count_custom_mapping,
+                True)
+
+            if(custom_mapping_season_count == plex_total_seasons):
+                return
+            else:
+                # Start processing of any remaining seasons
+                counter_season = custom_mapping_season_count + 1
+
     while counter_season <= plex_total_seasons:
         plex_watched_episode_count = plexmodule.get_watched_episodes_for_show_season(
             plex_series_all, plex_title, counter_season)
