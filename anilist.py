@@ -766,6 +766,7 @@ def match_series_with_seasons(
                         '[ANILIST] Skipped season lookup as Plex did not supply a show year for %s , recommend checking Plex Web and correcting the show year manually.' %
                         (plex_title))
 
+            plex_title_lookup = plex_title
             if media_id_search:
                 # check if already on anilist list
                 series_already_listed = False
@@ -775,16 +776,16 @@ def match_series_with_seasons(
                         # (series.id,media_id_search))
                         series_already_listed = True
                         if series.title_english is not None:
-                            plex_title = series.title_english
+                            plex_title_lookup = series.title_english
                         elif series.title_romaji is not None:
-                            plex_title = series.title_romaji
+                            plex_title_lookup = series.title_romaji
                         plex_year = series.started_year
                         matched_anilist_series.append(series)
                         break
 
                 if series_already_listed:
                     update_entry(
-                        plex_title,
+                        plex_title_lookup,
                         plex_year,
                         plex_watched_episode_count,
                         matched_anilist_series,
@@ -796,12 +797,12 @@ def match_series_with_seasons(
                         (media_id_search, plex_watched_episode_count))
                     add_by_id(
                         media_id_search,
-                        plex_title,
+                        plex_title_lookup,
                         plex_year,
                         plex_watched_episode_count,
                         False)
             else:
-                error_message = '[ANILIST] Failed to find valid season title match on AniList for: %s' % (plex_title)
+                error_message = '[ANILIST] Failed to find valid season title match on AniList for: %s' % (plex_title_lookup)
                 logger.error(error_message)
 
                 if ANILIST_LOG_FAILED_MATCHES:
