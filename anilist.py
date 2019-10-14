@@ -1032,49 +1032,50 @@ def find_id_best_match(title, year):
     list_items = search_by_name(title)
     if list_items:
         for item in list_items:
-            if item[0].media:
-                for media_item in item[0].media:
-                    title_english = ''
-                    title_english_for_matching = ''
-                    title_romaji = ''
-                    title_romaji_for_matching = ''
-                    started_year = ''
+            if item[0] is not None:
+                if item[0].media:
+                    for media_item in item[0].media:
+                        title_english = ''
+                        title_english_for_matching = ''
+                        title_romaji = ''
+                        title_romaji_for_matching = ''
+                        started_year = ''
 
-                    if hasattr(media_item.title, 'english'):
-                        if media_item.title.english is not None:
-                            title_english = media_item.title.english
-                            title_english_for_matching = re.sub(
-                                '[^A-Za-z0-9]+', '', title_english).lower().strip()
-                    if hasattr(media_item.title, 'romaji'):
-                        if media_item.title.romaji is not None:
-                            title_romaji = media_item.title.romaji
-                            title_romaji_for_matching = re.sub(
-                                '[^A-Za-z0-9]+', '', title_romaji).lower().strip()
-                    if hasattr(media_item.startDate, 'year'):
-                        started_year = str(media_item.startDate.year)
+                        if hasattr(media_item.title, 'english'):
+                            if media_item.title.english is not None:
+                                title_english = media_item.title.english
+                                title_english_for_matching = re.sub(
+                                    '[^A-Za-z0-9]+', '', title_english).lower().strip()
+                        if hasattr(media_item.title, 'romaji'):
+                            if media_item.title.romaji is not None:
+                                title_romaji = media_item.title.romaji
+                                title_romaji_for_matching = re.sub(
+                                    '[^A-Za-z0-9]+', '', title_romaji).lower().strip()
+                        if hasattr(media_item.startDate, 'year'):
+                            started_year = str(media_item.startDate.year)
 
-                    #logger.info('Comparing AniList: %s | %s[%s] <===> %s[%s]' % (title_english, title_romaji, started_year, match_title, match_year))
-                    if match_title == title_english_for_matching and match_year == started_year:
-                        media_id = media_item.id
-                        logger.warning(
-                            '[ANILIST] Found match: %s [%s]' %
-                            (title_english, media_id))
-                        break
-                    if match_title == title_romaji_for_matching and match_year == started_year:
-                        media_id = media_item.id
-                        logger.warning(
-                            '[ANILIST] Found match: %s [%s]' %
-                            (title_romaji, media_id))
-                        break
-                    if match_title == title_romaji_for_matching and match_year != started_year:
-                        logger.info(
-                            '[ANILIST] Found match however started year is a mismatch: %s [AL: %s <==> Plex: %s] ' %
-                            (title_romaji, started_year, match_year))
-                    elif match_title == title_english_for_matching and match_year != started_year:
-                        logger.info(
-                            '[ANILIST] Found match however started year is a mismatch: %s [AL: %s <==> Plex: %s] ' %
-                            (title_english, started_year, match_year))
-    if media_id == 0:
+                        #logger.info('Comparing AniList: %s | %s[%s] <===> %s[%s]' % (title_english, title_romaji, started_year, match_title, match_year))
+                        if match_title == title_english_for_matching and match_year == started_year:
+                            media_id = media_item.id
+                            logger.warning(
+                                '[ANILIST] Found match: %s [%s]' %
+                                (title_english, media_id))
+                            break
+                        if match_title == title_romaji_for_matching and match_year == started_year:
+                            media_id = media_item.id
+                            logger.warning(
+                                '[ANILIST] Found match: %s [%s]' %
+                                (title_romaji, media_id))
+                            break
+                        if match_title == title_romaji_for_matching and match_year != started_year:
+                            logger.info(
+                                '[ANILIST] Found match however started year is a mismatch: %s [AL: %s <==> Plex: %s] ' %
+                                (title_romaji, started_year, match_year))
+                        elif match_title == title_english_for_matching and match_year != started_year:
+                            logger.info(
+                                '[ANILIST] Found match however started year is a mismatch: %s [AL: %s <==> Plex: %s] ' %
+                                (title_english, started_year, match_year))
+    if media_id is None:
         logger.error('[ANILIST] No match found for title: %s' % (title))
     return media_id
 
