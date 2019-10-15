@@ -11,3 +11,7 @@ __pycache__/
 ApplyPEP8\.bat
 
 failed_matches\.txt
+
+update_anilist\.bat
+
+update_anilist_test\.bat
