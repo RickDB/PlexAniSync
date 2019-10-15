@@ -119,6 +119,7 @@ def search_by_id(anilist_id):
                 english
                 native
             }
+            synonyms
             startDate {
                 year
                 month
@@ -175,6 +176,7 @@ def search_by_name(anilist_show_name):
                         english
                         native
                     }
+                    synonyms
                     startDate {
                         year
                         month
@@ -1039,6 +1041,8 @@ def find_id_best_match(title, year):
                         title_english_for_matching = ''
                         title_romaji = ''
                         title_romaji_for_matching = ''
+                        synonyms = ''
+                        synonyms_for_matching = ''
                         started_year = ''
 
                         if hasattr(media_item.title, 'english'):
@@ -1067,6 +1071,18 @@ def find_id_best_match(title, year):
                                 '[ANILIST] Found match: %s [%s]' %
                                 (title_romaji, media_id))
                             break
+                        if hasattr(media_item, 'synonyms'):
+                            if media_item.synonyms is not None:
+                                for synonym in media_item.synonyms:
+                                    synonyms = synonym
+                                    synonyms_for_matching = re.sub(
+                                        '[^A-Za-z0-9]+', '', synonyms).lower().strip()
+                                    if match_title == synonyms_for_matching and match_year == started_year:
+                                        media_id = media_item.id
+                                        logger.warning(
+                                            '[ANILIST] Found match in synonyms: %s [%s]' %
+                                            (synonyms, media_id))
+                                        break
                         if match_title == title_romaji_for_matching and match_year != started_year:
                             logger.info(
                                 '[ANILIST] Found match however started year is a mismatch: %s [AL: %s <==> Plex: %s] ' %
