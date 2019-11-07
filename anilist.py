@@ -475,6 +475,7 @@ def match_to_plex(
             pass
 
         found_match = False
+        skip_year_check = False
         matched_anilist_series = []
 
         potential_titles = [
@@ -490,6 +491,7 @@ def match_to_plex(
             for series in anilist_series:
                 if custom_mapping_id > 0 and series.id == custom_mapping_id:
                     found_match = True
+                    skip_year_check = True
                     logger.info(
                         '[ANILIST] Used custom mapping id | title: %s | season: %s | anilist id: %s' %
                         (plex_title, plex_total_seasons, custom_mapping_id))
@@ -533,7 +535,7 @@ def match_to_plex(
                         plex_title,
                         plex_year,
                         plex_watched_episode_count,
-                        True)
+                        skip_year_check)
                 else:
                     logger.warning(
                         '[ANILIST] Searching best title / year match for: %s' %
@@ -572,7 +574,7 @@ def match_to_plex(
                     plex_year,
                     plex_watched_episode_count,
                     matched_anilist_series,
-                    False)
+                    skip_year_check)
                 matched_anilist_series = []
         elif not all(matched_anilist_series) or not matched_anilist_series and plex_total_seasons > 1:
             logger.info(
@@ -635,7 +637,7 @@ def match_series_with_seasons(
                     plex_year,
                     plex_watched_episode_count_custom_mapping,
                     matched_anilist_series,
-                    False)
+                    True)
             else:
                 add_by_id(
                     custom_mapping_seasons_anilist_id,
@@ -658,6 +660,7 @@ def match_series_with_seasons(
         # later)
         if(counter_season == 1):
             found_match = False
+            skip_year_check = False
             plex_title_clean = re.sub(
                 '[^A-Za-z0-9]+', '', plex_title.lower().strip())
             plex_title_clean_without_year = plex_title_clean
@@ -673,6 +676,7 @@ def match_series_with_seasons(
             for series in anilist_series:
                 if(custom_mapping_id > 0):
                     found_match = True
+                    skip_year_check = True
                     logger.info(
                         '[ANILIST] Used custom mapping id  |  title: %s | season: %s | anilist id: %s' %
                         (plex_title, counter_season, custom_mapping_id))
@@ -701,7 +705,7 @@ def match_series_with_seasons(
                         plex_year,
                         plex_watched_episode_count,
                         matched_anilist_series,
-                        False)
+                        skip_year_check)
                     break
 
             # Series not listed so search for it
