@@ -656,11 +656,11 @@ def match_series_with_seasons(
         plex_watched_episode_count = plexmodule.get_watched_episodes_for_show_season(
             plex_series_all, plex_title, counter_season)
         matched_anilist_series = []
+        skip_year_check = False
         # for first season use regular search (some redundant codecan be merged
         # later)
         if(counter_season == 1):
             found_match = False
-            skip_year_check = False
             plex_title_clean = re.sub(
                 '[^A-Za-z0-9]+', '', plex_title.lower().strip())
             plex_title_clean_without_year = plex_title_clean
@@ -763,6 +763,7 @@ def match_series_with_seasons(
                     "[MAPPING] Used custom mapping id |  title: %s | season: %s | anilist id: %s" %
                     (plex_title, counter_season, custom_mapping_id))
                 media_id_search = custom_mapping_id
+                skip_year_check = True
             else:
                 if plex_year is not None:
                     media_id_search = find_id_season_best_match(
@@ -795,7 +796,7 @@ def match_series_with_seasons(
                         plex_year,
                         plex_watched_episode_count,
                         matched_anilist_series,
-                        False)
+                        skip_year_check)
                     matched_anilist_series = []
                 else:
                     logger.warning(
@@ -806,7 +807,7 @@ def match_series_with_seasons(
                         plex_title_lookup,
                         plex_year,
                         plex_watched_episode_count,
-                        False)
+                        skip_year_check)
             else:
                 error_message = '[ANILIST] Failed to find valid season title match on AniList for: %s' % (plex_title_lookup)
                 logger.error(error_message)
