@@ -195,9 +195,11 @@ https://github.com/RickDB/PlexAniSync/wiki/Tautulli-sync-script
 
 ## Docker
 
-There's also a Dockerized version maintained by [Thundernerd](https://github.com/Thundernerd)  which you can find here:
+There's also a Docker version based on [Thundernerd's](https://github.com/Thundernerd) which you can find here:
 
-[Docker](https://hub.docker.com/r/chrus/plexanisync)
+[Docker](https://hub.docker.com/r/rickdb/plexanisync)
+
+If you are still on the Thundernerd docker image recommend switching to this one as it will be kept in sync with latest PlexAniSync changes.
 
 ## Requirements
 
