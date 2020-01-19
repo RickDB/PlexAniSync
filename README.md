@@ -1,5 +1,5 @@
 # Plex to AniList Sync
-[![Build Status](https://travis-ci.org/RickDB/PlexAniSync.svg?branch=master)](https://travis-ci.org/RickDB/PlexAniSync)[![Build Status](https://img.shields.io/docker/cloud/build/chrus/plexanisync.svg)](https://hub.docker.com/r/chrus/plexanisync)
+[![Build Status](https://travis-ci.org/RickDB/PlexAniSync.svg?branch=master)](https://travis-ci.org/RickDB/PlexAniSync)[![Build Status](https://img.shields.io/docker/cloud/build/rickdb/plexanisync.svg)](https://hub.docker.com/r/rickdb/plexanisync)
 
 ![Logo](logo.png)
 
