@@ -872,7 +872,7 @@ def update_entry(
             except BaseException:
                 pass
 
-        if watched_episode_count >= anilist_total_episodes and anilist_total_episodes is not 0 and anilist_media_status == 'FINISHED':
+        if watched_episode_count >= anilist_total_episodes and anilist_total_episodes > 0 and anilist_media_status == 'FINISHED':
             # series completed watched
             logger.warning(
                 '[ANILIST] Plex episode watch count [%s] was higher than the one on AniList total episodes for that series [%s] | gonna update AniList entry to completed' %
@@ -892,7 +892,7 @@ def update_entry(
                         current_episodes_watched,
                         "COMPLETED")
                     current_episodes_watched += 1
-        elif watched_episode_count > anilist_episodes_watched and anilist_total_episodes is not 0:
+        elif watched_episode_count > anilist_episodes_watched and anilist_total_episodes > 0:
             # episode watch count higher than plex
             logger.warning(
                 '[ANILIST] Plex episode watch count [%s] was higher than the one on AniList [%s] which has total of %s episodes | gonna update AniList entry to currently watching' %
@@ -929,7 +929,7 @@ def update_entry(
             logger.info(
                 '[ANILIST] Episodes watched was higher on AniList [%s] than on Plex [%s] so skipping update' %
                 (anilist_episodes_watched, watched_episode_count))
-        elif anilist_total_episodes is 0:
+        elif anilist_total_episodes <= 0:
             logger.info(
                 '[ANILIST] AniList total episodes was 0 so most likely invalid data')
 
