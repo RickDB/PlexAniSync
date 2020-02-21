@@ -3,6 +3,7 @@ import configparser
 import coloredlogs
 import json
 import logging
+import logging.handlers
 import os
 import re
 import requests
@@ -15,14 +16,27 @@ import anilist
 import plexmodule
 
 # Logger settings
+log_filename = 'PlexAniSync.log'
 logger = logging.getLogger('PlexAniSync')
+logger.setLevel(logging.INFO)
 coloredlogs.install(fmt='%(asctime)s %(message)s', logger=logger)
+
+#DEBUG LOG
+logging.basicConfig(level=logging.DEBUG,
+                    format='%(asctime)s %(levelname)s %(message)s',
+                    filename='PlexAniSync-DEBUG.log',
+                    filemode='w')
+
+# Add the rotating log message handler to the logger
+handler = logging.handlers.RotatingFileHandler(log_filename, maxBytes=10000000, backupCount=5)
+handler.setLevel(logging.INFO)
+logger.addHandler(handler)
+
 
 # Enable this if you want to also log all messages coming from imported libraries
 # coloredlogs.install(level='DEBUG')
 
 ## Settings section ##
-
 
 def read_settings(settings_file):
     if not os.path.isfile(settings_file):
