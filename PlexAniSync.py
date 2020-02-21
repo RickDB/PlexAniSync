@@ -18,11 +18,13 @@ import plexmodule
 logger = logging.getLogger('PlexAniSync')
 coloredlogs.install(fmt='%(asctime)s %(message)s', logger=logger)
 
+log_filename = 'PlexAniSync.log'
+logging.basicConfig(filename=log_filename,level=logging.INFO)
+
 # Enable this if you want to also log all messages coming from imported libraries
 # coloredlogs.install(level='DEBUG')
 
 ## Settings section ##
-
 
 def read_settings(settings_file):
     if not os.path.isfile(settings_file):
