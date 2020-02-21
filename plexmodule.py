@@ -1,23 +1,15 @@
-import collections
-import configparser
-import coloredlogs
-import json
 import logging
-import os
 import re
-import requests
 import sys
-from guessit import guessit
+
 from plexapi.myplex import MyPlexAccount
 from plexapi.server import PlexServer
-
-logger = logging.getLogger('PlexAniSync')
-coloredlogs.install(fmt='%(asctime)s %(message)s', logger=logger)
 
 plex_settings = dict()
 
 
-class plex_watched_series:
+class PlexWatchedSeries:
+
     def __init__(self, title, year, episodes_watched, total_seasons):
         self.series_id = id
         self.title = title
@@ -52,34 +44,34 @@ def authenticate():
 
             if home_user_sync == 'true':
                 if home_username == '':
-                    logger.error('Home authentication cancelled as certain home_user settings are invalid')
+                    logging.error('Home authentication cancelled as certain home_user settings are invalid')
                     return None
                 try:
-                    logger.warning('Authenticating as admin for MyPlex home user: %s' % (home_username))
+                    logging.warning('Authenticating as admin for MyPlex home user: %s' % home_username)
                     plex_account = MyPlexAccount(plex_user, plex_password)
                     plex_server_home = PlexServer(home_server_base_url, plex_account.authenticationToken)
 
-                    logger.warning('Retrieving home user information')
+                    logging.warning('Retrieving home user information')
                     plex_user_account = plex_account.user(home_username)
 
-                    logger.warning('Retrieving user token for MyPlex home user')
+                    logging.warning('Retrieving user token for MyPlex home user')
                     plex_user_token = plex_user_account.get_token(plex_server_home.machineIdentifier)
 
-                    logger.warning('Retrieved user token for MyPlex home user')
+                    logging.warning('Retrieved user token for MyPlex home user')
                     plex = PlexServer(home_server_base_url, plex_user_token)
-                    logger.warning('Successfully authenticated for MyPlex home user')
+                    logging.warning('Successfully authenticated for MyPlex home user')
                 except Exception as e:
-                    logger.error('Error occured during Plex Home user lookup or server authentication: %s' % (e))
+                    logging.error('Error occured during Plex Home user lookup or server authentication: %s' % e)
             else:
                 account = MyPlexAccount(plex_user, plex_password)
                 plex = account.resource(plex_server).connect()
         else:
-            logger.critical(
+            logging.critical(
                 '[PLEX] Failed to authenticate due to invalid settings or authentication info, exiting...')
             sys.exit()
         return plex
     except Exception as e:
-        logger.error(
+        logging.error(
             'Unable to authenticate to Plex Media Server, traceback: %s' %
             (e))
         return None
@@ -88,7 +80,7 @@ def authenticate():
 def get_anime_shows():
     plex = authenticate()
     if plex is None:
-        logger.error(
+        logging.error(
             'Plex authentication failed, check access to your Plex Media Server and settings')
         return None
 
@@ -96,18 +88,19 @@ def get_anime_shows():
     shows = []
     for section in sections:
         try:
-            logger.info(
+            logging.info(
                 '[PLEX] Retrieving anime series from section: %s' %
                 section)
             shows_search = plex.library.section(section.strip()).search()
             shows += shows_search
-            logger.info(
+            logging.info(
                 '[PLEX] Found %s anime series in section: %s' %
                 (len(shows_search), section))
         except BaseException:
-            logger.error(
-                'Could not find library [%s] on your Plex Server, check the library name in AniList settings file and also verify that your library name in Plex has no trailing spaces in it' %
-                (section))
+            logging.error(
+                'Could not find library [%s] on your Plex Server, check the library name in AniList settings file and '
+                'also verify that your library name in Plex has no trailing spaces in it' %
+                section)
 
     return shows
 
@@ -124,9 +117,9 @@ def get_anime_shows_filter(show_name):
         try:
             if '(' in show.title and ')' in show.title:
                 year = re.search(r"(\d{4})", show.title).group(1)
-                yearString = '(%s)' % (year)
+                year_string = '(%s)' % year
                 show_title_clean_without_year = show.title.replace(
-                    yearString, '').strip()
+                    year_string, '').strip()
                 show_title_clean_without_year = re.sub(
                     '[^A-Za-z0-9]+', '', show_title_clean_without_year)
         except BaseException:
@@ -138,16 +131,16 @@ def get_anime_shows_filter(show_name):
             shows_filtered.append(show)
 
     if len(shows_filtered) > 0:
-        logger.info(
+        logging.info(
             '[PLEX] Found matching anime series')
     else:
-        logger.info(
+        logging.info(
             '[PLEX] Did not find %s in anime series' % (show_name))
     return shows_filtered
 
 
 def get_watched_shows(shows):
-    logger.info('[PLEX] Retrieving watch count for series')
+    logging.info('[PLEX] Retrieving watch count for series')
     watched_series = []
     ovas_found = 0
 
@@ -163,17 +156,16 @@ def get_watched_shows(shows):
                     season = 1 if not episode.seasonNumber else episode.seasonNumber
                     n_episode = episode.index
                     if episode.isWatched and n_episode:
-                        if (n_episode > episodes_watched and season ==
-                                season_watched) or (season > season_watched):
+                        if (n_episode > episodes_watched and season_watched == season) or (season > season_watched):
                             season_watched = season
                             episodes_watched = n_episode
                             season_total = season
                         else:
                             episodes_watched = 0
                 except Exception as e:
-                    logger.error(
+                    logging.error(
                         'Error during lookup_result processing, traceback: %s' %
-                        (e))
+                        e)
                     pass
             if episodes_watched > 0:
                 # Add year if we have one otherwise fallback
@@ -181,7 +173,7 @@ def get_watched_shows(shows):
                 if show.year:
                     year = show.year
 
-                watched_show = plex_watched_series(
+                watched_show = PlexWatchedSeries(
                     show.title.strip(), year, episodes_watched, season_total)
                 watched_series.append(watched_show)
 
@@ -199,27 +191,28 @@ def get_watched_shows(shows):
                     if show.year:
                         year = show.year
 
-                    watched_show = plex_watched_series(
+                    watched_show = PlexWatchedSeries(
                         show.title.strip(), show.year, 1, 1)
                     watched_series.append(watched_show)
                     ovas_found += 1
 
-    logger.info('[PLEX] Found %s watched series' % (len(watched_series)))
+    logging.info('[PLEX] Found %s watched series' % (len(watched_series)))
 
     if ovas_found > 0:
-        logger.info(
-            '[PLEX] Watched series also contained %s releases with no episode attribute (probably movie / OVA), support for this is still experimental' %
-            (ovas_found))
+        logging.info(
+            '[PLEX] Watched series also contained %s releases with no episode attribute (probably movie / OVA), '
+            'support for this is still experimental' %
+            ovas_found)
 
     if watched_series is not None and len(watched_series) == 0:
         return None
     else:
-         return watched_series
+        return watched_series
 
 
 def get_watched_episodes_for_show_season(
         shows, watched_show_title, watched_season):
-    logger.info(
+    logging.info(
         '[PLEX] Retrieving episode watch count for show: %s | season: %s' %
         (watched_show_title, watched_season))
 
@@ -233,10 +226,10 @@ def get_watched_episodes_for_show_season(
                         if episode.isWatched:
                             episodes_watched += 1
                 except Exception as e:
-                    logger.error(
+                    logging.error(
                         'Error during lookup_result processing, traceback: %s' %
-                        (e))
+                        e)
                     pass
 
-    #logger.info('[PLEX] %s episodes watched for season: %s' % (episodes_watched, watched_season))
+    # logger.info('[PLEX] %s episodes watched for season: %s' % (episodes_watched, watched_season))
     return episodes_watched

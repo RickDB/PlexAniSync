@@ -1,23 +1,25 @@
 import collections
-import configparser
 import coloredlogs
+import configparser
 import json
 import logging
 import os
 import re
 import requests
 import sys
-from time import sleep
 from guessit import guessit
 from plexapi.myplex import MyPlexAccount
 from plexapi.server import PlexServer
+from time import sleep
 
 import anilist
 import plexmodule
+from misc.log import logger
 
 # Logger settings
-logger = logging.getLogger('PlexAniSync')
+log = logging.getLogger(__name__)
 coloredlogs.install(fmt='%(asctime)s %(message)s', logger=logger)
+
 
 # Enable this if you want to also log all messages coming from imported libraries
 # coloredlogs.install(level='DEBUG')
@@ -71,7 +73,7 @@ def read_custom_mappings(mapping_file):
                 logger.info(
                     "[MAPPING] Adding custom mapping | title: %s | season: %s | anilist id: %s" %
                     (series_title, season, anime_id))
-                mapping = anilist.anilist_custom_mapping(
+                mapping = anilist.AnilistCustomMapping(
                     series_title, season, anime_id)
                 custom_mappings.append(mapping)
             except BaseException:
@@ -79,7 +81,8 @@ def read_custom_mappings(mapping_file):
                     '[MAPPING] Invalid entry found for line: %s' %
                     (line))
 
-## Startup section ##
+
+# Startup section
 
 
 def start():
@@ -121,14 +124,14 @@ def start():
         plexmodule.plex_settings = plex_settings
         plex_anime_series = plexmodule.get_anime_shows_filter(show_title)
 
-        if(plex_anime_series is None):
+        if plex_anime_series is None:
             logger.error('Found no Plex shows for processing')
             plex_series_watched = None
         else:
             plex_series_watched = plexmodule.get_watched_shows(
                 plex_anime_series)
 
-        if(plex_series_watched is None):
+        if plex_series_watched is None:
             logger.error(
                 'Found no watched shows on Plex for processing')
         else:

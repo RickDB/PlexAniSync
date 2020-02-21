@@ -15,3 +15,11 @@ failed_matches\.txt
 update_anilist\.bat
 
 update_anilist_test\.bat
+/.idea/misc.xml
+/.idea/modules.xml
+/PlexAniSync-DEBUG-test.log
+/.idea/PlexAniSync-develop.iml
+/.idea/inspectionProfiles/profiles_settings.xml
+/.idea/rSettings.xml
+/.idea/vcs.xml
+/.idea/workspace.xml

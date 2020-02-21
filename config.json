@@ -1,0 +1,35 @@
+{
+  "ANILIST": {
+    "access_token": "",
+    "plex_episode_count_priority": false,
+    "skip_list_update": false,
+    "username": ""
+  },
+  "Direct_IP": {
+    "base_url": "",
+    "token": ""
+  },
+  "MyPlex": {
+    "home_server_base_url": "",
+    "home_user_sync": true,
+    "home_username": "",
+    "myplex_password": "",
+    "myplex_user": "",
+    "server": ""
+  },
+  "PLEX": {
+    "anime_section": "",
+    "authentication_method": "direct"
+  },
+  "core": {
+    "debug": false
+  },
+  "notifications": {
+    "Apprise": {
+      "service": "apprise",
+      "url": "",
+      "title": ""
+    },
+    "verbose": true
+  }
+}
