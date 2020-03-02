@@ -1,15 +1,17 @@
-import click
 import os.path
+import signal
+import sys
+
+import click
 import plexapi
 import requests
 ############################################################
 # INIT
 ############################################################
 import schedule
-import signal
-import sys
 from pyfiglet import Figlet
 
+# test
 cfg = None
 log = None
 notify = None
@@ -99,7 +101,7 @@ def plex(connect_method,
     global plex_auth
 
     # send notification
-    if not notifications and cfg.notifications.verbose:
+    if notifications or cfg.notifications.verbose:
         notify.send(message="PlexAniSync is now running.")
 
     if connect_method not in ["direct", "myplex"]:
@@ -223,7 +225,7 @@ def plex(connect_method,
                 '[MAPPING] Custom map file not found: %s' % mapping_file)
         else:
             # send notification
-            if cfg.notifications.verbose:
+            if notifications or cfg.notifications.verbose:
                 notify.send(message="Reading Custom Mapping file")
             log.warning('[MAPPING] Custom map file found: %s' % mapping_file)
             file = open(mapping_file, "r")
@@ -246,11 +248,11 @@ def plex(connect_method,
                         '[MAPPING] Invalid entry found for line: %s' %
                         line)
                     # send notification
-                    if cfg.notifications.verbose:
+                    if notifications or cfg.notifications.verbose:
                         notify.send(message='Invalid entry found for line: %s' %
                                             line)
         try:
-            if cfg.notifications.verbose:
+            if notifications or cfg.notifications.verbose:
                 notify.send(message='Searching Anime show in Plex')
             # Search for anime shows in Plex
             plex_connection = plex_auth
@@ -270,8 +272,9 @@ def plex(connect_method,
                         '[PLEX] Found %s anime series in section: %s' %
                         (len(shows_search), section))
                     # send notification
-                    notify.send(message='[PLEX] Found %s anime series in section: %s' %
-                                        (len(shows_search), section))
+                    if notifications or cfg.notifications.verbose:
+                        notify.send(message='[PLEX] Found %s anime series in section: %s' %
+                                            (len(shows_search), section))
 
                 except Exception as e:
                     log.critical(e)
@@ -325,7 +328,7 @@ def plex(connect_method,
                 else:
                     plex_watched_show = get_watched_shows(shows)
                     # send notification
-                    if cfg.notifications.verbose:
+                    if notifications or cfg.notifications.verbose:
                         notify.send(message='Found {} watched show starting sync against  Anilist'.format(
                             len(plex_watched_show)))
 
@@ -341,7 +344,7 @@ def plex(connect_method,
                                                          plex_watched_show)
             log.info('Plex to AniList sync finished')
             # send notification
-            if cfg.notifications.verbose:
+            if notifications or cfg.notifications.verbose:
                 notify.send(message="Plex to Anilist Sync finished.")
 
         except NameError as err:

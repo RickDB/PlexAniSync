@@ -5,6 +5,8 @@ import sys
 from plexapi.myplex import MyPlexAccount
 from plexapi.server import PlexServer
 
+logger = logging.getLogger(__name__)
+
 plex_settings = dict()
 
 

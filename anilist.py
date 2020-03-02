@@ -1,12 +1,15 @@
 import collections
-import inflect
 import json
 import logging
 import re
+
+import inflect
 import requests
 from guessit import guessit
 
 import plexmodule
+
+logger = logging.getLogger(__name__)
 
 custom_mappings = []
 ANILIST_ACCESS_TOKEN = ''
@@ -23,11 +26,11 @@ def to_object(o):
     return collections.namedtuple('X', keys)(*values)
 
 
-def int_to_roman_numeral(insert):
-    if not isinstance(insert, type(1)):
-        return insert
-    if not 0 < insert < 4000:
-        return insert
+def int_to_roman_numeral(integer):
+    if not isinstance(integer, type(1)):
+        return integer
+    if not 0 < integer < 4000:
+        return integer
     ints = (1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1)
     nums = (
         'M',
@@ -45,9 +48,9 @@ def int_to_roman_numeral(insert):
         'I')
     result = []
     for i in range(len(ints)):
-        count = int(insert / ints[i])
+        count = int(integer / ints[i])
         result.append(nums[i] * count)
-        insert -= ints[i] * count
+        integer -= ints[i] * count
     return ''.join(result)
 
 
