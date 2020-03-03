@@ -74,48 +74,48 @@ Click to enlarge.
 
 Installs PlexAniSync to the system so that it can be ran with the `PlexAniSync` command.
 
- 1. Clone the PlexAniSync repo.
+1. Clone the PlexAniSync repo.
    
    ```
    sudo git clone https://github.com/RickDB/PlexAniSync /opt/PlexAniSync
    ```
 
- 1. Fix permissions of the `PlexAniSync` folder (replace `user`/`group` with your info; run `id` to check).
+1. Fix permissions of the `PlexAniSync` folder (replace `user`/`group` with your info; run `id` to check).
    
    ```
    sudo chown -R user:group /opt/PlexAniSync
    ```
 
- 1. Go into the `PlexAniSync` folder.
+1. Go into the `PlexAniSync` folder.
    
    ```
    cd /opt/PlexAniSync
    ```
 
- 1. Install Python and PIP.
+1. Install Python and PIP.
    ```
    sudo apt-get install python3 python3-pip
    ```
    
- 1. Install the required python modules.
+1. Install the required python modules.
    
    ```
    sudo python3 -m pip install -r requirements.txt
    ```
 
- 1. Create a shortcut for `PlexAniSync`.
+1. Create a shortcut for `PlexAniSync`.
    
    ```
    sudo ln -s /opt/PlexAniSync/PlexAniSync.py /usr/local/bin/PlexAniSync
    ```
  
- 1. Generate a basic `config.json` file.
+1. Generate a basic `config.json` file.
    
    ```
    PlexAniSync plex -c direct
    ```
  
- 1. Configure the `config.json` file.
+1. Configure the `config.json` file.
  
    ```
    nano config.json
@@ -123,44 +123,43 @@ Installs PlexAniSync to the system so that it can be ran with the `PlexAniSync` 
    
 #2-base-install-widows 
  
- 1. Get the latest version using your favorite git client or by downloading the latest release from here:
+1. Get the latest version using your favorite git client or by downloading the latest release from here:
    ```
     https://github.com/RickDB/PlexAniSync/archive/master.zip
    ```
- 1. Make sure you have Python 3 installed:
+1. Make sure you have Python 3 installed:
 
     [Python homepage](https://www.python.org/)
 
- 1. Head over to the downloaded folder then open CMD or PowerShell then `cd` into your directory copy and paste the path into cmd/powershell
+1. Head over to the downloaded folder then open CMD or PowerShell then `cd` into your directory copy and paste the path into cmd/powershell
     
    ```
    cd C:\Users\username\path\to\file\PlexAniSync-master
    ```
  
- 1. Install the required python modules.
+1. Install the required python modules.
    
    ```
    pip3 install -r requirements.txt
    ```
    or
-   
    ```
    pip install -r requirements.txt
    ```
-
- 1.  Generate a basic `config.json` file.   
+1.  Generate a basic `config.json` file.   
     
    ```
     python .\PlexAniSync.py plex -c direct
    ```
- 1. Configure the `config.json` file using your favorite editor such as notepad++ and etc
+   
+1. Configure the `config.json` file using your favorite editor such as notepad++ and etc
    
    ```
    config.json
    ```
 #3-authenticate-home-users-optional
  
- 1. You can use `myplex` connection method to sync your home users library as well. there is 2 way to sync home user one is by using the config file and give the `homne_username` the other one by giving the username in the cli.
+1. You can use `myplex` connection method to sync your home users library as well. there is 2 way to sync home user one is by using the config file and give the `homne_username` the other one by giving the username in the cli.
    
    CLI Method
    ```
@@ -567,7 +566,6 @@ Options:
   --sync-now                 Immediately start syncing Animes  [default: False]
   --help                     Show this message and exit.
 ```
-
 `-c`, `--connect-method` -  This will be between `direct` or `myplex` make sure it reflect to the config file otherwise will throw an error. This argument is required.
 `-h`, `--home-username` -  This is only need to be passed if you want to sync the home user but don't want to bother going back to config and change it instead just pass the username. This argument is not required.
 `--notifications` - giving this parameter like including it will enable push notifications. not required by default is false.
