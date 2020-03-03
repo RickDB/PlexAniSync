@@ -70,7 +70,7 @@ Click to enlarge.
 3. Required Python modules.
 
 # Installation
-#1-base-install-linux
+# 1-base-install-linux
 
 Installs PlexAniSync to the system so that it can be ran with the `PlexAniSync` command.
 
@@ -121,7 +121,7 @@ Installs PlexAniSync to the system so that it can be ran with the `PlexAniSync` 
    nano config.json
    ```
    
-#2-base-install-widows 
+# 2-base-install-widows 
  
 1. Get the latest version using your favorite git client or by downloading the latest release from here:
    ```
@@ -157,7 +157,7 @@ Installs PlexAniSync to the system so that it can be ran with the `PlexAniSync` 
    ```
    config.json
    ```
-#3-authenticate-home-users-optional
+# 3-authenticate-home-users-optional
  
 1. You can use `myplex` connection method to sync your home users library as well. there is 2 way to sync home user one is by using the config file and give the `homne_username` the other one by giving the username in the cli.
    
