@@ -430,8 +430,8 @@ _Note: The key name can be anything, but the `service` key must be must be the e
     "service": "slack",
     "webhook_url": "",
     "channel": "",
-    "sender_name": "Traktarr",
-    "sender_icon": ":movie_camera:"
+    "sender_name": "",
+    "sender_icon": ""
   },
   "verbose": false
 },
@@ -451,7 +451,7 @@ _Note: The key name can be anything, but the `service` key must be must be the e
 
  - Optional.
 
- - Default is `Traktarr`.
+ - Default is `` is empty.
 
 `sender_icon` - Icon to use for the notifications.
 
