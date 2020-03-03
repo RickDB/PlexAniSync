@@ -58,7 +58,7 @@ Click to enlarge.
 
 ### Discord Notification
 
-[![asciicast](assets/discord_notif_demo.gif)]("Discord notification using apprise")
+![asciicast](assets/discord_notif_demo.gif)
 
 
 # Requirements
