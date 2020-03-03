@@ -567,8 +567,11 @@ Options:
   --help                     Show this message and exit.
 ```
 `-c`, `--connect-method` -  This will be between `direct` or `myplex` make sure it reflect to the config file otherwise will throw an error. This argument is required.
+
 `-h`, `--home-username` -  This is only need to be passed if you want to sync the home user but don't want to bother going back to config and change it instead just pass the username. This argument is not required.
+
 `--notifications` - giving this parameter like including it will enable push notifications. not required by default is false.
+
 `--sync-now` - Will sync the Anime list immediately without passing this argument it's just going to authenticate you good for testing if you are connected to the server. required if you want sync otherwise it won't initiate.
 ## examples-cli
 ### direct-connection
