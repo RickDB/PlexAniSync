@@ -391,7 +391,8 @@ if __name__ == '__main__':
 
     print("""
     #########################################################################
-    # Author:   RickDB, KaiserBh                                            #
+    # Author:   RickDB                                                      #
+    # Contributor:  KaiserBh, WoLpH, Versatile-BFG, wiiaboo                 #
     # URL:      https://github.com/RickDB/PlexAniSync                       #
     # --                                                                    #
     #########################################################################
