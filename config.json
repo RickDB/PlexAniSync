@@ -11,7 +11,7 @@
   },
   "MyPlex": {
     "home_server_base_url": "",
-    "home_user_sync": true,
+    "home_user_sync": false,
     "home_username": "",
     "myplex_password": "",
     "myplex_user": "",

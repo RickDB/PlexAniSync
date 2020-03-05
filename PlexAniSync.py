@@ -1,4 +1,5 @@
 import os.path
+import re
 import signal
 import sys
 
@@ -89,15 +90,36 @@ def app(config, cachefile, logfile):
     help='Immediately start syncing Animes',
     show_default=True
 )
+@click.option(
+    '--on-deck',
+    is_flag=True,
+    help='Get Animes On deck only and scan those instead of the whole library.',
+    show_default=True
+)
 def plex(connect_method,
          home_username=None,
          notifications=False,
          sync_now=False,
+         on_deck=False,
          ):
+    ############################################################
+    # ANILIST SECTION
+    ############################################################
+    from plexmodule import get_watched_shows
+    import anilist
+
+    anilist_skip_list_update = cfg.ANILIST.skip_list_update
+    anilist.ANILIST_ACCESS_TOKEN = cfg.ANILIST.access_token.strip()
+    anilist.ANILIST_PLEX_EPISODE_COUNT_PRIORITY = cfg.ANILIST.plex_episode_count_priority
+    anilist_username = cfg.ANILIST.username
+    anilist.custom_mappings = custom_mappings
     from plexapi.server import PlexServer
     from plexapi.exceptions import BadRequest
     from plexapi.myplex import MyPlexAccount
+
+    # Method and Section from config.
     method = cfg.PLEX.authentication_method.lower()
+    sections = cfg.PLEX.anime_section.split('|')
     global plex_auth
 
     # send notification
@@ -130,9 +152,14 @@ def plex(connect_method,
             log.critical('Authentication failed please check token')
 
         except requests.exceptions.ConnectionError as err:
-            log.error("Error failed to connect to the server.")
-            print(err)
-            print("\nCheck your base_url and see if it's correct.\n")
+            log.error("Error failed to connect to the server.\n")
+            print("\n")
+            log.error(
+                "Check your base_url and see if it's correct and you are connected to internet.\n")
+            log.error("If this is not the local computer where the server is running check firewall/try using "
+                      "phone network if you are on work network because domain firewall must be on\n")
+            log.error(err)
+
 
     # MyPlex method
     elif connect_method == 'myplex':
@@ -222,12 +249,12 @@ def plex(connect_method,
         log.info("Looking for custom mapping file.")
         if not os.path.isfile(mapping_file):
             log.warning(
-                '[MAPPING] Custom map file not found: %s' % mapping_file)
+                'Custom map file not found: %s' % mapping_file)
         else:
             # send notification
             if notifications or cfg.notifications.verbose:
                 notify.send(message="Reading Custom Mapping file")
-            log.warning('[MAPPING] Custom map file found: %s' % mapping_file)
+            log.warning('Custom map file found: %s' % mapping_file)
             file = open(mapping_file, "r")
             for line in file:
                 try:
@@ -237,7 +264,7 @@ def plex(connect_method,
                     anime_id = int(mapping_split[2])
 
                     log.info(
-                        "[MAPPING] Adding custom mapping | title: %s | season: %s | anilist id: %s" %
+                        "Adding custom mapping | title: %s | season: %s | anilist id: %s" %
                         (series_title, season, anime_id))
                     mapping = anilist.AnilistCustomMapping(
                         series_title, season, anime_id)
@@ -245,113 +272,172 @@ def plex(connect_method,
                 except Exception as err:
                     print(err)
                     log.error(
-                        '[MAPPING] Invalid entry found for line: %s' %
+                        'Invalid entry found for line: %s' %
                         line)
                     # send notification
                     if notifications or cfg.notifications.verbose:
                         notify.send(message='Invalid entry found for line: %s' %
                                             line)
-        try:
+            # send notification
             if notifications or cfg.notifications.verbose:
-                notify.send(message='Searching Anime show in Plex')
-            # Search for anime shows in Plex
+                notify.send(message="Successfully read Custom Mapping file")
+        ############################################################
+        # Create On Deck only option sync.
+        ############################################################
+        if on_deck:
+            log.info("Getting shows on deck only")
             plex_connection = plex_auth
             if plex_auth is None:
                 log.error(
-                    'Plex authentication failed, check access to your Plex Media Server and settings')
+                    'Plex authentication failed, check access to your Plex Media Server and config file')
                 return None
-            sections = cfg.PLEX.anime_section.split('|')
-            shows = []
-            for section in sections:
-                try:
-                    log.info(
-                        '[PLEX] Retrieving anime series from section: %s' % section)
-                    shows_search = plex_connection.library.section(section.strip()).search()
-                    shows += shows_search
-                    log.info(
-                        '[PLEX] Found %s anime series in section: %s' %
-                        (len(shows_search), section))
-                    # send notification
-                    if notifications or cfg.notifications.verbose:
-                        notify.send(message='[PLEX] Found %s anime series in section: %s' %
-                                            (len(shows_search), section))
-
-                except Exception as e:
-                    log.critical(e)
-                    log.error(
-                        'Could not find library [%s] on your Plex Server, check the library name in AniList settings '
-                        'file '
-                        'and '
-                        'also verify that your library name in Plex has no trailing spaces in it' %
-                        section)
-                    if cfg.notifications.verbose:
-                        notify.send(
-                            message='Could not find library [%s] on your Plex Server, check the library name in '
-                                    'AniList settings '
-                                    'file '
-                                    'and '
-                                    'also verify that your library name in Plex has no trailing spaces in it' %
-                                    section)
-
-            # Get Watched Show
-            from plexmodule import get_watched_shows
-            # ANILIST SECTION
-            anilist_skip_list_update = cfg.ANILIST.skip_list_update
-            anilist.ANILIST_ACCESS_TOKEN = cfg.ANILIST.access_token.strip()
-            anilist.ANILIST_PLEX_EPISODE_COUNT_PRIORITY = cfg.ANILIST.plex_episode_count_priority
-            anilist_username = cfg.ANILIST.username
-            anilist.custom_mappings = custom_mappings
+            get_on_deck = plex_connection.library.onDeck()
+            get_on_deck_list = []
+            for on_deck_obj in get_on_deck:
+                get_on_deck_list.append(str(on_deck_obj))
+            # Below will filter out the objects into a string pretty much and add them into list (Think there is a
+            # better way processing this but my knowledge still limited in terms of objects and plexapi) then search the
+            # title of episode by using regex to filter it out.
+            final_clean_title = []
+            for episode in get_on_deck_list:
+                episode_only = episode.find("Episode")
+                if episode_only == 1:
+                    get_episode = [episode]
+                    for temp_episode in get_episode:
+                        new_clean = re.sub("^<Episode:[0-9]+:", '', temp_episode)
+                        temp_clean_title = [new_clean]
+                        for show in temp_clean_title:
+                            title = re.sub("-s[0-9]*e[0-9]*>", '', show)
+                            final_clean_title.append(title)
+            on_deck_show = []
+            for shows in final_clean_title:
+                search_show = plex_connection.search(shows)
+                on_deck_show += search_show
+            plex_watched_show = get_watched_shows(on_deck_show)
             anilist_series = anilist.process_user_list(anilist_username)
-            if cfg.notifications.verbose:
-                notify.send(message='Found %s anime series on Anilist' % (len(anilist_series)))
-
-            if anilist_skip_list_update:
-                log.warning('AniList skip list update enabled in settings, will match but NOT update your list')
-
-            exists = os.path.isfile("failed_matches.txt")
-            if exists:
-                try:
-                    os.remove("failed_matches.txt")
-                except Exception as err:
-                    print(err)
-
             if anilist_series is None:
                 log.error(
                     'Unable to retrieve AniList list, check your username and access token')
             else:
-                if not anilist_series:
-                    log.error('No items found on your AniList list for additional processing later on')
-                plex_anime_series = shows
-                if plex_anime_series is None:
-                    log.error('Found no Plex shows for processing')
-                    plex_watched_show = None
-                else:
-                    plex_watched_show = get_watched_shows(shows)
-                    # send notification
-                    if notifications or cfg.notifications.verbose:
-                        notify.send(message='Found {} watched show starting sync against  Anilist'.format(
-                            len(plex_watched_show)))
-
+                # send notification
+                if notifications or cfg.notifications.verbose:
+                    notify.send(message='Found {} (On Deck) currently watched show  starting sync against  '
+                                        'Anilist'.format(
+                        len(plex_watched_show)))
                 if plex_watched_show is None:
                     log.error(
-                        'Found no watched shows on Plex for processing')
+                        'Found no watched shows on (Deck) Plex for processing')
                     # send notification
                     if cfg.notifications.verbose:
-                        notify.send(message='Found no watched shows on Plex for processing')
-                else:
-                    matched_show = anilist.match_to_plex(anilist_series,
-                                                         plex_anime_series,
-                                                         plex_watched_show)
-            log.info('Plex to AniList sync finished')
-            # send notification
-            if notifications or cfg.notifications.verbose:
-                notify.send(message="Plex to Anilist Sync finished.")
+                        notify.send(message='Found no watched shows on (Deck) Plex for processing')
+                anilist.match_to_plex(anilist_series,
+                                      on_deck_show,
+                                      plex_watched_show)
+                log.info('Plex On Deck only to AniList sync finished')
+                # send notification
+                if notifications or cfg.notifications.verbose:
+                    notify.send(message="Plex to Anilist Sync finished. (On Deck Only)")
+        else:
+            try:
+                if notifications or cfg.notifications.verbose:
+                    notify.send(message='Searching Anime show in Plex')
 
-        except NameError as err:
-            log.critical(err)
-            log.error(
-                "Try removing the --sync-now flag and check what the error is, most likely it's can't find the home "
-                "user: ")
+                ############################################################
+                # Search for Anime shows in Plex
+                ############################################################
+                plex_connection = plex_auth
+                if plex_auth is None:
+                    log.error(
+                        'Plex authentication failed, check access to your Plex Media Server and settings')
+                    return None
+                shows = []
+                for section in sections:
+                    try:
+                        log.info(
+                            '[PLEX] Retrieving anime series from section: %s' % section)
+                        shows_search = plex_connection.library.section(section.strip()).search()
+                        shows += shows_search
+                        log.info(
+                            '[PLEX] Found %s anime series in section: %s' %
+                            (len(shows_search), section))
+                        # send notification
+                        if notifications or cfg.notifications.verbose:
+                            notify.send(message='[PLEX] Found %s anime series in section: %s' %
+                                                (len(shows_search), section))
+
+                    except Exception as e:
+                        log.critical(e)
+                        log.error(
+                            'Could not find library [%s] on your Plex Server, check the library name in AniList '
+                            'settings '
+                            'file '
+                            'and '
+                            'also verify that your library name in Plex has no trailing spaces in it' %
+                            section)
+                        if cfg.notifications.verbose:
+                            notify.send(
+                                message='Could not find library [%s] on your Plex Server, check the library name in '
+                                        'AniList settings '
+                                        'file '
+                                        'and '
+                                        'also verify that your library name in Plex has no trailing spaces in it' %
+                                        section)
+                ############################################################
+                # Get Watched Show
+                ############################################################
+                anilist_series = anilist.process_user_list(anilist_username)
+
+                if cfg.notifications.verbose:
+                    notify.send(message='Found %s anime series on Anilist' % (len(anilist_series)))
+
+                if anilist_skip_list_update:
+                    log.warning('AniList skip list update enabled in settings, will match but NOT update your list')
+
+                exists = os.path.isfile("failed_matches.txt")
+                if exists:
+                    try:
+                        os.remove("failed_matches.txt")
+                    except Exception as err:
+                        print(err)
+
+                if anilist_series is None:
+                    log.error(
+                        'Unable to retrieve AniList list, check your username and access token')
+                else:
+                    if not anilist_series:
+                        log.error('No items found on your AniList list for additional processing later on')
+                    plex_anime_series = shows
+                    if plex_anime_series is None:
+                        log.error('Found no Plex shows for processing')
+                        plex_watched_show = None
+                    else:
+                        plex_watched_show = get_watched_shows(shows)
+                        # send notification
+                        if notifications or cfg.notifications.verbose:
+                            notify.send(message='Found {} watched show starting sync against  Anilist'.format(
+                                len(plex_watched_show)))
+
+                    if plex_watched_show is None:
+                        log.error(
+                            'Found no watched shows on Plex for processing')
+                        # send notification
+                        if cfg.notifications.verbose:
+                            notify.send(message='Found no watched shows on Plex for processing')
+                    else:
+                        matched_show = anilist.match_to_plex(anilist_series,
+                                                             plex_anime_series,
+                                                             plex_watched_show)
+                log.info('Plex to AniList sync finished')
+                # send notification
+                if notifications or cfg.notifications.verbose:
+                    notify.send(message="Plex to Anilist Sync finished.")
+
+            except NameError as err:
+                log.critical(err)
+                log.error(
+                    "Try removing the --sync-now flag and check what the error is, most likely it's can't find the "
+                    "home "
+                    "user: ", "and check config")
 
 
 ############################################################
@@ -409,4 +495,3 @@ if __name__ == '__main__':
 
     # TODO Create TautulliSyncHelper
     # TODO REMOVE AND REFACTOR PLEXMODULE.PY
-    # TODO TEST IF --CONFIG PATH is working
