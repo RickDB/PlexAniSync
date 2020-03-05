@@ -21,11 +21,11 @@
     - [Apprise](#apprise)
     - [Pushover](#pushover)
     - [Slack](#slack)
-- [Optional features](#Optional features)
-    - [Custom settings file location](#Custom settings file location)
-    - [Make Plex watched episode count take priority](#Make Plex watched episode count take priority)
-    - [Skip list updating for testing](#Skip list updating for testing)
-    - [Tautulli Sync Helper script](#Tautulli Sync Helper script)
+- [Optional features](#Optional-features)
+    - [Custom settings file location](#Custom-settings-file-location)
+    - [Make Plex watched episode count take priority](#Make-Plex-watched-episode-count-take-priority)
+    - [Skip list updating for testing](#Skip-list-updating-for-testing)
+    - [Tautulli Sync Helper script](#Tautulli-Sync-Helper-script)
     - [Docker](#Docker)
 - [Usage](#usage)
   - [plex](#plex)
@@ -461,9 +461,9 @@ _Note: The key name can be anything, but the `service` key must be must be the e
 
 
 
-# Optional features
+# Optional-features
 
-## Custom anime mapping
+## Custom-anime-mapping
 
 You can manually link a Plex title and season to an AniList ID, to do so:
 
@@ -481,7 +481,7 @@ https://anilist.co/anime/99263/Tate-no-Yuusha-no-Nariagari
 - You can remove any existing entries from the example file as they are purely instructional
 - Upon startup it will list all valid custom mappings, incorrect onces are shown as errors and are skipped
 
-## Custom settings file location
+## Custom-settings-file-location
 
 If you want to load a different settings.in file you can do so by supplying it in the first argument like so:
 
@@ -491,7 +491,7 @@ In case of the Tautulli sync helper script you can do as well, first argument wi
 
 `python TautulliSyncHelper.py  settings_alternate.ini <plex show name>`
 
-## Make Plex watched episode count take priority
+## Make-Plex-watched-episode-count-take-priority
 
 By default if AniList episode count watched is higher than that of Plex it will skip over, this can be overriden with the setting `plex_episode_count_priority`
 
@@ -499,11 +499,11 @@ When set to True it will update the AniList entry if Plex watched episode count 
 
 **Use this with caution as normally this isn't required and only meant for certain use cases.**
 
-## Skip list updating for testing
+## Skip-list-updating-for-testing
 
 In your settings file there's a setting called `skip_list_update` which you can set to True or False, if set to True it will **NOT** update your AniList which is useful if you want to do a test run to check if everything lines up properly.
 
-## Tautulli Sync Helper script
+## Tautulli-Sync-Helper-script
 
 In the project folder you will find `TautulliSyncHelper.py` which you can use to sync a single Plex show to AniList for use in Tautulli script notifcations (trigger on playback stop).
 
