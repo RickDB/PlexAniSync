@@ -15,6 +15,8 @@ from plexapi.server import PlexServer
 import anilist
 import plexmodule
 
+__version__ = "1.2.0"
+
 # Logger settings
 log_filename = 'PlexAniSync.log'
 logger = logging.getLogger('PlexAniSync')
@@ -101,6 +103,9 @@ def read_custom_mappings(mapping_file):
 
 
 def start():
+    logger.info(
+        "PlexAniSync - version: %s" % (__version__)) 
+
     if ANILIST_SKIP_UPDATE == 'true':
         logger.warning(
             'AniList skip list update enabled in settings, will match but NOT update your list')
