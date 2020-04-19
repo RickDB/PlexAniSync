@@ -20,8 +20,10 @@ ANILIST_ACCESS_TOKEN = ''
 ANILIST_SKIP_UPDATE = 'false'
 ANILIST_PLEX_EPISODE_COUNT_PRIORITY = 'false'
 
-# Set this to True for logging failed AniList matches to failed_matches.txt file
+# Set this to True for logging failed AniList matches to
+# failed_matches.txt file
 ANILIST_LOG_FAILED_MATCHES = False
+
 
 def to_object(o):
     keys, values = zip(*o.items())
@@ -56,10 +58,12 @@ def int_to_roman_numeral(input):
         input -= ints[i] * count
     return ''.join(result)
 
+
 def log_to_file(message):
-    f=open("failed_matches.txt", "a+")
+    f = open("failed_matches.txt", "a+")
     f.write('%s\n' % (message))
     f.close()
+
 
 class anilist_series:
     def __init__(
@@ -488,45 +492,33 @@ def match_to_plex(
         if(plex_total_seasons == 1):
             custom_mapping_id = retrieve_custom_mapping(
                 plex_title, plex_total_seasons)
+
+            # Custom mapping check - check user list
+            found_custom_match = False
             for series in anilist_series:
                 if custom_mapping_id > 0 and series.id == custom_mapping_id:
-                    found_match = True
-                    skip_year_check = True
                     logger.info(
-                        '[ANILIST] Used custom mapping id | title: %s | season: %s | anilist id: %s' %
-                        (plex_title, plex_total_seasons, custom_mapping_id))
-                else:
-                    if series.title_english:
-                        if series.title_english.lower() in potential_titles:
-                            found_match = True
-                        else:
-                            series_title_english_clean = re.sub(
-                                '[^A-Za-z0-9]+', '', series.title_english).lower().strip()
-                            if series_title_english_clean in potential_titles:
-                                found_match = True
-                    if series.title_romaji and not found_match:
-                        if series.title_romaji.lower() in potential_titles:
-                            found_match = True
-                        else:
-                            series_title_romaji_clean = re.sub(
-                                '[^A-Za-z0-9]+', '', series.title_romaji).lower().strip()
-                            if series_title_romaji_clean in potential_titles:
-                                found_match = True
-
-                if found_match:
+                        '[ANILIST] Used custom mapping id %s  |  title: %s | season: %s | anilist id: %s' %
+                        (custom_mapping_id, plex_title, plex_total_seasons, custom_mapping_id))
+                    logger.info(
+                        '[ANILIST] Updating series id to list: %s | Plex episodes watched: %s' %
+                        (custom_mapping_id, plex_watched_episode_count))
                     matched_anilist_series.append(series)
-                    break
-
-            # Series not listed so search for it
-            if not all(matched_anilist_series) or not matched_anilist_series:
-                logger.warning(
-                    '[ANILIST] Plex series was not on your AniList list: %s' %
-                    (plex_title))
-
+                    update_entry(
+                        plex_title,
+                        1970,
+                        plex_watched_episode_count,
+                        matched_anilist_series,
+                        True)
+                    matched_anilist_series = []           
+                    found_custom_match = True
+    
+            # Custom mapping check - without checking user list
+            if found_custom_match == False:
                 if custom_mapping_id > 0:
                     logger.info(
-                        '[ANILIST] Used custom mapping id  |  title: %s | season: %s | anilist id: %s' %
-                        (plex_title, plex_total_seasons, custom_mapping_id))
+                        '[ANILIST] Used custom mapping id %s  |  title: %s | season: %s | anilist id: %s' %
+                        (custom_mapping_id, plex_title, plex_total_seasons, custom_mapping_id))
                     logger.warning(
                         '[ANILIST] Adding new series id to list: %s | Plex episodes watched: %s' %
                         (custom_mapping_id, plex_watched_episode_count))
@@ -536,36 +528,69 @@ def match_to_plex(
                         plex_year,
                         plex_watched_episode_count,
                         skip_year_check)
-                else:
-                    logger.warning(
-                        '[ANILIST] Searching best title / year match for: %s' %
-                        (plex_title))
-                    media_id_search = find_id_best_match(
-                        plex_title, plex_year)
+                    found_custom_match = True
 
-                    if not media_id_search:
-                        # try alternative search title (remove year for instance in
-                        # case of Plex title)
-                        logger.warning(
-                            '[ANILIST] Trying alternative title for search: %s' %
-                            (plex_title_clean))
-                        media_id_search = find_id_best_match(
-                            plex_title_clean_without_year, plex_year)
-                    if media_id_search:
-                        logger.warning(
-                            '[ANILIST] Adding new series id to list: %s | Plex episodes watched: %s' %
-                            (media_id_search, plex_watched_episode_count))
-                        add_by_id(
-                            media_id_search,
-                            plex_title,
-                            plex_year,
-                            plex_watched_episode_count,
-                            False)
-                    else:
-                        error_message = '[ANILIST] Failed to find valid match on AniList for: %s' % (plex_title)
-                        logger.error(error_message)
-                        if ANILIST_LOG_FAILED_MATCHES:
-                            log_to_file(error_message)
+            # If custom match found continue to next
+            if found_custom_match == True:
+                continue
+
+            # Regular matching
+            if found_match == False:
+                for series in anilist_series:
+                    if series.title_english:
+                        if series.title_english.lower() in potential_titles:
+                            matched_anilist_series.append(series)
+                        else:
+                            series_title_english_clean = re.sub(
+                                '[^A-Za-z0-9]+', '', series.title_english).lower().strip()
+                            if series_title_english_clean in potential_titles:
+                                matched_anilist_series.append(series)
+                    if series.title_romaji:
+                        if series.title_romaji.lower() in potential_titles:
+                            if series not in matched_anilist_series:
+                                matched_anilist_series.append(series)
+                        else:
+                            series_title_romaji_clean = re.sub(
+                                '[^A-Za-z0-9]+', '', series.title_romaji).lower().strip()
+                            if series_title_romaji_clean in potential_titles:
+                                if series not in matched_anilist_series:
+                                    matched_anilist_series.append(series)
+
+            # Series not listed so search for it
+            if not all(matched_anilist_series) or not matched_anilist_series:
+                logger.warning(
+                    '[ANILIST] Plex series was not on your AniList list: %s' %
+                    (plex_title))
+                logger.warning(
+                    '[ANILIST] Searching best title / year match for: %s' %
+                    (plex_title))
+                media_id_search = find_id_best_match(
+                    plex_title, plex_year)
+
+                if not media_id_search:
+                    # try alternative search title (remove year for instance in
+                    # case of Plex title)
+                    logger.warning(
+                        '[ANILIST] Trying alternative title for search: %s' %
+                        (plex_title_clean))
+                    media_id_search = find_id_best_match(
+                        plex_title_clean_without_year, plex_year)
+                if media_id_search:
+                    logger.warning(
+                        '[ANILIST] Adding new series id to list: %s | Plex episodes watched: %s' %
+                        (media_id_search, plex_watched_episode_count))
+                    add_by_id(
+                        media_id_search,
+                        plex_title,
+                        plex_year,
+                        plex_watched_episode_count,
+                        False)
+                else:
+                    error_message = '[ANILIST] Failed to find valid match on AniList for: %s' % (
+                        plex_title)
+                    logger.error(error_message)
+                    if ANILIST_LOG_FAILED_MATCHES:
+                        log_to_file(error_message)
 
             # Series exists on list so checking if update required
             else:
@@ -594,33 +619,37 @@ def match_series_with_seasons(
         plex_title,
         plex_year,
         plex_total_seasons):
-        # logger.info('[ANILIST] Plex series has more than 1 season, using alternative season search for total of %s seasons' %
-        #  (plex_total_seasons))
+    # logger.info('[ANILIST] Plex series has more than 1 season, using alternative season search for total of %s seasons' %
+    #  (plex_total_seasons))
     counter_season = 1
     counter_season_custom_mapping = 1
     custom_mapping_seasons_anilist_id = 0
     custom_mapping_season_count = 0
-    plex_watched_episode_count_custom_mapping  = 0
+    plex_watched_episode_count_custom_mapping = 0
 
     # Check if we have custom mappings for all seasons (One Piece for example)
     if(plex_total_seasons > 1):
         while counter_season_custom_mapping <= plex_total_seasons:
-            matched_id = retrieve_custom_mapping(plex_title, counter_season_custom_mapping)
+            matched_id = retrieve_custom_mapping(
+                plex_title, counter_season_custom_mapping)
             if(matched_id > 0 and matched_id == custom_mapping_seasons_anilist_id):
-                plex_watched_episode_count_custom_mapping += plexmodule.get_watched_episodes_for_show_season(plex_series_all, plex_title, counter_season_custom_mapping)
+                plex_watched_episode_count_custom_mapping += plexmodule.get_watched_episodes_for_show_season(
+                    plex_series_all, plex_title, counter_season_custom_mapping)
                 custom_mapping_season_count += 1
             elif(matched_id > 0 and custom_mapping_seasons_anilist_id == 0):
-                plex_watched_episode_count_custom_mapping += plexmodule.get_watched_episodes_for_show_season(plex_series_all, plex_title, counter_season_custom_mapping)
+                plex_watched_episode_count_custom_mapping += plexmodule.get_watched_episodes_for_show_season(
+                    plex_series_all, plex_title, counter_season_custom_mapping)
                 custom_mapping_season_count += 1
-            
+
             custom_mapping_seasons_anilist_id = matched_id
             counter_season_custom_mapping += 1
 
-        # If we had custom mappings for multiple seasons with the same ID use cumulative episode count and skip per season processing
+        # If we had custom mappings for multiple seasons with the same ID use
+        # cumulative episode count and skip per season processing
         if(custom_mapping_season_count > 1):
             logger.warning(
-            '[ANILIST] Found same custom mapping id for multiple seasons so not using per season processing but updating as one | title: %s anilist id: %s' %
-            (plex_title, custom_mapping_seasons_anilist_id))
+                '[ANILIST] Found same custom mapping id for multiple seasons so not using per season processing but updating as one | title: %s anilist id: %s' %
+                (plex_title, custom_mapping_seasons_anilist_id))
 
             logger.warning(
                 '[ANILIST] Adding new series id to list: %s | Plex episodes watched for all seasons: %s' %
@@ -630,7 +659,7 @@ def match_series_with_seasons(
             for series in anilist_series:
                 if(custom_mapping_seasons_anilist_id == series.id):
                     matched_anilist_series.append(series)
-            
+
             if matched_anilist_series:
                 update_entry(
                     plex_title,
@@ -673,30 +702,75 @@ def match_series_with_seasons(
             custom_mapping_id = retrieve_custom_mapping(
                 plex_title, counter_season)
 
+            # Custom mapping check - check user list
+            found_custom_match = False
             for series in anilist_series:
-                if(custom_mapping_id > 0):
-                    found_match = True
-                    skip_year_check = True
+                if custom_mapping_id > 0 and series.id == custom_mapping_id:
                     logger.info(
-                        '[ANILIST] Used custom mapping id  |  title: %s | season: %s | anilist id: %s' %
-                        (plex_title, counter_season, custom_mapping_id))
-                else:
-                    if series.title_english:
-                        if series.title_english.lower() in potential_titles:
-                            found_match = True
-                        else:
-                            series_title_english_clean = re.sub(
-                                '[^A-Za-z0-9]+', '', series.title_english).lower().strip()
-                            if series_title_english_clean in potential_titles:
-                                found_match = True
-                    if series.title_romaji and not found_match:
-                        if series.title_romaji.lower() in potential_titles:
-                            found_match = True
-                        else:
-                            series_title_romaji_clean = re.sub(
-                                '[^A-Za-z0-9]+', '', series.title_romaji).lower().strip()
-                            if series_title_romaji_clean in potential_titles:
-                                found_match = True
+                        '[ANILIST] Used custom mapping id %s  |  title: %s | season: %s | anilist id: %s' %
+                        (custom_mapping_id, plex_title, plex_total_seasons, custom_mapping_id))
+                    logger.info(
+                        '[ANILIST] Updating series id to list: %s | Plex episodes watched: %s' %
+                        (custom_mapping_id, plex_watched_episode_count))
+                    matched_anilist_series.append(series)
+                    update_entry(
+                        plex_title,
+                        1970,
+                        plex_watched_episode_count,
+                        matched_anilist_series,
+                        True)
+                    matched_anilist_series = []           
+                    found_custom_match = True
+
+            # Custom mapping check - without checking user list
+            if found_custom_match == False:
+                if custom_mapping_id > 0:
+                    logger.info(
+                        '[ANILIST] Used custom mapping id %s  |  title: %s | season: %s | anilist id: %s' %
+                        (custom_mapping_id, plex_title, plex_total_seasons, custom_mapping_id))
+                    logger.warning(
+                        '[ANILIST] Adding new series id to list: %s | Plex episodes watched: %s' %
+                        (custom_mapping_id, plex_watched_episode_count))
+                    add_by_id(
+                        custom_mapping_id,
+                        plex_title,
+                        plex_year,
+                        plex_watched_episode_count,
+                        True)
+                    found_custom_match = True
+
+            # If custom match found continue to next
+            if found_custom_match == True:
+                continue
+
+            # Regular matching
+            if found_match == False:
+                for series in anilist_series:
+                    if custom_mapping_id > 0 and series.id == custom_mapping_id:
+                        found_match = True
+                        skip_year_check = True
+                        logger.info(
+                            '[ANILIST] Used custom mapping id  |  title: %s | season: %s | anilist id: %s' %
+                            (plex_title, counter_season, custom_mapping_id))
+                    else:
+                        if series.title_english:
+                            if series.title_english.lower() in potential_titles:
+                                matched_anilist_series.append(series)
+                            else:
+                                series_title_english_clean = re.sub(
+                                    '[^A-Za-z0-9]+', '', series.title_english).lower().strip()
+                                if series_title_english_clean in potential_titles:
+                                    matched_anilist_series.append(series)
+                        if series.title_romaji:
+                            if series.title_romaji.lower() in potential_titles:
+                                if series not in matched_anilist_series:
+                                    matched_anilist_series.append(series)
+                            else:
+                                series_title_romaji_clean = re.sub(
+                                    '[^A-Za-z0-9]+', '', series.title_romaji).lower().strip()
+                                if series_title_romaji_clean in potential_titles:
+                                    if series not in matched_anilist_series:
+                                        matched_anilist_series.append(series)
 
                 if found_match:
                     matched_anilist_series.append(series)
@@ -712,49 +786,34 @@ def match_series_with_seasons(
             if not all(matched_anilist_series) or not matched_anilist_series:
                 logger.error(
                     '[ANILIST] Plex series was not on your AniList list')
+                logger.warning(
+                    '[ANILIST] Searching best title / year match for: %s' %
+                    (plex_title))
+                media_id_search = find_id_best_match(
+                    plex_title, plex_year)
 
-                if custom_mapping_id > 0:
-                    logger.info(
-                        '[ANILIST] Used custom mapping id |  title: %s | season: %s | anilist id: %s' %
-                        (plex_title, counter_season, custom_mapping_id))
+                if not media_id_search:
+                    # try alternative search title (remove year for instance in
+                    # case of Plex title)
+                    logger.warning(
+                        '[ANILIST] Trying alternative title for search: %s' %
+                        (plex_title_clean))
+                    media_id_search = find_id_best_match(
+                        plex_title_clean_without_year, plex_year)
+                if media_id_search:
                     logger.warning(
                         '[ANILIST] Adding new series id to list: %s | Plex episodes watched: %s' %
-                        (custom_mapping_id, plex_watched_episode_count))
+                        (media_id_search, plex_watched_episode_count))
                     add_by_id(
-                        custom_mapping_id,
+                        media_id_search,
                         plex_title,
                         plex_year,
                         plex_watched_episode_count,
-                        True)
+                        False)
                 else:
-                    logger.warning(
-                        '[ANILIST] Searching best title / year match for: %s' %
+                    logger.error(
+                        '[ANILIST] Failed to find valid match on AniList for: %s' %
                         (plex_title))
-                    media_id_search = find_id_best_match(
-                        plex_title, plex_year)
-
-                    if not media_id_search:
-                        # try alternative search title (remove year for instance in
-                        # case of Plex title)
-                        logger.warning(
-                            '[ANILIST] Trying alternative title for search: %s' %
-                            (plex_title_clean))
-                        media_id_search = find_id_best_match(
-                            plex_title_clean_without_year, plex_year)
-                    if media_id_search:
-                        logger.warning(
-                            '[ANILIST] Adding new series id to list: %s | Plex episodes watched: %s' %
-                            (media_id_search, plex_watched_episode_count))
-                        add_by_id(
-                            media_id_search,
-                            plex_title,
-                            plex_year,
-                            plex_watched_episode_count,
-                            False)
-                    else:
-                        logger.error(
-                            '[ANILIST] Failed to find valid match on AniList for: %s' %
-                            (plex_title))
         else:
             custom_mapping_id = retrieve_custom_mapping(
                 plex_title, counter_season)
@@ -809,7 +868,8 @@ def match_series_with_seasons(
                         plex_watched_episode_count,
                         skip_year_check)
             else:
-                error_message = '[ANILIST] Failed to find valid season title match on AniList for: %s' % (plex_title_lookup)
+                error_message = '[ANILIST] Failed to find valid season title match on AniList for: %s' % (
+                    plex_title_lookup)
                 logger.error(error_message)
 
                 if ANILIST_LOG_FAILED_MATCHES:
@@ -837,7 +897,7 @@ def update_entry(
             continue
 
         if hasattr(series, 'started_year'):
-            if year != series.started_year:         
+            if year != series.started_year:
                 if ignore_year == False:
                     logger.error(
                         '[ANILIST] Series year did not match (skipping update) => Plex has %s and AniList has %s' %
@@ -845,8 +905,8 @@ def update_entry(
                     continue
                 elif ignore_year == True:
                     logger.info(
-                    '[ANILIST] Series year did not match however skip year check was given so adding anyway => Plex has %s and AniList has %s' %
-                    (year, series.started_year))
+                        '[ANILIST] Series year did not match however skip year check was given so adding anyway => Plex has %s and AniList has %s' %
+                        (year, series.started_year))
 
         anilist_total_episodes = 0
         anilist_episodes_watched = 0
@@ -918,8 +978,10 @@ def update_entry(
                 logger.info(
                     '[ANILIST] Episodes watched was higher on AniList [%s] than on Plex [%s] however Plex episode count override is active so updating' %
                     (anilist_episodes_watched, watched_episode_count))
-                
-                # Since AniList episode count is higher we don't loop thru updating the notification feed and just set the AniList episode count once
+
+                # Since AniList episode count is higher we don't loop thru
+                # updating the notification feed and just set the AniList
+                # episode count once
                 update_series(series.id, watched_episode_count, "CURRENT")
             else:
                 logger.info(
@@ -996,7 +1058,7 @@ def find_id_season_best_match(title, season, year):
                                 '[^A-Za-z0-9]+', '', title_romaji).lower().strip()
                     if hasattr(media_item.startDate, 'year'):
                         if media_item.startDate.year is not None:
-                             started_year = int(media_item.startDate.year)
+                            started_year = int(media_item.startDate.year)
 
                     for potential_title in potential_titles:
                         potential_title = re.sub(
@@ -1127,7 +1189,6 @@ def add_by_id(
             '[ANILIST] failed to get anilist search result for id: %s' %
             (anilist_id))
 
-
 def update_series(mediaId, progress, status):
     if ANILIST_SKIP_UPDATE == 'true':
         logger.warning(
@@ -1161,6 +1222,7 @@ def update_series(mediaId, progress, status):
         url, headers=headers, json={
             'query': query, 'variables': variables})
     # print(response.content)
+
 
 def retrieve_custom_mapping(title, season):
     if custom_mappings:
