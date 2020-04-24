@@ -18,9 +18,11 @@ plex_settings = dict()
 
 
 class plex_watched_series:
-    def __init__(self, title, year, episodes_watched, total_seasons):
+    def __init__(self, title, title_sort, title_original, year, episodes_watched, total_seasons):
         self.series_id = id
         self.title = title
+        self.title_sort = title_sort
+        self.title_original = title_original
         self.year = year
         self.episodes_watched = episodes_watched
         self.total_seasons = total_seasons
@@ -180,9 +182,19 @@ def get_watched_shows(shows):
                 year = 1900
                 if show.year:
                     year = show.year
+   
+                if not hasattr(show, 'titleSort'):
+                    show.titleSort = show.title
+                elif show.titleSort == '':
+                    show.titleSort = show.title
+
+                if not hasattr(show, 'originalTitle'):
+                    show.originalTitle = show.title
+                elif show.originalTitle == '':
+                    show.originalTitle = show.title
 
                 watched_show = plex_watched_series(
-                    show.title.strip(), year, episodes_watched, season_total)
+                    show.title.strip(), show.titleSort.strip(), show.originalTitle.strip(), year, episodes_watched, season_total)
                 watched_series.append(watched_show)
 
                 # logger.info(
@@ -199,8 +211,18 @@ def get_watched_shows(shows):
                     if show.year:
                         year = show.year
 
+                    if not hasattr(show, 'titleSort'):
+                        show.titleSort = show.title
+                    elif show.titleSort == '':
+                        show.titleSort = show.title
+
+                    if not hasattr(show, 'originalTitle'):
+                        show.originalTitle = show.title
+                    elif show.originalTitle == '':
+                        show.originalTitle = show.title
+
                     watched_show = plex_watched_series(
-                        show.title.strip(), show.year, 1, 1)
+                        show.title.strip(), show.titleSort.strip(), show.originalTitle.strip(), show.year, 1, 1)
                     watched_series.append(watched_show)
                     ovas_found += 1
 

@@ -462,9 +462,17 @@ def match_to_plex(
     logger.info('[ANILIST] Matching Plex series to Anilist')
     for plex_series in plex_series_watched:
         plex_title = plex_series.title
+        plex_title_sort = plex_series.title_sort
+        plex_title_original = plex_series.title_original
         plex_title_clean = re.sub(
             '[^A-Za-z0-9]+', '', plex_title.lower().strip())
+        plex_title_sort_clean = re.sub(
+            '[^A-Za-z0-9]+', '', plex_title_sort.lower().strip())
+        plex_title_original_clean = re.sub(
+            '[^A-Za-z0-9]+', '', plex_title_original.lower().strip())
         plex_title_clean_without_year = plex_title_clean
+        plex_title_sort_clean_without_year = plex_title_sort_clean
+        plex_title_original_clean_without_year = plex_title_original_clean
         plex_watched_episode_count = plex_series.episodes_watched
         plex_year = plex_series.year
         plex_total_seasons = plex_series.total_seasons
@@ -475,18 +483,36 @@ def match_to_plex(
                 yearString = '(%s)' % (year)
                 plex_title_clean_without_year = plex_title.replace(
                     yearString, '').strip()
+            if '(' in plex_title_sort and ')' in plex_title_sort:
+                year = re.search(r"(\d{4})", plex_title_sort).group(1)
+                yearString = '(%s)' % (year)
+                plex_title_sort_clean_without_year = plex_title_sort.replace(
+                    yearString, '').strip()
+            if '(' in plex_title_original and ')' in plex_title_original:
+                year = re.search(r"(\d{4})", plex_title_original).group(1)
+                yearString = '(%s)' % (year)
+                plex_title_original_clean_without_year = plex_title_original.replace(
+                    yearString, '').strip()
         except BaseException:
             pass
 
         found_match = False
         skip_year_check = False
         matched_anilist_series = []
-
+        
         potential_titles = [
             plex_title.lower(),
+            plex_title_sort,
+            plex_title_original,
             guessit(plex_title)['title'].lower(),
+            guessit(plex_title_sort)['title'].lower(),
+            guessit(plex_title_original)['title'].lower(),
             plex_title_clean,
-            plex_title_clean_without_year]
+            plex_title_sort_clean,
+            plex_title_original_clean,
+            plex_title_clean_without_year,
+            plex_title_sort_clean_without_year,
+            plex_title_original_clean_without_year]
 
         logger.info('--------------------------------------------------')
         if(plex_total_seasons == 1):
