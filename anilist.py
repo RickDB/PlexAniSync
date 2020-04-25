@@ -518,13 +518,10 @@ def match_to_plex(
             plex_title_original.lower(),
             plex_title_guessit,
             plex_title_sort_guessit,
-            plex_title_original_guessit,
             plex_title_clean,
             plex_title_sort_clean,
-            plex_title_original_clean,
             plex_title_clean_without_year,
-            plex_title_sort_clean_without_year,
-            plex_title_original_clean_without_year]
+            plex_title_sort_clean_without_year]
 
         # Remove duplicates from potential title list
         potential_titles_cleaned = [i for n, i in enumerate(potential_titles) if i not in potential_titles[:n]] 
@@ -605,7 +602,16 @@ def match_to_plex(
                     '[ANILIST] Plex series was not on your AniList list: %s' %
                     (plex_title))
 
-                for potential_title in potential_titles:
+                potential_titles_search = [
+                    plex_title.lower(),
+                    plex_title_sort.lower(),
+                    plex_title_original.lower(),
+                    plex_title_clean,
+                    plex_title_sort_clean,
+                    plex_title_clean_without_year,
+                    plex_title_sort_clean_without_year]
+
+                for potential_title in potential_titles_search:
                     logger.warning(
                         '[ANILIST] Searching best match using title: %s' %
                         (potential_title))
@@ -778,13 +784,10 @@ def match_series_with_seasons(
                 plex_title_original.lower(),
                 plex_title_guessit,
                 plex_title_sort_guessit,
-                plex_title_original_guessit,
                 plex_title_clean,
                 plex_title_sort_clean,
-                plex_title_original_clean,
                 plex_title_clean_without_year,
-                plex_title_sort_clean_without_year,
-                plex_title_original_clean_without_year]
+                plex_title_sort_clean_without_year]
 
             # Remove duplicates from potential title list
             potential_titles_cleaned = [i for n, i in enumerate(potential_titles) if i not in potential_titles[:n]] 
@@ -879,7 +882,16 @@ def match_series_with_seasons(
                 logger.error(
                     '[ANILIST] Plex series was not on your AniList list')
 
-                for potential_title in potential_titles:
+                potential_titles_search = [
+                    plex_title.lower(),
+                    plex_title_sort.lower(),
+                    plex_title_original.lower(),
+                    plex_title_clean,
+                    plex_title_sort_clean,
+                    plex_title_clean_without_year,
+                    plex_title_sort_clean_without_year]
+
+                for potential_title in potential_titles_search:
                     logger.warning(
                         '[ANILIST] Searching best match using title: %s' %
                         (potential_title))
