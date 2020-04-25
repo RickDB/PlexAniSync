@@ -521,7 +521,8 @@ def match_to_plex(
             plex_title_clean,
             plex_title_sort_clean,
             plex_title_clean_without_year,
-            plex_title_sort_clean_without_year]
+            plex_title_sort_clean_without_year,
+            plex_title_original_clean_without_year]
 
         # Remove duplicates from potential title list
         potential_titles_cleaned = [i for n, i in enumerate(potential_titles) if i not in potential_titles[:n]] 
@@ -603,13 +604,17 @@ def match_to_plex(
                     (plex_title))
 
                 potential_titles_search = [
-                    plex_title.lower(),
-                    plex_title_sort.lower(),
-                    plex_title_original.lower(),
-                    plex_title_clean,
-                    plex_title_sort_clean,
-                    plex_title_clean_without_year,
-                    plex_title_sort_clean_without_year]
+                   plex_title.lower(),
+                   plex_title_sort.lower(),
+                   plex_title_original.lower(),
+                   plex_title_clean_without_year,
+                   plex_title_sort_clean_without_year,
+                   plex_title_original_clean_without_year]
+
+                # Remove duplicates from potential title list
+                potential_titles_search_cleaned = [i for n, i in enumerate(potential_titles_search) if i not in potential_titles_search[:n]] 
+                potential_titles_search = []
+                potential_titles_search = potential_titles_search_cleaned.copy()
 
                 for potential_title in potential_titles_search:
                     logger.warning(
@@ -787,7 +792,8 @@ def match_series_with_seasons(
                 plex_title_clean,
                 plex_title_sort_clean,
                 plex_title_clean_without_year,
-                plex_title_sort_clean_without_year]
+                plex_title_sort_clean_without_year,
+                plex_title_original_clean_without_year]
 
             # Remove duplicates from potential title list
             potential_titles_cleaned = [i for n, i in enumerate(potential_titles) if i not in potential_titles[:n]] 
@@ -883,13 +889,17 @@ def match_series_with_seasons(
                     '[ANILIST] Plex series was not on your AniList list')
 
                 potential_titles_search = [
-                    plex_title.lower(),
-                    plex_title_sort.lower(),
-                    plex_title_original.lower(),
-                    plex_title_clean,
-                    plex_title_sort_clean,
-                    plex_title_clean_without_year,
-                    plex_title_sort_clean_without_year]
+                   plex_title.lower(),
+                   plex_title_sort.lower(),
+                   plex_title_original.lower(),
+                   plex_title_clean_without_year,
+                   plex_title_sort_clean_without_year,
+                   plex_title_original_clean_without_year]
+
+                # Remove duplicates from potential title list
+                potential_titles_search_cleaned = [i for n, i in enumerate(potential_titles_search) if i not in potential_titles_search[:n]] 
+                potential_titles_search = []
+                potential_titles_search = potential_titles_search_cleaned.copy()
 
                 for potential_title in potential_titles_search:
                     logger.warning(
