@@ -513,8 +513,8 @@ def match_to_plex(
 
         potential_titles = [
             plex_title.lower(),
-            plex_title_sort,
-            plex_title_original,
+            plex_title_sort.lower(),
+            plex_title_original.lower(),
             plex_title_guessit,
             plex_title_sort_guessit,
             plex_title_original_guessit,
@@ -646,6 +646,8 @@ def match_to_plex(
                 anilist_series,
                 plex_series_all,
                 plex_title,
+                plex_title_sort,
+                plex_title_original,
                 plex_year,
                 plex_total_seasons)
 
@@ -654,6 +656,8 @@ def match_series_with_seasons(
         anilist_series,
         plex_series_all,
         plex_title,
+        plex_title_sort,
+        plex_title_original,
         plex_year,
         plex_total_seasons):
     # logger.info('[ANILIST] Plex series has more than 1 season, using alternative season search for total of %s seasons' %
@@ -730,19 +734,53 @@ def match_series_with_seasons(
             plex_title_clean = re.sub(
                 '[^A-Za-z0-9]+', '', plex_title.lower().strip())
             plex_title_clean_without_year = plex_title_clean
+            plex_title_sort_clean = re.sub('[^A-Za-z0-9]+', '', plex_title_sort.lower().strip())
+            plex_title_original_clean = re.sub('[^A-Za-z0-9]+', '', plex_title_original.lower().strip())
+            plex_title_sort_clean_without_year = plex_title_sort_clean
+            plex_title_original_clean_without_year = plex_title_original_clean
 
+            try:
+                if '(' in plex_title and ')' in plex_title:
+                    year = re.search(r"(\d{4})", plex_title).group(1)
+                    yearString = '(%s)' % (year)
+                    plex_title_clean_without_year = plex_title.replace(
+                        yearString, '').strip()
+                if '(' in plex_title_sort and ')' in plex_title_sort:
+                    year = re.search(r"(\d{4})", plex_title_sort).group(1)
+                    yearString = '(%s)' % (year)
+                    plex_title_sort_clean_without_year = plex_title_sort.replace(
+                        yearString, '').strip()
+                if '(' in plex_title_original and ')' in plex_title_original:
+                    year = re.search(r"(\d{4})", plex_title_original).group(1)
+                    yearString = '(%s)' % (year)
+                    plex_title_original_clean_without_year = plex_title_original.replace(
+                        yearString, '').strip()
+            except BaseException:
+                pass
             plex_title_guessit = plex_title
+            plex_title_sort_guessit = plex_title_sort
+            plex_title_original_guessit = plex_title_original
 
             try:
                 plex_title_guessit = guessit(plex_title.lower())['title'].lower()
+                plex_title_sort_guessit = guessit(plex_title_sort.lower())['title'].lower()
+                plex_title_original_guessit = guessit(plex_title_original.lower())['title'].lower()
             except:
-                logger.error("Error parsing parsing guessit title for: %s" % (plex_title))
+                logger.error("Error parsing parsing guessit title for: %s | %s | %s" % (plex_title, plex_title_sort, plex_title_original))
 
             potential_titles = [
                 plex_title.lower(),
+                plex_title_sort.lower(),
+                plex_title_original.lower(),
                 plex_title_guessit,
+                plex_title_sort_guessit,
+                plex_title_original_guessit,
                 plex_title_clean,
-                plex_title_clean_without_year]
+                plex_title_sort_clean,
+                plex_title_original_clean,
+                plex_title_clean_without_year,
+                plex_title_sort_clean_without_year,
+                plex_title_original_clean_without_year]
 
             custom_mapping_id = retrieve_custom_mapping(
                 plex_title, counter_season)
