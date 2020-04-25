@@ -1,3 +1,4 @@
+# coding=utf-8
 import collections
 import configparser
 import coloredlogs
@@ -13,7 +14,6 @@ from guessit import guessit
 import plexmodule
 
 logger = logging.getLogger('PlexAniSync')
-coloredlogs.install(fmt='%(asctime)s %(message)s', logger=logger)
 
 custom_mappings = []
 ANILIST_ACCESS_TOKEN = ''
@@ -500,13 +500,24 @@ def match_to_plex(
         skip_year_check = False
         matched_anilist_series = []
         
+        plex_title_guessit = plex_title
+        plex_title_sort_guessit = plex_title_sort
+        plex_title_original_guessit = plex_title_original
+
+        try:
+            plex_title_guessit = guessit(plex_title.lower())['title'].lower()
+            plex_title_sort_guessit = guessit(plex_title_sort.lower())['title'].lower()
+            plex_title_original_guessit = guessit(plex_title_original.lower())['title'].lower()
+        except:
+            logger.error("Error parsing parsing guessit title for: %s | %s | %s" % (plex_title, plex_title_sort, plex_title_original))
+
         potential_titles = [
             plex_title.lower(),
             plex_title_sort,
             plex_title_original,
-            guessit(plex_title)['title'].lower(),
-            guessit(plex_title_sort)['title'].lower(),
-            guessit(plex_title_original)['title'].lower(),
+            plex_title_guessit,
+            plex_title_sort_guessit,
+            plex_title_original_guessit,
             plex_title_clean,
             plex_title_sort_clean,
             plex_title_original_clean,
@@ -719,9 +730,17 @@ def match_series_with_seasons(
             plex_title_clean = re.sub(
                 '[^A-Za-z0-9]+', '', plex_title.lower().strip())
             plex_title_clean_without_year = plex_title_clean
+
+            plex_title_guessit = plex_title
+
+            try:
+                plex_title_guessit = guessit(plex_title.lower())['title'].lower()
+            except:
+                logger.error("Error parsing parsing guessit title for: %s" % (plex_title))
+
             potential_titles = [
                 plex_title.lower(),
-                guessit(plex_title)['title'].lower(),
+                plex_title_guessit,
                 plex_title_clean,
                 plex_title_clean_without_year]
 

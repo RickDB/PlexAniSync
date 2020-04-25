@@ -1,3 +1,4 @@
+# coding=utf-8
 import collections
 import configparser
 import coloredlogs
@@ -12,10 +13,7 @@ from plexapi.myplex import MyPlexAccount
 from plexapi.server import PlexServer
 
 logger = logging.getLogger('PlexAniSync')
-coloredlogs.install(fmt='%(asctime)s %(message)s', logger=logger)
-
 plex_settings = dict()
-
 
 class plex_watched_series:
     def __init__(self, title, title_sort, title_original, year, episodes_watched, total_seasons):

@@ -1,7 +1,9 @@
+# coding=utf-8
 import collections
 import configparser
 import coloredlogs
 import json
+import locale
 import logging
 import logging.handlers
 import os
@@ -15,24 +17,22 @@ from plexapi.server import PlexServer
 import anilist
 import plexmodule
 
-__version__ = "1.2.1"
+__version__ = "1.2.2"
 
 # Logger settings
 log_filename = 'PlexAniSync.log'
 logger = logging.getLogger('PlexAniSync')
-logger.setLevel(logging.INFO)
-coloredlogs.install(fmt='%(asctime)s %(message)s', logger=logger)
 
-#DEBUG LOG
-logging.basicConfig(level=logging.DEBUG,
-                    format='%(asctime)s %(levelname)s %(message)s',
-                    filename='PlexAniSync-DEBUG.log',
-                    filemode='w')
-
-# Add the rotating log message handler to the logger
-handler = logging.handlers.RotatingFileHandler(log_filename, maxBytes=10000000, backupCount=5)
+# Add the rotating log message handler to the standard log
+handler = logging.handlers.RotatingFileHandler(log_filename, maxBytes=10000000, backupCount=5,encoding='utf-8')
 handler.setLevel(logging.INFO)
 logger.addHandler(handler)
+
+# Debug log
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(levelname)s %(message)s', handlers=[logging.FileHandler('PlexAniSync-DEBUG.log', 'w', 'utf-8')])
+
+# Install colored logs
+coloredlogs.install(fmt='%(asctime)s %(message)s', logger=logger)
 
 
 # Enable this if you want to also log all messages coming from imported libraries
