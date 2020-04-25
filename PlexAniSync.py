@@ -110,6 +110,10 @@ def start():
         logger.warning(
             'AniList skip list update enabled in settings, will match but NOT update your list')
 
+    if ANILIST_PLEX_EPISODE_COUNT_PRIORITY == 'true':
+        logger.warning(
+            'Plex episode watched count will take priority over AniList, this will always update AniList watched count over Plex data')
+
     # Cleanup any old logs
     exists = os.path.isfile("failed_matches.txt")
     if exists:
