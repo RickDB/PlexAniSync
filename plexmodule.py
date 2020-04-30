@@ -186,10 +186,13 @@ def get_watched_shows(shows):
                 elif show.titleSort == '':
                     show.titleSort = show.title
 
-                if not hasattr(show, 'originalTitle'):
-                    show.originalTitle = show.title
-                elif show.originalTitle == '':
-                    show.originalTitle = show.title
+                # Disable original title for now, results in false positives for yet unknown reason
+
+                #if not hasattr(show, 'originalTitle'):
+                #    show.originalTitle = show.title
+                #elif show.originalTitle == '':
+                #    show.originalTitle = show.title
+                show.originalTitle = show.title
 
                 watched_show = plex_watched_series(
                     show.title.strip(), show.titleSort.strip(), show.originalTitle.strip(), year, episodes_watched, season_total)
@@ -214,10 +217,13 @@ def get_watched_shows(shows):
                     elif show.titleSort == '':
                         show.titleSort = show.title
 
-                    if not hasattr(show, 'originalTitle'):
-                        show.originalTitle = show.title
-                    elif show.originalTitle == '':
-                        show.originalTitle = show.title
+                    # Disable original title for now, results in false positives for yet unknown reason
+
+                    #if not hasattr(show, 'originalTitle'):
+                    #    show.originalTitle = show.title
+                    #elif show.originalTitle == '':
+                    #    show.originalTitle = show.title
+                    show.originalTitle = show.title
 
                     watched_show = plex_watched_series(
                         show.title.strip(), show.titleSort.strip(), show.originalTitle.strip(), show.year, 1, 1)
