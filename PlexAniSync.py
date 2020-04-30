@@ -17,7 +17,7 @@ from plexapi.server import PlexServer
 import anilist
 import plexmodule
 
-__version__ = "1.2.3"
+__version__ = "1.2.4"
 
 # Logger settings
 log_filename = 'PlexAniSync.log'
