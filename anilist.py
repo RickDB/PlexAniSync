@@ -527,7 +527,7 @@ def match_to_plex(
         # Remove duplicates from potential title list
         potential_titles_cleaned = [i for n, i in enumerate(potential_titles) if i not in potential_titles[:n]] 
         potential_titles = []
-        potential_titles = potential_titles_cleaned.copy()
+        potential_titles = list(potential_titles_cleaned)
 
         logger.info('--------------------------------------------------')
         if(plex_total_seasons == 1):
@@ -614,7 +614,7 @@ def match_to_plex(
                 # Remove duplicates from potential title list
                 potential_titles_search_cleaned = [i for n, i in enumerate(potential_titles_search) if i not in potential_titles_search[:n]] 
                 potential_titles_search = []
-                potential_titles_search = potential_titles_search_cleaned.copy()
+                potential_titles_search = list(potential_titles_search_cleaned)
 
                 for potential_title in potential_titles_search:
                     logger.warning(
@@ -798,7 +798,7 @@ def match_series_with_seasons(
             # Remove duplicates from potential title list
             potential_titles_cleaned = [i for n, i in enumerate(potential_titles) if i not in potential_titles[:n]] 
             potential_titles = []
-            potential_titles = potential_titles_cleaned.copy()
+            potential_titles = list(potential_titles_cleaned)
 
             custom_mapping_id = retrieve_custom_mapping(
                 plex_title, counter_season)
@@ -899,7 +899,7 @@ def match_series_with_seasons(
                 # Remove duplicates from potential title list
                 potential_titles_search_cleaned = [i for n, i in enumerate(potential_titles_search) if i not in potential_titles_search[:n]] 
                 potential_titles_search = []
-                potential_titles_search = potential_titles_search_cleaned.copy()
+                potential_titles_search = list(potential_titles_search_cleaned)
 
                 for potential_title in potential_titles_search:
                     logger.warning(
