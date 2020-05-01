@@ -842,6 +842,7 @@ def match_series_with_seasons(
 
             # If custom match found continue to next
             if found_custom_match == True:
+                counter_season += 1
                 continue
 
             # Regular matching
