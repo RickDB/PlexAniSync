@@ -1172,6 +1172,8 @@ def find_id_season_best_match(title, season, year):
                     if hasattr(media_item.startDate, 'year'):
                         if media_item.startDate.year is not None:
                             started_year = int(media_item.startDate.year)
+                    else:
+                        logger.warning('[ANILIST] Anilist series did not have year attribute so skipping this result and moving to next: %s | %s' % (title_english, title_romaji ))   
 
                     for potential_title in potential_titles:
                         potential_title = re.sub(
