@@ -29,7 +29,7 @@ def authenticate():
         home_user_sync = plex_settings["home_user_sync"].lower()
         home_username = plex_settings["home_username"]
         home_server_base_url = plex_settings["home_server_base_url"]
-    except Exception as e:
+    except Exception:
         home_user_sync = "false"
         home_username = ""
         home_server_base_url = ""
