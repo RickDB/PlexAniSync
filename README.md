@@ -220,7 +220,7 @@ https://forums.plex.tv/t/plexanisync-sync-your-plex-library-to-anilist/365826
 Currently planned for future releases:
 
 - [ ] XREF title matching based on HAMA which uses custom lists and AniDB
-- [ ] Add setting to skip updating with dropped state on user list
+- [ ] Add setting to skip updating shows with dropped state on user list
 - [ ] Ignore anime list support (based on content rating and / or title)
 - [ ] Improve error handling
 
