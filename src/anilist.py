@@ -300,9 +300,9 @@ def search_item_to_obj(item):
 
 
 def media_item_to_object(media_item):
-    id = media_item.media.id
-    sType = ""
-    sFormat = ""
+    ani_id = media_item.media.id
+    show_type = ""
+    show_format = ""
     source = ""
     status = ""
     media_status = ""
@@ -321,9 +321,9 @@ def media_item_to_object(media_item):
     if hasattr(media_item.media, "status"):
         media_status = media_item.media.status
     if hasattr(media_item.media, "type"):
-        sType = media_item.media.type
+        show_type = media_item.media.type
     if hasattr(media_item.media, "format"):
-        sFormat = media_item.media.format
+        show_format = media_item.media.format
     if hasattr(media_item.media, "source"):
         source = media_item.media.source
     if hasattr(media_item.media, "season"):
@@ -340,9 +340,9 @@ def media_item_to_object(media_item):
         ended_year = media_item.media.endDate.year
 
     series = AnilistSeries(
-        id,
-        sType,
-        sFormat,
+        ani_id,
+        show_type,
+        show_format,
         source,
         status,
         media_status,
@@ -355,6 +355,33 @@ def media_item_to_object(media_item):
         ended_year,
     )
     return series
+
+
+def check_title(title, sort_title, title_original):
+    plex_title_sort_clean_without_year = sort_title
+    plex_title_original_clean_without_year = title_original
+    plex_title_clean_without_year = title
+
+    if "(" in title and ")" in title:
+        year = re.search(r"(\d{4})", title).group(1)
+        year_string = "(%s)" % year
+        plex_title_clean_without_year = title.replace(
+            year_string, ""
+        ).strip()
+    if "(" in sort_title and ")" in sort_title:
+        year = re.search(r"(\d{4})", sort_title).group(1)
+        year_string = "(%s)" % year
+        plex_title_sort_clean_without_year = sort_title.replace(
+            year_string, ""
+        ).strip()
+    if "(" in title_original and ")" in title_original:
+        year = re.search(r"(\d{4})", title_original).group(1)
+        year_string = "(%s)" % year
+        plex_title_original_clean_without_year = title_original.replace(
+            year_string, ""
+        ).strip()
+
+    return plex_title_sort_clean_without_year, plex_title_original_clean_without_year, plex_title_clean_without_year
 
 
 def match_to_plex(anilist_series, plex_series_all, plex_series_watched):
@@ -378,24 +405,7 @@ def match_to_plex(anilist_series, plex_series_all, plex_series_watched):
         plex_total_seasons = plex_series.total_seasons
 
         try:
-            if "(" in plex_title and ")" in plex_title:
-                year = re.search(r"(\d{4})", plex_title).group(1)
-                yearString = "(%s)" % (year)
-                plex_title_clean_without_year = plex_title.replace(
-                    yearString, ""
-                ).strip()
-            if "(" in plex_title_sort and ")" in plex_title_sort:
-                year = re.search(r"(\d{4})", plex_title_sort).group(1)
-                yearString = "(%s)" % (year)
-                plex_title_sort_clean_without_year = plex_title_sort.replace(
-                    yearString, ""
-                ).strip()
-            if "(" in plex_title_original and ")" in plex_title_original:
-                year = re.search(r"(\d{4})", plex_title_original).group(1)
-                yearString = "(%s)" % (year)
-                plex_title_original_clean_without_year = plex_title_original.replace(
-                    yearString, ""
-                ).strip()
+            check_title(plex_title, plex_title_sort, plex_title_original)
         except BaseException:
             pass
 
