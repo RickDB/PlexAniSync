@@ -135,9 +135,9 @@ def get_anime_shows_filter(show_name):
         try:
             if "(" in show.title and ")" in show.title:
                 year = re.search(r"(\d{4})", show.title).group(1)
-                yearString = "(%s)" % (year)
+                year_string = "(%s)" % year
                 show_title_clean_without_year = show.title.replace(
-                    yearString, ""
+                    year_string, ""
                 ).strip()
                 show_title_clean_without_year = re.sub(
                     "[^A-Za-z0-9]+", "", show_title_clean_without_year
