@@ -229,8 +229,10 @@ def get_watched_shows(shows):
 
             if hasattr(show, "isWatched"):
                 if show.isWatched:
+                    # The local variable not being used should this be kept here?
                     year = 1900
                     if show.year:
+                        # same with this local variable is not being used might want to remove it?'
                         year = show.year
 
                     if not hasattr(show, "titleSort"):
@@ -294,26 +296,29 @@ def get_watched_episodes_for_show_season(shows, watched_show_title, watched_seas
                         except Exception as e:
                             logger.error(
                                 "Error during lookup_result processing, traceback: %s"
-                                % (e)
+                                % e
                             )
                             pass
-                # Most likely single item (Movie), falback untill we added proper fix based on additional Plex metadata
+                # Most likely single item (Movie), fallback until we added proper fix based on additional Plex metadata
                 try:
                     logger.info(
-                        "[PLEX] Show appears to be movie (no episodes attribute) and trying fallback approach to determine watched state"
+                        "[PLEX] Show appears to be movie (no episodes attribute) and trying fallback approach to "
+                        "determine watched state "
                     )
                     if hasattr(show, "isWatched"):
                         if show.isWatched:
                             episodes_watched = 1
-                except Exception:
+                except Exception as e:
                     logger.exception(
                         "[PLEX] Failed to get watched state for unknown object (possibly movie)"
                     )
-            except Exception:
+                    logger.error(e)
+            except Exception as e:
                 logger.exception(
                     "[PLEX] Error occured during retrieving of watched episodes for show %s [season = %s]"
                     % (watched_show_title, watched_season)
                 )
+                logger.error(e)
 
     # logger.info('[PLEX] %s episodes watched for season: %s' % (episodes_watched, watched_season))
     return episodes_watched
