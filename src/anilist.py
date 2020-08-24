@@ -1339,7 +1339,8 @@ def find_id_best_match(title, year):
                         if hasattr(media_item.startDate, "year"):
                             started_year = str(media_item.startDate.year)
 
-                        # logger.info('Comparing AniList: %s | %s[%s] <===> %s[%s]' % (title_english, title_romaji, started_year, match_title, match_year))
+                        # logger.info('Comparing AniList: %s | %s[%s] <===> %s[%s]' % (title_english, title_romaji,
+                        # started_year, match_title, match_year))
                         if (
                                 match_title == title_english_for_matching
                                 and match_year == started_year
@@ -1422,11 +1423,11 @@ def add_by_id(
             )
     else:
         logger.error(
-            "[ANILIST] failed to get anilist search result for id: %s" % (anilist_id)
+            "[ANILIST] failed to get anilist search result for id: %s" % anilist_id
         )
 
 
-def update_series(mediaId, progress, status):
+def update_series(media_id, progress, status):
     if ANILIST_SKIP_UPDATE == "true":
         logger.warning("Skip update is enabled in settings so not updating this item")
         return
@@ -1440,7 +1441,7 @@ def update_series(mediaId, progress, status):
         }
         """
 
-    variables = {"mediaId": mediaId, "status": status, "progress": int(progress)}
+    variables = {"mediaId": media_id, "status": status, "progress": int(progress)}
 
     requests.post(
         url, headers=get_headers(), json={"query": query, "variables": variables}
