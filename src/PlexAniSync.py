@@ -106,7 +106,8 @@ def start():
 
     if ANILIST_PLEX_EPISODE_COUNT_PRIORITY == "true":
         logger.warning(
-            "Plex episode watched count will take priority over AniList, this will always update AniList watched count over Plex data"
+            "Plex episode watched count will take priority over AniList, this will always update AniList watched "
+            "count over Plex data "
         )
 
     # Cleanup any old logs
