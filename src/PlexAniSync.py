@@ -38,7 +38,7 @@ coloredlogs.install(fmt="%(asctime)s %(message)s", logger=logger)
 
 def read_settings(settings_file_param):
     if not os.path.isfile(settings_file_param):
-        logger.critical("[CONFIG] Settings file file not found: %s" % (settings_file_param))
+        logger.critical("[CONFIG] Settings file file not found: %s" % settings_file_param)
         sys.exit()
     settings_config_parser = configparser.ConfigParser()
     settings_config_parser.read(settings_file_param)
@@ -47,7 +47,7 @@ def read_settings(settings_file_param):
 
 if len(sys.argv) > 1:
     settings_file = sys.argv[1]
-    logger.warning("Found settings file parameter and using: %s" % (settings_file))
+    logger.warning("Found settings file parameter and using: %s" % settings_file)
 else:
     settings_file = "settings.ini"
 
@@ -69,12 +69,12 @@ mapping_file = "custom_mappings.ini"
 custom_mappings = []
 
 
-def read_custom_mappings(mapping_file):
-    if not os.path.isfile(mapping_file):
-        logger.info("[MAPPING] Custom map file not found: %s" % (mapping_file))
+def read_custom_mappings(mapping_file_param):
+    if not os.path.isfile(mapping_file_param):
+        logger.info("[MAPPING] Custom map file not found: %s" % mapping_file_param)
     else:
-        logger.info("[MAPPING] Custom map file found: %s" % (mapping_file))
-        file = open(mapping_file, "r")
+        logger.info("[MAPPING] Custom map file found: %s" % mapping_file_param)
+        file = open(mapping_file_param, "r")
         for line in file:
             try:
                 mappingSplit = line.split("^")
