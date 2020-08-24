@@ -31,9 +31,6 @@ plex_settings = settings["PLEX"]
 ANILIST_SKIP_UPDATE = anilist_settings["skip_list_update"].lower()
 ANILIST_ACCESS_TOKEN = anilist_settings["access_token"].strip()
 
-mapping_file = "custom_mappings.ini"
-
-custom_mappings = PlexAniSync.read_custom_mappings(mapping_file=mapping_file)
 
 
 # Startup section #
@@ -63,7 +60,7 @@ def start():
 
     # Anilist
     anilist_username = anilist_settings["username"]
-    anilist.custom_mappings = custom_mappings
+    anilist.custom_mappings = PlexAniSync.mapping_file
     anilist.ANILIST_ACCESS_TOKEN = ANILIST_ACCESS_TOKEN
     anilist.ANILIST_SKIP_UPDATE = ANILIST_SKIP_UPDATE
     anilist_series = anilist.process_user_list(anilist_username)
@@ -96,5 +93,5 @@ def start():
 
 
 if __name__ == "__main__":
-    PlexAniSync.read_custom_mappings(custom_mappings)
+    PlexAniSync.read_custom_mappings(PlexAniSync.mapping_file)
     start()
