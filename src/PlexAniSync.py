@@ -115,8 +115,8 @@ def start():
     if exists:
         try:
             os.remove("failed_matches.txt")
-        except BaseException:
-            pass
+        except BaseException as e:
+            logger.error(e)
 
     # Anilist
     anilist_username = anilist_settings["username"]
