@@ -744,6 +744,7 @@ def match_series_with_seasons(
             except Exception as exception:
                 logger.debug("Uncaught exception: %r", exception)
                 pass
+            # Duplicate code line 747 - 789 and 417 to 454 identitcal code.
             plex_title_guessit = plex_title
             plex_title_sort_guessit = plex_title_sort
             plex_title_original_guessit = plex_title_original
