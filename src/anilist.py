@@ -795,7 +795,7 @@ def match_series_with_seasons(
             # Custom mapping check - check user list
             found_custom_match = False
             for series in anilist_series:
-                if custom_mapping_id > 0 and series.id == custom_mapping_id:
+                if 0 < custom_mapping_id == series.id:
                     logger.info(
                         "[ANILIST] Used custom mapping id %s  |  title: %s | season: %s | anilist id: %s"
                         % (
