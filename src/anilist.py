@@ -455,6 +455,8 @@ def match_to_plex(anilist_series, plex_series_all, plex_series_watched):
 
         logger.info("--------------------------------------------------")
         if plex_total_seasons == 1:
+
+            # Duplicate code from 458 - 486 and 789 - 817
             custom_mapping_id = retrieve_custom_mapping(plex_title, plex_total_seasons)
 
             # Custom mapping check - check user list
