@@ -77,7 +77,7 @@ def authenticate():
                 except Exception as e:
                     logger.error(
                         "Error occured during Plex Home user lookup or server authentication: %s"
-                        % (e)
+                        % e
                     )
             else:
                 account = MyPlexAccount(plex_user, plex_password)
@@ -89,7 +89,7 @@ def authenticate():
             sys.exit()
         return plex
     except Exception as e:
-        logger.error("Unable to authenticate to Plex Media Server, traceback: %s" % (e))
+        logger.error("Unable to authenticate to Plex Media Server, traceback: %s" % e)
         return None
 
 
@@ -112,13 +112,14 @@ def get_anime_shows():
                 "[PLEX] Found %s anime series in section: %s"
                 % (len(shows_search), section)
             )
-        except BaseException:
+        except BaseException as e:
             logger.error(
                 "Could not find library [%s] on your Plex Server, check the library "
                 "name in AniList settings file and also verify that your library "
                 "name in Plex has no trailing spaces in it"
-                % (section)
+                % section
             )
+            logger.critical(e)
 
     return shows
 
