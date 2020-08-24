@@ -244,12 +244,12 @@ def fetch_user_list(username):
 
 
 def process_user_list(username):
-    logger.info("[ANILIST] Retrieving AniList list for user: %s" % (username))
+    logger.info("[ANILIST] Retrieving AniList list for user: %s" % username)
     anilist_series = []
     list_items = fetch_user_list(username)
     try:
         if not list_items:
-            logger.critical("[ANILIST] Failed to return list for user: %s" % (username))
+            logger.critical("[ANILIST] Failed to return list for user: %s" % username)
             return None
         else:
             for item in list_items:
