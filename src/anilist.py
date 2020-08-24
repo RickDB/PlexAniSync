@@ -1143,7 +1143,8 @@ def update_entry(
         ):
             if watched_episode_count > 0:
                 logger.info(
-                    "[ANILIST] Episodes watched was higher on AniList [%s] than on Plex [%s] however Plex episode count override is active so updating"
+                    "[ANILIST] Episodes watched was higher on AniList [%s] than on Plex [%s] however Plex episode "
+                    "count override is active so updating "
                     % (anilist_episodes_watched, watched_episode_count)
                 )
 
