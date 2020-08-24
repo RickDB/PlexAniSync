@@ -88,15 +88,16 @@ def read_custom_mappings(mapping_file_param):
                 )
                 mapping = anilist.anilist_custom_mapping(series_title, season, anime_id)
                 custom_mappings.append(mapping)
-            except BaseException:
-                logger.error("[MAPPING] Invalid entry found for line: %s" % (line))
+            except BaseException as e:
+                logger.error("[MAPPING] Invalid entry found for line: %s" % line)
+                logger.critical(e)
 
 
-## Startup section ##
+# Startup section #
 
 
 def start():
-    logger.info("PlexAniSync - version: %s" % (__version__))
+    logger.info("PlexAniSync - version: %s" % __version__)
 
     if ANILIST_SKIP_UPDATE == "true":
         logger.warning(
