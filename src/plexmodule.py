@@ -261,8 +261,9 @@ def get_watched_shows(shows):
 
     if ovas_found > 0:
         logger.info(
-            "[PLEX] Watched series also contained %s releases with no episode attribute (probably movie / OVA), support for this is still experimental"
-            % (ovas_found)
+            "[PLEX] Watched series also contained %s releases with no episode attribute (probably movie / OVA), "
+            "support for this is still experimental "
+            % ovas_found
         )
 
     if watched_series is not None and len(watched_series) == 0:
