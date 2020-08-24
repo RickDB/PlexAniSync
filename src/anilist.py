@@ -82,7 +82,7 @@ class AnilistSeries:
         self.ended_year = ended_year
 
 
-class anilist_custom_mapping:
+class AnilistCustomMapping:
     def __init__(self, title, season, anime_id):
         self.title = title
         self.season = season

@@ -86,7 +86,7 @@ def read_custom_mappings(mapping_file_param):
                     "[MAPPING] Adding custom mapping | title: %s | season: %s | anilist id: %s"
                     % (series_title, season, anime_id)
                 )
-                mapping = anilist.anilist_custom_mapping(series_title, season, anime_id)
+                mapping = anilist.AnilistCustomMapping(series_title, season, anime_id)
                 custom_mappings.append(mapping)
             except BaseException as e:
                 logger.error("[MAPPING] Invalid entry found for line: %s" % line)
