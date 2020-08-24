@@ -549,7 +549,7 @@ def match_to_plex(anilist_series, plex_series_all, plex_series_watched):
             if not all(matched_anilist_series) or not matched_anilist_series:
                 logger.warning(
                     "[ANILIST] Plex series was not on your AniList list: %s"
-                    % (plex_title)
+                    % plex_title
                 )
 
                 potential_titles_search = [
