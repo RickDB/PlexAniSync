@@ -293,7 +293,7 @@ def process_user_list(username):
 def search_item_to_obj(item):
     try:
         if item:
-            return single_mediaitem_to_object(item.data)
+            return media_item_to_object(item.data)
     except BaseException as e:
         logger.error(e)
     return None
@@ -338,64 +338,6 @@ def media_item_to_object(media_item):
         started_year = media_item.media.startDate.year
     if hasattr(media_item.media.endDate, "year"):
         ended_year = media_item.media.endDate.year
-
-    series = AnilistSeries(
-        id,
-        sType,
-        sFormat,
-        source,
-        status,
-        media_status,
-        progress,
-        season,
-        episodes,
-        title_english,
-        title_romaji,
-        started_year,
-        ended_year,
-    )
-    return series
-
-
-def single_mediaitem_to_object(media_item):
-    id = media_item.Media.id
-    sType = ""
-    sFormat = ""
-    source = ""
-    status = ""
-    media_status = ""
-    progress = ""
-    season = ""
-    episodes = ""
-    title_english = ""
-    title_romaji = ""
-    started_year = ""
-    ended_year = ""
-
-    if hasattr(media_item, "status"):
-        status = media_item.status
-    if hasattr(media_item, "progress"):
-        progress = media_item.progress
-    if hasattr(media_item.Media, "status"):
-        media_status = media_item.Media.status
-    if hasattr(media_item.Media, "type"):
-        sType = media_item.Media.type
-    if hasattr(media_item.Media, "format"):
-        sFormat = media_item.Media.format
-    if hasattr(media_item.Media, "source"):
-        source = media_item.Media.source
-    if hasattr(media_item.Media, "season"):
-        season = media_item.Media.season
-    if hasattr(media_item.Media, "episodes"):
-        episodes = media_item.Media.episodes
-    if hasattr(media_item.Media.title, "english"):
-        title_english = media_item.Media.title.english
-    if hasattr(media_item.Media.title, "romaji"):
-        title_romaji = media_item.Media.title.romaji
-    if hasattr(media_item.Media.startDate, "year"):
-        started_year = media_item.Media.startDate.year
-    if hasattr(media_item.Media.endDate, "year"):
-        ended_year = media_item.Media.endDate.year
 
     series = AnilistSeries(
         id,
