@@ -46,7 +46,7 @@ def int_to_roman_numeral(input_numeral):
 
 def log_to_file(message):
     f = open("failed_matches.txt", "a+")
-    f.write("%s\n" % (message))
+    f.write("%s\n" % message)
     f.close()
 
 
