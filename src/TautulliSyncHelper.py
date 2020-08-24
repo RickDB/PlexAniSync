@@ -13,6 +13,7 @@ from src import PlexAniSync
 # Logger settings
 logger = logging.getLogger(__name__)
 coloredlogs.install(fmt="%(asctime)s %(message)s", logger=logger)
+
 # Enable this if you want to also log all messages coming from imported
 # libraries
 # coloredlogs.install(level='DEBUG')
@@ -31,33 +32,11 @@ ANILIST_SKIP_UPDATE = anilist_settings["skip_list_update"].lower()
 ANILIST_ACCESS_TOKEN = anilist_settings["access_token"].strip()
 
 mapping_file = "custom_mappings.ini"
-custom_mappings = []
+
+PlexAniSync.read_custom_mappings(mapping_file=mapping_file)
 
 
-def read_custom_mappings(mapping_file):
-    if not os.path.isfile(mapping_file):
-        logger.info("[MAPPING] Custom map file not found: %s" % (mapping_file))
-    else:
-        logger.info("[MAPPING] Custom map file found: %s" % (mapping_file))
-        file = open(mapping_file, "r")
-        for line in file:
-            try:
-                mappingSplit = line.split("^")
-                series_title = mappingSplit[0]
-                season = mappingSplit[1]
-                anime_id = int(mappingSplit[2])
-
-                logger.info(
-                    "[MAPPING] Adding custom mapping | title: %s | season: %s | anilist id: %s"
-                    % (series_title, season, anime_id)
-                )
-                mapping = anilist.anilist_custom_mapping(series_title, season, anime_id)
-                custom_mappings.append(mapping)
-            except BaseException:
-                logger.error("[MAPPING] Invalid entry found for line: %s" % (line))
-
-
-## Startup section ##
+# Startup section #
 
 
 def start():
