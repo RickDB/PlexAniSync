@@ -1062,11 +1062,12 @@ def update_entry(
             if series.episodes is not None:
                 try:
                     anilist_total_episodes = int(series.episodes)
-                except BaseException:
+                except BaseException as e:
                     logger.error(
                         "Series has unknown total total episodes on AniList "
                         "(not an Integer), will most likely not match up properly"
                     )
+                    logger.critical(e)
                     anilist_total_episodes = 0
             else:
                 logger.error(
@@ -1078,12 +1079,12 @@ def update_entry(
         if hasattr(series, "progress"):
             try:
                 anilist_episodes_watched = int(series.progress)
-            except BaseException:
+            except BaseException as e:
+                logger.error(e)
                 pass
 
         if (
-                watched_episode_count >= anilist_total_episodes
-                and anilist_total_episodes > 0
+                watched_episode_count >= anilist_total_episodes > 0
                 and anilist_media_status == "FINISHED"
         ):
             # series completed watched
