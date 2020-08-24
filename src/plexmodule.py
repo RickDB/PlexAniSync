@@ -29,7 +29,7 @@ def authenticate():
         home_user_sync = plex_settings["home_user_sync"].lower()
         home_username = plex_settings["home_username"]
         home_server_base_url = plex_settings["home_server_base_url"]
-    except Exception:
+    except KeyError:
         home_user_sync = "false"
         home_username = ""
         home_server_base_url = ""
@@ -56,7 +56,7 @@ def authenticate():
                 try:
                     logger.warning(
                         "Authenticating as admin for MyPlex home user: %s"
-                        % (home_username)
+                        % home_username
                     )
                     plex_account = MyPlexAccount(plex_user, plex_password)
                     plex_server_home = PlexServer(
