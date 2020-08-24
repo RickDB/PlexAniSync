@@ -6,29 +6,16 @@ from time import sleep
 
 import coloredlogs
 
-import anilist
-import plexmodule
+from src import anilist
+from src import plexmodule
+from src import PlexAniSync
 
 # Logger settings
-logger = logging.getLogger("PlexAniSync")
+logger = logging.getLogger(__name__)
 coloredlogs.install(fmt="%(asctime)s %(message)s", logger=logger)
-
-
 # Enable this if you want to also log all messages coming from imported
 # libraries
 # coloredlogs.install(level='DEBUG')
-
-## Settings section ##
-
-
-def read_settings(settings_file):
-    if not os.path.isfile(settings_file):
-        logger.critical("[CONFIG] Settings file file not found: %s" % (settings_file))
-        sys.exit()
-    settings = configparser.ConfigParser()
-    settings.read(settings_file)
-    return settings
-
 
 if len(sys.argv) > 2:
     settings_file = sys.argv[1]
@@ -36,7 +23,7 @@ if len(sys.argv) > 2:
 else:
     settings_file = "settings.ini"
 
-settings = read_settings(settings_file)
+settings = PlexAniSync.read_settings(settings_file)
 anilist_settings = settings["ANILIST"]
 plex_settings = settings["PLEX"]
 
