@@ -462,7 +462,7 @@ def match_to_plex(anilist_series, plex_series_all, plex_series_watched):
             # Custom mapping check - check user list
             found_custom_match = False
             for series in anilist_series:
-                if custom_mapping_id > 0 and series.id == custom_mapping_id:
+                if 0 < custom_mapping_id == series.id:
                     logger.info(
                         "[ANILIST] Used custom mapping id %s  |  title: %s | season: %s | anilist id: %s"
                         % (
@@ -519,6 +519,7 @@ def match_to_plex(anilist_series, plex_series_all, plex_series_watched):
             # Regular matching
             if found_match is False:
                 for series in anilist_series:
+                    # duplicate code 522-545 and 863 - 886 same identitical code.
                     if series.title_english:
                         if series.title_english.lower() in potential_titles:
                             matched_anilist_series.append(series)
