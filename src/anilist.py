@@ -1180,7 +1180,7 @@ def find_id_season_best_match(title, season, year):
     match_title_season_suffix2 = "%s season %s" % (match_title, season)
     match_title_season_suffix3 = "%s %s" % (match_title, season)
 
-    # oridinal season (1st 2nd etc..)
+    # original season (1st 2nd etc..)
     try:
         pEngine = inflect.engine()
         match_title_season_suffix4 = "%s %s season" % (
