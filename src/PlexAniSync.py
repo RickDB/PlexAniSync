@@ -26,8 +26,6 @@ logging.basicConfig(level=logging.DEBUG, format="%(asctime)s %(levelname)s %(mes
                     filename="PlexAniSync-DEBUG.log",
                     filemode='w')
 
-
-
 # Install colored logs
 coloredlogs.install(fmt="%(asctime)s %(message)s", logger=logger)
 
@@ -35,16 +33,16 @@ coloredlogs.install(fmt="%(asctime)s %(message)s", logger=logger)
 # Enable this if you want to also log all messages coming from imported libraries
 # coloredlogs.install(level='DEBUG')
 
-## Settings section ##
+# Settings section #
 
 
-def read_settings(settings_file):
-    if not os.path.isfile(settings_file):
-        logger.critical("[CONFIG] Settings file file not found: %s" % (settings_file))
+def read_settings(settings_file_param):
+    if not os.path.isfile(settings_file_param):
+        logger.critical("[CONFIG] Settings file file not found: %s" % (settings_file_param))
         sys.exit()
-    settings = configparser.ConfigParser()
-    settings.read(settings_file)
-    return settings
+    settings_config_parser = configparser.ConfigParser()
+    settings_config_parser.read(settings_file_param)
+    return settings_config_parser
 
 
 if len(sys.argv) > 1:
