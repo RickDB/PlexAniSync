@@ -406,8 +406,8 @@ def match_to_plex(anilist_series, plex_series_all, plex_series_watched):
 
         try:
             check_title(plex_title, plex_title_sort, plex_title_original)
-        except BaseException:
-            pass
+        except BaseException as e:
+            logger.error(e)
 
         found_match = False
         skip_year_check = False
