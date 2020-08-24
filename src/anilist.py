@@ -919,7 +919,7 @@ def match_series_with_seasons(
                 for potential_title in potential_titles_search:
                     logger.warning(
                         "[ANILIST] Searching best match using title: %s"
-                        % (potential_title)
+                        % potential_title
                     )
                     media_id_search = find_id_best_match(potential_title, plex_year)
 
@@ -943,7 +943,7 @@ def match_series_with_seasons(
                 if not media_id_search:
                     logger.error(
                         "[ANILIST] Failed to find valid match on AniList for: %s"
-                        % (plex_title)
+                        % plex_title
                     )
         else:
             custom_mapping_id = retrieve_custom_mapping(plex_title, counter_season)
@@ -964,7 +964,7 @@ def match_series_with_seasons(
                         "[ANILIST] Skipped season lookup as Plex did not supply "
                         "a show year for %s , recommend checking Plex Web and "
                         "correcting the show year manually."
-                        % (plex_title)
+                        % plex_title
                     )
 
             plex_title_lookup = plex_title
@@ -1008,7 +1008,7 @@ def match_series_with_seasons(
             else:
                 error_message = (
                         "[ANILIST] Failed to find valid season title match on AniList for: %s"
-                        % (plex_title_lookup)
+                        % plex_title_lookup
                 )
                 logger.error(error_message)
 
@@ -1023,7 +1023,7 @@ def update_entry(
 ):
     for series in matched_anilist_series:
         status = ""
-        logger.info("[ANILIST] Found AniList entry for Plex title: %s" % (title))
+        logger.info("[ANILIST] Found AniList entry for Plex title: %s" % title)
         if hasattr(series, "status"):
             status = series.status
         if status == "COMPLETED":
@@ -1042,7 +1042,8 @@ def update_entry(
                     continue
                 elif ignore_year is True:
                     logger.info(
-                        "[ANILIST] Series year did not match however skip year check was given so adding anyway => Plex has %s and AniList has %s"
+                        "[ANILIST] Series year did not match however skip year check was given so adding anyway => "
+                        "Plex has %s and AniList has %s "
                         % (year, series.started_year)
                     )
 
