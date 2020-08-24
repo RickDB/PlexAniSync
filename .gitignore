@@ -1,0 +1,11 @@
+\.vs/
+__pycache__/
+*.pyc
+*.log
+ApplyPEP8\.bat
+custom_mappings.ini
+failed_matches\.txt
+logo\.psd
+settings\.ini
+update_anilist\.bat
+update_anilist_test\.bat

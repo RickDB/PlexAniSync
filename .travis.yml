@@ -1,0 +1,11 @@
+sudo: false
+language: python
+python:
+  - '3.6'
+install:
+  - pip install -U flake8
+  - pip install -r requirements.txt
+before_script:
+  - flake8 .
+script:
+  - python PlexAniSync.py
