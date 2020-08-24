@@ -573,7 +573,7 @@ def match_to_plex(anilist_series, plex_series_all, plex_series_watched):
                 for potential_title in potential_titles_search:
                     logger.warning(
                         "[ANILIST] Searching best match using title: %s"
-                        % (potential_title)
+                        % potential_title
                     )
                     media_id_search = find_id_best_match(potential_title, plex_year)
 
@@ -597,7 +597,7 @@ def match_to_plex(anilist_series, plex_series_all, plex_series_watched):
                 if not media_id_search:
                     error_message = (
                             "[ANILIST] Failed to find valid match on AniList for: %s"
-                            % (plex_title)
+                            % plex_title
                     )
                     logger.error(error_message)
                     if ANILIST_LOG_FAILED_MATCHES:
@@ -620,7 +620,7 @@ def match_to_plex(anilist_series, plex_series_all, plex_series_watched):
         ):
             logger.info(
                 "Found multiple seasons so using season search instead for: %s"
-                % (plex_title)
+                % plex_title
             )
             match_series_with_seasons(
                 anilist_series,
