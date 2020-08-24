@@ -54,7 +54,7 @@ class AnilistSeries:
     def __init__(
         self,
         ani_id,
-        sType,
+        show_type,
         sFormat,
         source,
         status,
@@ -68,7 +68,7 @@ class AnilistSeries:
         ended_year,
     ):
         self.id = ani_id
-        self.sType = sType
+        self.sType = show_type
         self.sFormat = sFormat
         self.source = source
         self.status = status
