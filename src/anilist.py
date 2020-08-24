@@ -55,7 +55,7 @@ class AnilistSeries:
         self,
         ani_id,
         show_type,
-        sFormat,
+        show_format,
         source,
         status,
         media_status,
@@ -69,7 +69,7 @@ class AnilistSeries:
     ):
         self.id = ani_id
         self.sType = show_type
-        self.sFormat = sFormat
+        self.sFormat = show_format
         self.source = source
         self.status = status
         self.media_status = media_status
