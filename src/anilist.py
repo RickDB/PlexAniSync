@@ -1221,6 +1221,7 @@ def find_id_season_best_match(title, season, year):
         for item in list_items:
             if item[0].media:
                 for media_item in item[0].media:
+                    # Duplicate code found line 1224 - 1245 and 1312 to 1333 has the same content
                     title_english = ""
                     title_english_for_matching = ""
                     title_romaji = ""
