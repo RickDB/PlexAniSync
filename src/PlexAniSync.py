@@ -77,10 +77,10 @@ def read_custom_mappings(mapping_file_param):
         file = open(mapping_file_param, "r")
         for line in file:
             try:
-                mappingSplit = line.split("^")
-                series_title = mappingSplit[0]
-                season = mappingSplit[1]
-                anime_id = int(mappingSplit[2])
+                mapping_split = line.split("^")
+                series_title = mapping_split[0]
+                season = mapping_split[1]
+                anime_id = int(mapping_split[2])
 
                 logger.info(
                     "[MAPPING] Adding custom mapping | title: %s | season: %s | anilist id: %s"
