@@ -629,6 +629,7 @@ def match_to_plex(anilist_series, plex_series_all, plex_series_watched):
             )
 
 
+#  This function is too big maybe try to divide it into smaller function that works together perhaps? #
 def match_series_with_seasons(
         anilist_series,
         plex_series_all,
@@ -735,7 +736,7 @@ def match_series_with_seasons(
             plex_title_original_clean_without_year = plex_title_original_clean
 
             try:
-                check_title(plex_title,plex_title_sort, plex_title_original)
+                check_title(plex_title, plex_title_sort, plex_title_original)
             except Exception as exception:
                 logger.debug("Uncaught exception: %r", exception)
                 pass
@@ -783,6 +784,7 @@ def match_series_with_seasons(
             ]
             potential_titles = list(potential_titles_cleaned)
 
+            # DUPLICATES CODE line 786 to 814 and 457 to 485 #
             custom_mapping_id = retrieve_custom_mapping(plex_title, counter_season)
 
             # Custom mapping check - check user list
@@ -854,6 +856,7 @@ def match_series_with_seasons(
                             % (plex_title, counter_season, custom_mapping_id)
                         )
                     else:
+                        # Another Duplicate code that can be used in a function line 859 - 882 and line 519 - 542
                         if series.title_english:
                             if series.title_english.lower() in potential_titles:
                                 matched_anilist_series.append(series)
@@ -894,6 +897,7 @@ def match_series_with_seasons(
             if not all(matched_anilist_series) or not matched_anilist_series:
                 logger.error("[ANILIST] Plex series was not on your AniList list")
 
+                # Another Duplicate code that can be used in a function line 900 - 940 and line 551 - 591
                 potential_titles_search = [
                     plex_title.lower(),
                     plex_title_sort.lower(),
@@ -969,8 +973,8 @@ def match_series_with_seasons(
                 series_already_listed = False
                 for series in anilist_series:
                     if series.id == media_id_search:
-                        # logger.warning('[ANILIST] Plex series has more than 1 season and is already on list: %s <===>%s ' %
-                        # (series.id,media_id_search))
+                        # logger.warning('[ANILIST] Plex series has more than 1 season and is already on list: %s
+                        # <===>%s ' % (series.id,media_id_search))
                         series_already_listed = True
                         if series.title_english is not None:
                             plex_title_lookup = series.title_english
