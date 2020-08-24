@@ -29,18 +29,18 @@ def to_object(o):
     return collections.namedtuple("X", keys)()
 
 
-def int_to_roman_numeral(input):
-    if not isinstance(input, type(1)):
-        return input
-    if not 0 < input < 4000:
-        return input
+def int_to_roman_numeral(input_numeral):
+    if not isinstance(input_numeral, type(1)):
+        return input_numeral
+    if not 0 < input_numeral < 4000:
+        return input_numeral
     ints = (1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1)
     nums = ("M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I")
     result = []
     for i in range(len(ints)):
-        count = int(input / ints[i])
+        count = int(input_numeral / ints[i])
         result.append(nums[i] * count)
-        input -= ints[i] * count
+        input_numeral -= ints[i] * count
     return "".join(result)
 
 
