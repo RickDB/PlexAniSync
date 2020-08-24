@@ -1249,7 +1249,8 @@ def find_id_season_best_match(title, season, year):
                             started_year = int(media_item.startDate.year)
                     else:
                         logger.warning(
-                            "[ANILIST] Anilist series did not have year attribute so skipping this result and moving to next: %s | %s"
+                            "[ANILIST] Anilist series did not have year attribute so skipping this result and moving "
+                            "to next: %s | %s "
                             % (title_english, title_romaji)
                         )
                         continue
@@ -1263,7 +1264,8 @@ def find_id_season_best_match(title, season, year):
                         if title_english_for_matching == potential_title:
                             if started_year < match_year:
                                 logger.warning(
-                                    "[ANILIST] Found match: %s [%s] | skipping as it was released before first season (%s <==> %s)"
+                                    "[ANILIST] Found match: %s [%s] | skipping as it was released before first season "
+                                    "(%s <==> %s) "
                                     % (
                                         title_english,
                                         media_id,
@@ -1281,7 +1283,8 @@ def find_id_season_best_match(title, season, year):
                         if title_romaji_for_matching == potential_title:
                             if started_year < match_year:
                                 logger.warning(
-                                    "[ANILIST] Found match: %s [%s] | skipping as it was released before first season (%s <==> %s)"
+                                    "[ANILIST] Found match: %s [%s] | skipping as it was released before first season "
+                                    "(%s <==> %s) "
                                     % (title_romaji, media_id, started_year, match_year)
                                 )
                             else:
@@ -1316,6 +1319,7 @@ def find_id_best_match(title, year):
                         synonyms_for_matching = ""
                         started_year = ""
 
+                        # Duplicate code found from 1322 - 1337 has the same content as line 1231 - 1246
                         if hasattr(media_item.title, "english"):
                             if media_item.title.english is not None:
                                 title_english = media_item.title.english
