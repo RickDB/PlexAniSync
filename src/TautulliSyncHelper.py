@@ -33,7 +33,7 @@ ANILIST_ACCESS_TOKEN = anilist_settings["access_token"].strip()
 
 mapping_file = "custom_mappings.ini"
 
-PlexAniSync.read_custom_mappings(mapping_file=mapping_file)
+custom_mappings = PlexAniSync.read_custom_mappings(mapping_file=mapping_file)
 
 
 # Startup section #
