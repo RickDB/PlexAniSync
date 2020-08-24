@@ -281,8 +281,9 @@ def process_user_list(username):
                                     if list_entry.media is not None:
                                         series_obj = mediaitem_to_object(list_entry)
                                         anilist_series.append(series_obj)
-    except BaseException:
-        logger.critical("[ANILIST] Failed to return list for user: %s" % (username))
+    except BaseException as e:
+        logger.critical("[ANILIST] Failed to return list for user: %s" % username)
+        logger.critical(e)
         return None
 
     logger.info("[ANILIST] Found %s anime series on list" % (len(anilist_series)))
@@ -293,8 +294,8 @@ def search_item_to_obj(item):
     try:
         if item:
             return single_mediaitem_to_object(item.data)
-    except BaseException:
-        pass
+    except BaseException as e:
+        logger.error(e)
     return None
 
 
