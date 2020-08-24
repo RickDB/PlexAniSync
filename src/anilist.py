@@ -259,27 +259,27 @@ def process_user_list(username):
                             if hasattr(list_entry, "status"):
                                 if list_entry.status == "CURRENT":
                                     if list_entry.media is not None:
-                                        series_obj = mediaitem_to_object(list_entry)
+                                        series_obj = media_item_to_object(list_entry)
                                         anilist_series.append(series_obj)
                                 if list_entry.status == "PLANNING":
                                     if list_entry.media is not None:
-                                        series_obj = mediaitem_to_object(list_entry)
+                                        series_obj = media_item_to_object(list_entry)
                                         anilist_series.append(series_obj)
                                 if list_entry.status == "COMPLETED":
                                     if list_entry.media is not None:
-                                        series_obj = mediaitem_to_object(list_entry)
+                                        series_obj = media_item_to_object(list_entry)
                                         anilist_series.append(series_obj)
                                 if list_entry.status == "DROPPED":
                                     if list_entry.media is not None:
-                                        series_obj = mediaitem_to_object(list_entry)
+                                        series_obj = media_item_to_object(list_entry)
                                         anilist_series.append(series_obj)
                                 if list_entry.status == "PAUSED":
                                     if list_entry.media is not None:
-                                        series_obj = mediaitem_to_object(list_entry)
+                                        series_obj = media_item_to_object(list_entry)
                                         anilist_series.append(series_obj)
                                 if list_entry.status == "REPEATING":
                                     if list_entry.media is not None:
-                                        series_obj = mediaitem_to_object(list_entry)
+                                        series_obj = media_item_to_object(list_entry)
                                         anilist_series.append(series_obj)
     except BaseException as e:
         logger.critical("[ANILIST] Failed to return list for user: %s" % username)
@@ -299,7 +299,7 @@ def search_item_to_obj(item):
     return None
 
 
-def mediaitem_to_object(media_item):
+def media_item_to_object(media_item):
     id = media_item.media.id
     sType = ""
     sFormat = ""
