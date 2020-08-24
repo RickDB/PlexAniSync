@@ -10,7 +10,7 @@ logger = logging.getLogger("PlexAniSync")
 plex_settings = dict()
 
 
-class plex_watched_series:
+class PlexWatchedSeries:
     def __init__(
         self, title, title_sort, title_original, year, episodes_watched, total_seasons
     ):
@@ -208,7 +208,7 @@ def get_watched_shows(shows):
                 #    show.originalTitle = show.title
                 show.originalTitle = show.title
 
-                watched_show = plex_watched_series(
+                watched_show = PlexWatchedSeries(
                     show.title.strip(),
                     show.titleSort.strip(),
                     show.originalTitle.strip(),
@@ -245,7 +245,7 @@ def get_watched_shows(shows):
                     #    show.originalTitle = show.title
                     show.originalTitle = show.title
 
-                    watched_show = plex_watched_series(
+                    watched_show = PlexWatchedSeries(
                         show.title.strip(),
                         show.titleSort.strip(),
                         show.originalTitle.strip(),
