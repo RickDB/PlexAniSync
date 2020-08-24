@@ -53,7 +53,7 @@ def log_to_file(message):
 class AnilistSeries:
     def __init__(
         self,
-        id,
+        ani_id,
         sType,
         sFormat,
         source,
@@ -67,7 +67,7 @@ class AnilistSeries:
         started_year,
         ended_year,
     ):
-        self.id = id
+        self.id = ani_id
         self.sType = sType
         self.sFormat = sFormat
         self.source = source
