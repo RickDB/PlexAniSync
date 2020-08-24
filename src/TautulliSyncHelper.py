@@ -96,5 +96,5 @@ def start():
 
 
 if __name__ == "__main__":
-    read_custom_mappings(mapping_file)
+    PlexAniSync.read_custom_mappings(custom_mappings)
     start()
