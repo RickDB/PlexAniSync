@@ -848,7 +848,7 @@ def match_series_with_seasons(
             # Regular matching
             if found_match is False:
                 for series in anilist_series:
-                    if custom_mapping_id > 0 and series.id == custom_mapping_id:
+                    if 0 < custom_mapping_id == series.id:
                         found_match = True
                         skip_year_check = True
                         logger.info(
