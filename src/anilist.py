@@ -735,24 +735,7 @@ def match_series_with_seasons(
             plex_title_original_clean_without_year = plex_title_original_clean
 
             try:
-                if "(" in plex_title and ")" in plex_title:
-                    year = re.search(r"(\d{4})", plex_title).group(1)
-                    yearString = "(%s)" % (year)
-                    plex_title_clean_without_year = plex_title.replace(
-                        yearString, ""
-                    ).strip()
-                if "(" in plex_title_sort and ")" in plex_title_sort:
-                    year = re.search(r"(\d{4})", plex_title_sort).group(1)
-                    yearString = "(%s)" % (year)
-                    plex_title_sort_clean_without_year = plex_title_sort.replace(
-                        yearString, ""
-                    ).strip()
-                if "(" in plex_title_original and ")" in plex_title_original:
-                    year = re.search(r"(\d{4})", plex_title_original).group(1)
-                    yearString = "(%s)" % (year)
-                    plex_title_original_clean_without_year = plex_title_original.replace(
-                        yearString, ""
-                    ).strip()
+                check_title(plex_title,plex_title_sort, plex_title_original)
             except Exception as exception:
                 logger.debug("Uncaught exception: %r", exception)
                 pass
