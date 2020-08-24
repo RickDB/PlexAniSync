@@ -1187,13 +1187,14 @@ def find_id_season_best_match(title, season, year):
             match_title,
             p_engine.ordinal(season),
         )
-    except BaseException:
+    except BaseException as e:
         logger.error(
             "Error while converting season to ordinal string, make sure Inflect pip package is installed"
         )
+        logger.error(e)
         match_title_season_suffix4 = match_title_season_suffix2
 
-    # oridinal season - variation 1 (1st 2nd Thread) - see AniList ID: 21000
+    # original season - variation 1 (1st 2nd Thread) - see AniList ID: 21000
     try:
         p_engine = inflect.engine()
         match_title_season_suffix5 = "%s %s thread" % (
