@@ -1,14 +1,12 @@
-import configparser
 import logging
-import os
 import sys
 from time import sleep
 
 import coloredlogs
 
+from src import PlexAniSync
 from src import anilist
 from src import plexmodule
-from src import PlexAniSync
 
 # Logger settings
 logger = logging.getLogger(__name__)
@@ -20,7 +18,7 @@ coloredlogs.install(fmt="%(asctime)s %(message)s", logger=logger)
 
 if len(sys.argv) > 2:
     settings_file = sys.argv[1]
-    logger.warning("Found settings file parameter and using: %s" % (settings_file))
+    logger.warning("Found settings file parameter and using: %s" % settings_file)
 else:
     settings_file = "settings.ini"
 
@@ -30,7 +28,6 @@ plex_settings = settings["PLEX"]
 
 ANILIST_SKIP_UPDATE = anilist_settings["skip_list_update"].lower()
 ANILIST_ACCESS_TOKEN = anilist_settings["access_token"].strip()
-
 
 
 # Startup section #
