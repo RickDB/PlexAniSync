@@ -142,8 +142,8 @@ def get_anime_shows_filter(show_name):
                 show_title_clean_without_year = re.sub(
                     "[^A-Za-z0-9]+", "", show_title_clean_without_year
                 )
-        except BaseException:
-            pass
+        except BaseException as e:
+            logger.error(e)
 
         if show.title.lower().strip() == show_name.lower().strip():
             shows_filtered.append(show)
