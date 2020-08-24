@@ -50,7 +50,7 @@ def log_to_file(message):
     f.close()
 
 
-class anilist_series:
+class AnilistSeries:
     def __init__(
         self,
         id,
@@ -347,7 +347,7 @@ def mediaitem_to_object(media_item):
     if hasattr(media_item.media.endDate, "year"):
         ended_year = media_item.media.endDate.year
 
-    series = anilist_series(
+    series = AnilistSeries(
         id,
         sType,
         sFormat,
@@ -405,7 +405,7 @@ def single_mediaitem_to_object(media_item):
     if hasattr(media_item.Media.endDate, "year"):
         ended_year = media_item.Media.endDate.year
 
-    series = anilist_series(
+    series = AnilistSeries(
         id,
         sType,
         sFormat,
