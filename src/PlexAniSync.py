@@ -21,13 +21,12 @@ handler = logging.handlers.RotatingFileHandler(
 )
 handler.setLevel(logging.INFO)
 logger.addHandler(handler)
-
 # Debug log
-logging.basicConfig(
-    level=logging.DEBUG,
-    format="%(asctime)s %(levelname)s %(message)s",
-    handlers=[logging.FileHandler("PlexAniSync-DEBUG.log", "w", "utf-8")],
-)
+logging.basicConfig(level=logging.DEBUG, format="%(asctime)s %(levelname)s %(message)s",
+                    filename="PlexAniSync-DEBUG.log",
+                    filemode='w')
+
+
 
 # Install colored logs
 coloredlogs.install(fmt="%(asctime)s %(message)s", logger=logger)
