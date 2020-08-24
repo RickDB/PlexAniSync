@@ -724,7 +724,7 @@ def match_series_with_seasons(
         )
         matched_anilist_series = []
         skip_year_check = False
-        # for first season use regular search (some redundant codecan be merged
+        # for first season use regular search (some redundant code can be merged
         # later)
         if counter_season == 1:
             found_match = False
