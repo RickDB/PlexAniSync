@@ -34,6 +34,7 @@ ANILIST_ACCESS_TOKEN = anilist_settings["access_token"].strip()
 
 
 def start():
+    show_title = ''
     if len(sys.argv) < 2:
         logger.error("No show title specified in arguments so cancelling updating")
         sys.exit()
@@ -45,7 +46,7 @@ def start():
         elif len(sys.argv) == 2:
             show_title = sys.argv[1]
 
-        logger.info("Updating single show: %s" % (show_title))
+        logger.info("Updating single show: %s" % show_title)
 
     if ANILIST_SKIP_UPDATE == "true":
         logger.warning(
