@@ -187,7 +187,7 @@ def get_watched_shows(shows):
                             episodes_watched = 0
                 except Exception as e:
                     logger.error(
-                        "Error during lookup_result processing, traceback: %s" % (e)
+                        "Error during lookup_result processing, traceback: %s" % e
                     )
                     pass
             if episodes_watched > 0:
