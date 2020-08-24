@@ -1182,10 +1182,10 @@ def find_id_season_best_match(title, season, year):
 
     # original season (1st 2nd etc..)
     try:
-        pEngine = inflect.engine()
+        p_engine = inflect.engine()
         match_title_season_suffix4 = "%s %s season" % (
             match_title,
-            pEngine.ordinal(season),
+            p_engine.ordinal(season),
         )
     except BaseException:
         logger.error(
@@ -1195,10 +1195,10 @@ def find_id_season_best_match(title, season, year):
 
     # oridinal season - variation 1 (1st 2nd Thread) - see AniList ID: 21000
     try:
-        pEngine = inflect.engine()
+        p_engine = inflect.engine()
         match_title_season_suffix5 = "%s %s thread" % (
             match_title,
-            pEngine.ordinal(season),
+            p_engine.ordinal(season),
         )
     except BaseException:
         logger.error(
