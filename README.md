@@ -31,7 +31,7 @@ https://github.com/RickDB/PlexAniSync/archive/master.zip
 
 ### Step 3 - Configuration
 
-From the project directory rename `settings.ini.example` to `settings.ini`, open `settings.ini` with your favorite text editor and edit where needed.
+From the project directory there is folder called assests rename `settings.ini.example` to `settings.ini` and move it to the src folder, then open `settings.ini` with your favorite text editor and edit where needed.
 
 
 #### Plex
@@ -145,7 +145,7 @@ Depending on library size and server can take a few minutes to finish, for sched
 
 You can manually link a Plex title and season to an AniList ID, to do so:
 
-- From the project folder copy `custom_mappings.ini.example` to `custom_mappings.ini`
+- From the project folder copy `custom_mappings.ini.example` from assests folder to src folder and name it `custom_mappings.ini`
 - Add new entries there in the following format:
 
 `Plex title for series`^`Plex season`^`AniList series ID`
