@@ -412,34 +412,34 @@ def match_to_plex(anilist_series, plex_series_all, plex_series_watched):
         found_match = False
         skip_year_check = False
         matched_anilist_series = []
-        # Duplicate code from 416 - 453 and 743 -785 content identitcal
 
-        plex_title_guessit = plex_title
-        plex_title_sort_guessit = plex_title_sort
-        plex_title_original_guessit = plex_title_original
+        # Duplicate code from 416 - 453 and 743 -785 content identical
+        plex_title_guess_it = plex_title
+        plex_title_sort_guess_it = plex_title_sort
+        plex_title_original_guess_it = plex_title_original
 
         try:
-            plex_title_guessit = guessit(plex_title.lower())["title"].lower()
-            plex_title_sort_guessit = guessit(plex_title_sort.lower())["title"].lower()
-            plex_title_original_guessit = guessit(plex_title_original.lower())[
+            plex_title_guess_it = guessit(plex_title.lower())["title"].lower()
+            plex_title_sort_guess_it = guessit(plex_title_sort.lower())["title"].lower()
+            plex_title_original_guess_it = guessit(plex_title_original.lower())[
                 "title"
             ].lower()
         except Exception as exception:
             logger.error(
-                "Error parsing parsing guessit title for: %s | %s | %s :: %r"
+                "Error parsing parsing guess_it title for: %s | %s | %s :: %r"
                 % (plex_title, plex_title_sort, plex_title_original, exception)
             )
 
         # For linting, the variable is currently unused by might be useful in
         # the future
-        assert plex_title_original_guessit
+        assert plex_title_original_guess_it
 
         potential_titles = [
             plex_title.lower(),
             plex_title_sort.lower(),
             plex_title_original.lower(),
-            plex_title_guessit,
-            plex_title_sort_guessit,
+            plex_title_guess_it,
+            plex_title_sort_guess_it,
             plex_title_clean,
             plex_title_sort_clean,
             plex_title_clean_without_year,
@@ -519,7 +519,7 @@ def match_to_plex(anilist_series, plex_series_all, plex_series_watched):
             # Regular matching
             if found_match is False:
                 for series in anilist_series:
-                    # duplicate code 522-545 and 863 - 886 same identitical code.
+                    # duplicate code 522-545 and 863 - 886 same identical code.
                     if series.title_english:
                         if series.title_english.lower() in potential_titles:
                             matched_anilist_series.append(series)
@@ -548,6 +548,7 @@ def match_to_plex(anilist_series, plex_series_all, plex_series_watched):
                     % plex_title
                 )
 
+                # Duplicate Codes from line 551 - 592 and 901 -942 same content potential fixes a function,
                 potential_titles_search = [
                     plex_title.lower(),
                     plex_title_sort.lower(),
@@ -743,36 +744,36 @@ def match_series_with_seasons(
             except Exception as exception:
                 logger.debug("Uncaught exception: %r", exception)
                 pass
-            # Duplicate code line 747 - 789 and 417 to 454 identitcal code.
-            plex_title_guessit = plex_title
-            plex_title_sort_guessit = plex_title_sort
-            plex_title_original_guessit = plex_title_original
+            # Duplicate code line 747 - 789 and 417 to 454 identical code.
+            plex_title_guess_it = plex_title
+            plex_title_sort_guess_it = plex_title_sort
+            plex_title_original_guess_it = plex_title_original
 
             try:
-                plex_title_guessit = guessit(plex_title.lower())["title"].lower()
-                plex_title_sort_guessit = guessit(plex_title_sort.lower())[
+                plex_title_guess_it = guessit(plex_title.lower())["title"].lower()
+                plex_title_sort_guess_it = guessit(plex_title_sort.lower())[
                     "title"
                 ].lower()
-                plex_title_original_guessit = guessit(plex_title_original.lower())[
+                plex_title_original_guess_it = guessit(plex_title_original.lower())[
                     "title"
                 ].lower()
             except Exception as exception:
                 logger.error(
-                    "Error parsing parsing guessit title for: %s | %s | %s :: %r"
+                    "Error parsing parsing guess_it title for: %s | %s | %s :: %r"
                     % (plex_title, plex_title_sort, plex_title_original,
                        exception)
                 )
 
             # For linting, the variable is currently unused by might be useful in
             # the future
-            assert plex_title_original_guessit
+            assert plex_title_original_guess_it
 
             potential_titles = [
                 plex_title.lower(),
                 plex_title_sort.lower(),
                 plex_title_original.lower(),
-                plex_title_guessit,
-                plex_title_sort_guessit,
+                plex_title_guess_it,
+                plex_title_sort_guess_it,
                 plex_title_clean,
                 plex_title_sort_clean,
                 plex_title_clean_without_year,
@@ -1318,17 +1319,13 @@ def find_id_best_match(title, year):
                             if media_item.title.english is not None:
                                 title_english = media_item.title.english
                                 title_english_for_matching = (
-                                    re.sub("[^A-Za-z0-9]+", "", title_english)
-                                        .lower()
-                                        .strip()
+                                    re.sub("[^A-Za-z0-9]+", "", title_english).lower().strip()
                                 )
                         if hasattr(media_item.title, "romaji"):
                             if media_item.title.romaji is not None:
                                 title_romaji = media_item.title.romaji
                                 title_romaji_for_matching = (
-                                    re.sub("[^A-Za-z0-9]+", "", title_romaji)
-                                        .lower()
-                                        .strip()
+                                    re.sub("[^A-Za-z0-9]+", "", title_romaji).lower().strip()
                                 )
                         if hasattr(media_item.startDate, "year"):
                             started_year = str(media_item.startDate.year)
@@ -1360,9 +1357,7 @@ def find_id_best_match(title, year):
                                 for synonym in media_item.synonyms:
                                     synonyms = synonym
                                     synonyms_for_matching = (
-                                        re.sub("[^A-Za-z0-9]+", "", synonyms)
-                                            .lower()
-                                            .strip()
+                                        re.sub("[^A-Za-z0-9]+", "", synonyms).lower().strip()
                                     )
                                     if (
                                             match_title == synonyms_for_matching
