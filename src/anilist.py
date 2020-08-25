@@ -525,9 +525,7 @@ def match_to_plex(anilist_series, plex_series_all, plex_series_watched):
                             matched_anilist_series.append(series)
                         else:
                             series_title_english_clean = (
-                                re.sub("[^A-Za-z0-9]+", "", series.title_english)
-                                    .lower()
-                                    .strip()
+                                re.sub("[^A-Za-z0-9]+", "", series.title_english).lower().strip()
                             )
                             if series_title_english_clean in potential_titles:
                                 matched_anilist_series.append(series)
@@ -537,9 +535,7 @@ def match_to_plex(anilist_series, plex_series_all, plex_series_watched):
                                 matched_anilist_series.append(series)
                         else:
                             series_title_romaji_clean = (
-                                re.sub("[^A-Za-z0-9]+", "", series.title_romaji)
-                                    .lower()
-                                    .strip()
+                                re.sub("[^A-Za-z0-9]+", "", series.title_romaji).lower().strip()
                             )
                             if series_title_romaji_clean in potential_titles:
                                 if series not in matched_anilist_series:
@@ -567,6 +563,7 @@ def match_to_plex(anilist_series, plex_series_all, plex_series_watched):
                     for n, i in enumerate(potential_titles_search)
                     if i not in potential_titles_search[:n]
                 ]
+                # local variable not used.
                 potential_titles_search = []
                 potential_titles_search = list(potential_titles_search_cleaned)
 
@@ -612,6 +609,8 @@ def match_to_plex(anilist_series, plex_series_all, plex_series_watched):
                     matched_anilist_series,
                     skip_year_check,
                 )
+
+                # Local variable not used.
                 matched_anilist_series = []
         elif (
                 not all(matched_anilist_series)
@@ -867,9 +866,7 @@ def match_series_with_seasons(
                                 matched_anilist_series.append(series)
                             else:
                                 series_title_english_clean = (
-                                    re.sub("[^A-Za-z0-9]+", "", series.title_english)
-                                        .lower()
-                                        .strip()
+                                    re.sub("[^A-Za-z0-9]+", "", series.title_english).lower().strip()
                                 )
                                 if series_title_english_clean in potential_titles:
                                     matched_anilist_series.append(series)
@@ -879,9 +876,7 @@ def match_series_with_seasons(
                                     matched_anilist_series.append(series)
                             else:
                                 series_title_romaji_clean = (
-                                    re.sub("[^A-Za-z0-9]+", "", series.title_romaji)
-                                        .lower()
-                                        .strip()
+                                    re.sub("[^A-Za-z0-9]+", "", series.title_romaji).lower().strip()
                                 )
                                 if series_title_romaji_clean in potential_titles:
                                     if series not in matched_anilist_series:
@@ -1397,7 +1392,7 @@ def find_id_best_match(title, year):
                                 % (title_english, started_year, match_year)
                             )
     if media_id is None:
-        logger.error("[ANILIST] No match found for title: %s" % (title))
+        logger.error("[ANILIST] No match found for title: %s" % title)
     return media_id
 
 
