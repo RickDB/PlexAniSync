@@ -913,6 +913,7 @@ def match_series_with_seasons(
                     for n, i in enumerate(potential_titles_search)
                     if i not in potential_titles_search[:n]
                 ]
+                # Again local variable not being used.
                 potential_titles_search = []
                 potential_titles_search = list(potential_titles_search_cleaned)
 
