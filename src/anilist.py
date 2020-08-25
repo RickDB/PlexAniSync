@@ -26,7 +26,7 @@ ANILIST_LOG_FAILED_MATCHES = False
 def to_object(o):
     keys, values = zip(*o.items())
     # print(keys, values)
-    return collections.namedtuple("X", keys)()
+    return collections.namedtuple("X", keys)(*values)
 
 
 def int_to_roman_numeral(input_numeral):
