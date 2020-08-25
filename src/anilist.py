@@ -993,6 +993,7 @@ def match_series_with_seasons(
                         matched_anilist_series,
                         skip_year_check,
                     )
+                    # Local variable not being used
                     matched_anilist_series = []
                 else:
                     logger.warning(
