@@ -1229,17 +1229,13 @@ def find_id_season_best_match(title, season, year):
                         if media_item.title.english is not None:
                             title_english = media_item.title.english
                             title_english_for_matching = (
-                                re.sub("[^A-Za-z0-9]+", "", title_english)
-                                    .lower()
-                                    .strip()
+                                re.sub("[^A-Za-z0-9]+", "", title_english).lower().strip()
                             )
                     if hasattr(media_item.title, "romaji"):
                         if media_item.title.romaji is not None:
                             title_romaji = media_item.title.romaji
                             title_romaji_for_matching = (
-                                re.sub("[^A-Za-z0-9]+", "", title_romaji)
-                                    .lower()
-                                    .strip()
+                                re.sub("[^A-Za-z0-9]+", "", title_romaji).lower().strip()
                             )
                     if hasattr(media_item.startDate, "year"):
                         if media_item.startDate.year is not None:
@@ -1292,7 +1288,7 @@ def find_id_season_best_match(title, season, year):
                                 )
                                 break
     if media_id == 0:
-        logger.error("[ANILIST] No match found for title: %s" % (title))
+        logger.error("[ANILIST] No match found for title: %s" % title)
     return media_id
 
 
@@ -1312,6 +1308,7 @@ def find_id_best_match(title, year):
                         title_english_for_matching = ""
                         title_romaji = ""
                         title_romaji_for_matching = ""
+                        # local variables not being used both synonyms and   synonyms_for_matching
                         synonyms = ""
                         synonyms_for_matching = ""
                         started_year = ""
