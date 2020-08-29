@@ -4,9 +4,9 @@ from time import sleep
 
 import coloredlogs
 
-from src import PlexAniSync
-from src import anilist
-from src import plexmodule
+from . import PlexAniSync
+from . import anilist
+from . import plexmodule
 
 # Logger settings
 logger = logging.getLogger(__name__)

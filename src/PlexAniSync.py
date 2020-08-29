@@ -6,8 +6,8 @@ import sys
 
 import coloredlogs
 
-from src import anilist
-from src import plexmodule
+from . import anilist
+from . import plexmodule
 
 __version__ = "1.2.6"
 
