@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Plex to AniList Sync
 [![Build Status](https://travis-ci.org/RickDB/PlexAniSync.svg?branch=master)](https://travis-ci.org/RickDB/PlexAniSync)[![Build Status](https://img.shields.io/docker/cloud/build/rickdb/plexanisync.svg)](https://hub.docker.com/r/rickdb/plexanisync)
 
@@ -458,4 +457,3 @@ Currently planned for future releases:
 ## Credits
 
 [Python-PlexAPI](https://github.com/pkkid/python-plexapi)
->>>>>>> 464765a62758a5da33de9419c9282f3f8b5811f8
