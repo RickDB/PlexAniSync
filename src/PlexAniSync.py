@@ -6,8 +6,8 @@ import sys
 
 import coloredlogs
 
-import anilist
-import plexmodule
+from src import anilist
+from src import plexmodule
 
 __version__ = "1.2.6"
 
@@ -21,13 +21,10 @@ handler = logging.handlers.RotatingFileHandler(
 )
 handler.setLevel(logging.INFO)
 logger.addHandler(handler)
-
 # Debug log
-logging.basicConfig(
-    level=logging.DEBUG,
-    format="%(asctime)s %(levelname)s %(message)s",
-    handlers=[logging.FileHandler("PlexAniSync-DEBUG.log", "w", "utf-8")],
-)
+logging.basicConfig(level=logging.DEBUG, format="%(asctime)s %(levelname)s %(message)s",
+                    filename="PlexAniSync-DEBUG.log",
+                    filemode='w')
 
 # Install colored logs
 coloredlogs.install(fmt="%(asctime)s %(message)s", logger=logger)
@@ -36,21 +33,21 @@ coloredlogs.install(fmt="%(asctime)s %(message)s", logger=logger)
 # Enable this if you want to also log all messages coming from imported libraries
 # coloredlogs.install(level='DEBUG')
 
-## Settings section ##
+# Settings section #
 
 
-def read_settings(settings_file):
-    if not os.path.isfile(settings_file):
-        logger.critical("[CONFIG] Settings file file not found: %s" % (settings_file))
+def read_settings(settings_file_param):
+    if not os.path.isfile(settings_file_param):
+        logger.critical("[CONFIG] Settings file file not found: %s" % settings_file_param)
         sys.exit()
-    settings = configparser.ConfigParser()
-    settings.read(settings_file)
-    return settings
+    settings_config_parser = configparser.ConfigParser()
+    settings_config_parser.read(settings_file_param)
+    return settings_config_parser
 
 
 if len(sys.argv) > 1:
     settings_file = sys.argv[1]
-    logger.warning("Found settings file parameter and using: %s" % (settings_file))
+    logger.warning("Found settings file parameter and using: %s" % settings_file)
 else:
     settings_file = "settings.ini"
 
@@ -72,34 +69,35 @@ mapping_file = "custom_mappings.ini"
 custom_mappings = []
 
 
-def read_custom_mappings(mapping_file):
-    if not os.path.isfile(mapping_file):
-        logger.info("[MAPPING] Custom map file not found: %s" % (mapping_file))
+def read_custom_mappings(mapping_file_param):
+    if not os.path.isfile(mapping_file_param):
+        logger.info("[MAPPING] Custom map file not found: %s" % mapping_file_param)
     else:
-        logger.info("[MAPPING] Custom map file found: %s" % (mapping_file))
-        file = open(mapping_file, "r")
+        logger.info("[MAPPING] Custom map file found: %s" % mapping_file_param)
+        file = open(mapping_file_param, "r")
         for line in file:
             try:
-                mappingSplit = line.split("^")
-                series_title = mappingSplit[0]
-                season = mappingSplit[1]
-                anime_id = int(mappingSplit[2])
+                mapping_split = line.split("^")
+                series_title = mapping_split[0]
+                season = mapping_split[1]
+                anime_id = int(mapping_split[2])
 
                 logger.info(
                     "[MAPPING] Adding custom mapping | title: %s | season: %s | anilist id: %s"
                     % (series_title, season, anime_id)
                 )
-                mapping = anilist.anilist_custom_mapping(series_title, season, anime_id)
+                mapping = anilist.AnilistCustomMapping(series_title, season, anime_id)
                 custom_mappings.append(mapping)
-            except BaseException:
-                logger.error("[MAPPING] Invalid entry found for line: %s" % (line))
+            except BaseException as e:
+                logger.error("[MAPPING] Invalid entry found for line: %s" % line)
+                logger.critical(e)
 
 
-## Startup section ##
+# Startup section #
 
 
 def start():
-    logger.info("PlexAniSync - version: %s" % (__version__))
+    logger.info("PlexAniSync - version: %s" % __version__)
 
     if ANILIST_SKIP_UPDATE == "true":
         logger.warning(
@@ -108,7 +106,8 @@ def start():
 
     if ANILIST_PLEX_EPISODE_COUNT_PRIORITY == "true":
         logger.warning(
-            "Plex episode watched count will take priority over AniList, this will always update AniList watched count over Plex data"
+            "Plex episode watched count will take priority over AniList, this will always update AniList watched "
+            "count over Plex data "
         )
 
     # Cleanup any old logs
@@ -116,8 +115,8 @@ def start():
     if exists:
         try:
             os.remove("failed_matches.txt")
-        except BaseException:
-            pass
+        except BaseException as e:
+            logger.error(e)
 
     # Anilist
     anilist_username = anilist_settings["username"]
