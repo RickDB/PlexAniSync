@@ -31,7 +31,7 @@ https://github.com/RickDB/PlexAniSync/archive/master.zip
 
 ### Step 3 - Configuration
 
-From the project directory there is folder called assests rename `settings.ini.example` to `settings.ini` and move it to the src folder, then open `settings.ini` with your favorite text editor and edit where needed.
+From the project directory there is folder called "src"" open that then open `settings.ini` with your favorite text editor and edit where needed.
 
 
 #### Plex
