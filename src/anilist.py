@@ -9,7 +9,7 @@ import inflect
 import requests
 from guessit import guessit
 
-from src import plexmodule
+import plexmodule
 
 logger = logging.getLogger("PlexAniSync")
 
