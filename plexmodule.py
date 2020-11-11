@@ -280,33 +280,20 @@ def get_watched_episodes_for_show_season(shows, watched_show_title, watched_seas
     for show in shows:
         if show.title.lower().strip() == watched_show_title.lower().strip():
             try:
-                if hasattr(show, "episodes"):
-                    for episode in show.episodes():
-                        try:
-                            season = (
-                                1 if not episode.seasonNumber else episode.seasonNumber
-                            )
-                            if season == watched_season:
-                                if episode.isWatched:
-                                    episodes_watched += 1
-                        except Exception as e:
-                            logger.error(
-                                "Error during lookup_result processing, traceback: %s"
-                                % (e)
-                            )
-                            pass
-                # Most likely single item (Movie), falback untill we added proper fix based on additional Plex metadata
-                try:
-                    logger.info(
-                        "[PLEX] Show appears to be movie (no episodes attribute) and trying fallback approach to determine watched state"
-                    )
-                    if hasattr(show, "isWatched"):
-                        if show.isWatched:
-                            episodes_watched = 1
-                except Exception:
-                    logger.exception(
-                        "[PLEX] Failed to get watched state for unknown object (possibly movie)"
-                    )
+                for episode in show.episodes():
+                    try:
+                        season = (
+                            1 if not episode.seasonNumber else episode.seasonNumber
+                        )
+                        if season == watched_season:
+                            if episode.isWatched:
+                                episodes_watched += 1
+                    except Exception as e:
+                        logger.error(
+                            "Error during lookup_result processing, traceback: %s"
+                            % (e)
+                        )
+                        pass
             except Exception:
                 logger.exception(
                     "[PLEX] Error occured during retrieving of watched episodes for show %s [season = %s]"
