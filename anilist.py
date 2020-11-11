@@ -64,6 +64,7 @@ class anilist_series:
         episodes,
         title_english,
         title_romaji,
+        synonyms,
         started_year,
         ended_year,
     ):
@@ -78,6 +79,7 @@ class anilist_series:
         self.episodes = episodes
         self.title_english = title_english
         self.title_romaji = title_romaji
+        self.synonyms = synonyms
         self.started_year = started_year
         self.ended_year = ended_year
 
@@ -291,8 +293,8 @@ def process_user_list(username):
                                     if list_entry.media is not None:
                                         series_obj = mediaitem_to_object(list_entry)
                                         anilist_series.append(series_obj)
-    except BaseException:
-        logger.critical("[ANILIST] Failed to return list for user: %s" % (username))
+    except BaseException as exception:
+        logger.critical("[ANILIST] Failed to return list for user: %s" % (username), exception)
         return None
 
     logger.info("[ANILIST] Found %s anime series on list" % (len(anilist_series)))
@@ -382,6 +384,7 @@ def single_mediaitem_to_object(media_item):
     episodes = ""
     title_english = ""
     title_romaji = ""
+    synonyms = []
     started_year = ""
     ended_year = ""
 
@@ -405,6 +408,8 @@ def single_mediaitem_to_object(media_item):
         title_english = media_item.Media.title.english
     if hasattr(media_item.Media.title, "romaji"):
         title_romaji = media_item.Media.title.romaji
+    if hasattr(media_item.Media, "synonyms"):
+        synonyms = media_item.Media.synonyms
     if hasattr(media_item.Media.startDate, "year"):
         started_year = media_item.Media.startDate.year
     if hasattr(media_item.Media.endDate, "year"):
@@ -422,6 +427,7 @@ def single_mediaitem_to_object(media_item):
         episodes,
         title_english,
         title_romaji,
+        synonyms,
         started_year,
         ended_year,
     )
@@ -1057,7 +1063,7 @@ def match_series_against_potential_titles(
                 if series not in matched_anilist_series:
                     matched_anilist_series.append(series)
     if series.synonyms:
-        for synonym in synonyms:
+        for synonym in series.synonyms:
             if synonym.lower() in potential_titles:
                 if series not in matched_anilist_series:
                     matched_anilist_series.append(series)
