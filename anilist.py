@@ -371,6 +371,7 @@ def mediaitem_to_object(media_item):
     )
     return series
 
+
 def match_to_plex(anilist_series, plex_series_all, plex_series_watched):
     logger.info("[ANILIST] Matching Plex series to Anilist")
     for plex_series in plex_series_watched:
@@ -981,8 +982,10 @@ def match_series_with_seasons(
 
         counter_season += 1
 
+
 def find_mapped_series(anilist_series, custom_mapping_id):
     return next(filter(lambda s: s.id == custom_mapping_id, anilist_series), None)
+
 
 def match_series_against_potential_titles(
     series, potential_titles, matched_anilist_series
@@ -1012,6 +1015,7 @@ def match_series_against_potential_titles(
                 synonym_clean = clean_title(synonym)
                 if synonym_clean in potential_titles:
                     matched_anilist_series.append(series)
+
 
 def update_entry(
     title, year, watched_episode_count, matched_anilist_series, ignore_year
@@ -1422,6 +1426,7 @@ def retrieve_custom_mapping(title, season):
                 return mapping.anime_id
 
     return 0
+
 
 def clean_title(title):
     return re.sub("[^A-Za-z0-9]+", "", title.lower().strip())

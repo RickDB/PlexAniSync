@@ -171,7 +171,7 @@ def get_watched_shows(shows):
 
         if hasattr(show, "episodes"):
             episodes = show.episodes()
-            season_total = max(map(lambda e: e.seasonNumber, episodes), default = 1)
+            season_total = max(map(lambda e: e.seasonNumber, episodes), default=1)
             for episode in episodes:
                 if episode.isWatched:
                     try:
@@ -284,8 +284,8 @@ def get_watched_episodes_for_show_season(shows, watched_show_title, watched_seas
                 if hasattr(show, "episodes"):
                     try:
                         watched_episodes_of_season = [e for e in show.episodes() if e.isWatched and seasons_match(e, watched_season)]
-                        #len(watched_episodes_of_season) only works when the user didn't skip any episodes
-                        episodes_watched = max(map(lambda e: e.index, watched_episodes_of_season), default = 0)
+                        # len(watched_episodes_of_season) only works when the user didn't skip any episodes
+                        episodes_watched = max(map(lambda e: e.index, watched_episodes_of_season), default=0)
                         break
                     except Exception as e:
                         logger.error(
@@ -315,6 +315,7 @@ def get_watched_episodes_for_show_season(shows, watched_show_title, watched_seas
 
     logger.info('[PLEX] %s episodes watched for season: %s' % (episodes_watched, watched_season))
     return episodes_watched
+
 
 def seasons_match(episode, season_number):
     episode_season = (1 if not episode.seasonNumber else episode.seasonNumber)
