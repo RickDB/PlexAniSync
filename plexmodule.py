@@ -170,25 +170,26 @@ def get_watched_shows(shows):
         episodes_watched = 0
 
         if hasattr(show, "episodes"):
-            for episode in show.episodes():
-                try:
-                    # If season not defined set to season 1
-                    season = 1 if not episode.seasonNumber else episode.seasonNumber
-                    n_episode = episode.index
-                    if episode.isWatched and n_episode:
-                        if (
-                            n_episode > episodes_watched and season == season_watched
-                        ) or (season > season_watched):
-                            season_watched = season
-                            episodes_watched = n_episode
-                            season_total = season
-                        else:
-                            episodes_watched = 0
-                except Exception as e:
-                    logger.error(
-                        "Error during lookup_result processing, traceback: %s" % (e)
-                    )
-                    pass
+            episodes = show.episodes()
+            season_total = max(map(lambda e: e.seasonNumber, episodes), default=1)
+            for episode in episodes:
+                if episode.isWatched:
+                    try:
+                        # If season not defined set to season 1
+                        season = 1 if not episode.seasonNumber else episode.seasonNumber
+                        if episode.index:
+                            if (
+                                episode.index > episodes_watched and season == season_watched
+                            ) or (season > season_watched):
+                                season_watched = season
+                                episodes_watched = episode.index
+                            else:
+                                episodes_watched = 0
+                    except Exception as e:
+                        logger.error(
+                            "Error during lookup_result processing, traceback: %s" % (e)
+                        )
+                        pass
             if episodes_watched > 0:
                 # Add year if we have one otherwise fallback
                 year = 1900
@@ -281,37 +282,41 @@ def get_watched_episodes_for_show_season(shows, watched_show_title, watched_seas
         if show.title.lower().strip() == watched_show_title.lower().strip():
             try:
                 if hasattr(show, "episodes"):
-                    for episode in show.episodes():
-                        try:
-                            season = (
-                                1 if not episode.seasonNumber else episode.seasonNumber
-                            )
-                            if season == watched_season:
-                                if episode.isWatched:
-                                    episodes_watched += 1
-                        except Exception as e:
-                            logger.error(
-                                "Error during lookup_result processing, traceback: %s"
-                                % (e)
-                            )
-                            pass
-                # Most likely single item (Movie), falback untill we added proper fix based on additional Plex metadata
-                try:
-                    logger.info(
-                        "[PLEX] Show appears to be movie (no episodes attribute) and trying fallback approach to determine watched state"
-                    )
-                    if hasattr(show, "isWatched"):
-                        if show.isWatched:
-                            episodes_watched = 1
-                except Exception:
-                    logger.exception(
-                        "[PLEX] Failed to get watched state for unknown object (possibly movie)"
-                    )
+                    try:
+                        watched_episodes_of_season = [e for e in show.episodes() if e.isWatched and seasons_match(e, watched_season)]
+                        # len(watched_episodes_of_season) only works when the user didn't skip any episodes
+                        episodes_watched = max(map(lambda e: e.index, watched_episodes_of_season), default=0)
+                        break
+                    except Exception as e:
+                        logger.error(
+                            "Error during lookup_result processing, traceback: %s"
+                            % (e)
+                        )
+                        pass
+                else:
+                    # Most likely single item (Movie), falback untill we added proper fix based on additional Plex metadata
+                    try:
+                        logger.info(
+                            "[PLEX] Show appears to be movie (no episodes attribute) and trying fallback approach to determine watched state"
+                        )
+                        if hasattr(show, "isWatched"):
+                            if show.isWatched:
+                                episodes_watched = 1
+                                break
+                    except Exception:
+                        logger.exception(
+                            "[PLEX] Failed to get watched state for unknown object (possibly movie)"
+                        )
             except Exception:
                 logger.exception(
                     "[PLEX] Error occured during retrieving of watched episodes for show %s [season = %s]"
                     % (watched_show_title, watched_season)
                 )
 
-    # logger.info('[PLEX] %s episodes watched for season: %s' % (episodes_watched, watched_season))
+    logger.info('[PLEX] %s episodes watched for season: %s' % (episodes_watched, watched_season))
     return episodes_watched
+
+
+def seasons_match(episode, season_number):
+    episode_season = (1 if not episode.seasonNumber else episode.seasonNumber)
+    return episode_season == season_number

@@ -64,6 +64,7 @@ class anilist_series:
         episodes,
         title_english,
         title_romaji,
+        synonyms,
         started_year,
         ended_year,
     ):
@@ -78,6 +79,7 @@ class anilist_series:
         self.episodes = episodes
         self.title_english = title_english
         self.title_romaji = title_romaji
+        self.synonyms = synonyms
         self.started_year = started_year
         self.ended_year = ended_year
 
@@ -93,7 +95,7 @@ def search_by_id(anilist_id):
     query = """
         query ($id: Int) {
           # Define which variables will be used in the query (id)
-          Media (id: $id, type: ANIME) {
+          media: Media (id: $id, type: ANIME) {
             # Insert our variables into the query arguments
             # (id) (type: ANIME is hard-coded in the query)
             id
@@ -196,43 +198,44 @@ def search_by_name(anilist_show_name):
 def fetch_user_list(username):
     query = """
         query ($username: String) {
-        MediaListCollection(userName: $username, type: ANIME) {
-            lists {
-            name
-            status
-            isCustomList
-            entries {
-                id
-                progress
-                status
-                repeat
-                media{
-                id
-                type
-                format
-                status
-                source
-                season
-                episodes
-                startDate {
-                    year
-                    month
-                    day
-                }
-                endDate {
-                    year
-                    month
-                    day
-                }
-                title {
-                    romaji
-                    english
-                    native
-                }
+            MediaListCollection(userName: $username, type: ANIME) {
+                lists {
+                    name
+                    status
+                    isCustomList
+                    entries {
+                        id
+                        progress
+                        status
+                        repeat
+                        media {
+                            id
+                            type
+                            format
+                            status
+                            source
+                            season
+                            episodes
+                            startDate {
+                                year
+                                month
+                                day
+                            }
+                            endDate {
+                                year
+                                month
+                                day
+                            }
+                            title {
+                                romaji
+                                english
+                                native
+                            }
+                            synonyms
+                        }
+                    }
                 }
             }
-            }
-        }
         }
         """
 
@@ -290,8 +293,8 @@ def process_user_list(username):
                                     if list_entry.media is not None:
                                         series_obj = mediaitem_to_object(list_entry)
                                         anilist_series.append(series_obj)
-    except BaseException:
-        logger.critical("[ANILIST] Failed to return list for user: %s" % (username))
+    except BaseException as exception:
+        logger.critical("[ANILIST] Failed to return list for user: %s" % (username), exception)
         return None
 
     logger.info("[ANILIST] Found %s anime series on list" % (len(anilist_series)))
@@ -301,7 +304,7 @@ def process_user_list(username):
 def search_item_to_obj(item):
     try:
         if item:
-            return single_mediaitem_to_object(item.data)
+            return mediaitem_to_object(item.data)
     except BaseException:
         pass
     return None
@@ -319,6 +322,7 @@ def mediaitem_to_object(media_item):
     episodes = ""
     title_english = ""
     title_romaji = ""
+    synonyms = []
     started_year = ""
     ended_year = ""
 
@@ -342,6 +346,8 @@ def mediaitem_to_object(media_item):
         title_english = media_item.media.title.english
     if hasattr(media_item.media.title, "romaji"):
         title_romaji = media_item.media.title.romaji
+    if hasattr(media_item.media, "synonyms"):
+        synonyms = media_item.media.synonyms
     if hasattr(media_item.media.startDate, "year"):
         started_year = media_item.media.startDate.year
     if hasattr(media_item.media.endDate, "year"):
@@ -359,64 +365,7 @@ def mediaitem_to_object(media_item):
         episodes,
         title_english,
         title_romaji,
-        started_year,
-        ended_year,
-    )
-    return series
-
-
-def single_mediaitem_to_object(media_item):
-    id = media_item.Media.id
-    sType = ""
-    sFormat = ""
-    source = ""
-    status = ""
-    media_status = ""
-    progress = ""
-    season = ""
-    episodes = ""
-    title_english = ""
-    title_romaji = ""
-    started_year = ""
-    ended_year = ""
-
-    if hasattr(media_item, "status"):
-        status = media_item.status
-    if hasattr(media_item, "progress"):
-        progress = media_item.progress
-    if hasattr(media_item.Media, "status"):
-        media_status = media_item.Media.status
-    if hasattr(media_item.Media, "type"):
-        sType = media_item.Media.type
-    if hasattr(media_item.Media, "format"):
-        sFormat = media_item.Media.format
-    if hasattr(media_item.Media, "source"):
-        source = media_item.Media.source
-    if hasattr(media_item.Media, "season"):
-        season = media_item.Media.season
-    if hasattr(media_item.Media, "episodes"):
-        episodes = media_item.Media.episodes
-    if hasattr(media_item.Media.title, "english"):
-        title_english = media_item.Media.title.english
-    if hasattr(media_item.Media.title, "romaji"):
-        title_romaji = media_item.Media.title.romaji
-    if hasattr(media_item.Media.startDate, "year"):
-        started_year = media_item.Media.startDate.year
-    if hasattr(media_item.Media.endDate, "year"):
-        ended_year = media_item.Media.endDate.year
-
-    series = anilist_series(
-        id,
-        sType,
-        sFormat,
-        source,
-        status,
-        media_status,
-        progress,
-        season,
-        episodes,
-        title_english,
-        title_romaji,
+        synonyms,
         started_year,
         ended_year,
     )
@@ -429,13 +378,9 @@ def match_to_plex(anilist_series, plex_series_all, plex_series_watched):
         plex_title = plex_series.title
         plex_title_sort = plex_series.title_sort
         plex_title_original = plex_series.title_original
-        plex_title_clean = re.sub("[^A-Za-z0-9]+", "", plex_title.lower().strip())
-        plex_title_sort_clean = re.sub(
-            "[^A-Za-z0-9]+", "", plex_title_sort.lower().strip()
-        )
-        plex_title_original_clean = re.sub(
-            "[^A-Za-z0-9]+", "", plex_title_original.lower().strip()
-        )
+        plex_title_clean = clean_title(plex_title)
+        plex_title_sort_clean = clean_title(plex_title_sort)
+        plex_title_original_clean = clean_title(plex_title_original)
         plex_title_clean_without_year = plex_title_clean
         plex_title_sort_clean_without_year = plex_title_sort_clean
         plex_title_original_clean_without_year = plex_title_original_clean
@@ -513,9 +458,10 @@ def match_to_plex(anilist_series, plex_series_all, plex_series_watched):
             custom_mapping_id = retrieve_custom_mapping(plex_title, plex_total_seasons)
 
             # Custom mapping check - check user list
-            found_custom_match = False
-            for series in anilist_series:
-                if custom_mapping_id > 0 and series.id == custom_mapping_id:
+            if custom_mapping_id > 0:
+                found_custom_match = False
+                series = find_mapped_series(anilist_series, custom_mapping_id)
+                if series:
                     logger.info(
                         "[ANILIST] Used custom mapping id %s  |  title: %s | season: %s | anilist id: %s"
                         % (
@@ -532,7 +478,7 @@ def match_to_plex(anilist_series, plex_series_all, plex_series_watched):
                     matched_anilist_series.append(series)
                     update_entry(
                         plex_title,
-                        1970,
+                        plex_year,
                         plex_watched_episode_count,
                         matched_anilist_series,
                         True,
@@ -540,9 +486,8 @@ def match_to_plex(anilist_series, plex_series_all, plex_series_watched):
                     matched_anilist_series = []
                     found_custom_match = True
 
-            # Custom mapping check - without checking user list
-            if found_custom_match is False:
-                if custom_mapping_id > 0:
+                # Custom mapping check - without checking user list
+                if found_custom_match is False:
                     logger.info(
                         "[ANILIST] Used custom mapping id %s  |  title: %s | season: %s | anilist id: %s"
                         % (
@@ -565,37 +510,14 @@ def match_to_plex(anilist_series, plex_series_all, plex_series_watched):
                     )
                     found_custom_match = True
 
-            # If custom match found continue to next
-            if found_custom_match is True:
-                continue
+                # If custom match found continue to next
+                if found_custom_match is True:
+                    continue
 
             # Regular matching
             if found_match is False:
                 for series in anilist_series:
-                    if series.title_english:
-                        if series.title_english.lower() in potential_titles:
-                            matched_anilist_series.append(series)
-                        else:
-                            series_title_english_clean = (
-                                re.sub("[^A-Za-z0-9]+", "", series.title_english)
-                                .lower()
-                                .strip()
-                            )
-                            if series_title_english_clean in potential_titles:
-                                matched_anilist_series.append(series)
-                    if series.title_romaji:
-                        if series.title_romaji.lower() in potential_titles:
-                            if series not in matched_anilist_series:
-                                matched_anilist_series.append(series)
-                        else:
-                            series_title_romaji_clean = (
-                                re.sub("[^A-Za-z0-9]+", "", series.title_romaji)
-                                .lower()
-                                .strip()
-                            )
-                            if series_title_romaji_clean in potential_titles:
-                                if series not in matched_anilist_series:
-                                    matched_anilist_series.append(series)
+                    match_series_against_potential_titles(series, potential_titles, matched_anilist_series)
 
             # Series not listed so search for it
             if not all(matched_anilist_series) or not matched_anilist_series:
@@ -779,14 +701,10 @@ def match_series_with_seasons(
         # later)
         if counter_season == 1:
             found_match = False
-            plex_title_clean = re.sub("[^A-Za-z0-9]+", "", plex_title.lower().strip())
+            plex_title_clean = clean_title(plex_title)
             plex_title_clean_without_year = plex_title_clean
-            plex_title_sort_clean = re.sub(
-                "[^A-Za-z0-9]+", "", plex_title_sort.lower().strip()
-            )
-            plex_title_original_clean = re.sub(
-                "[^A-Za-z0-9]+", "", plex_title_original.lower().strip()
-            )
+            plex_title_sort_clean = clean_title(plex_title_sort)
+            plex_title_original_clean = clean_title(plex_title_original)
             plex_title_sort_clean_without_year = plex_title_sort_clean
             plex_title_original_clean_without_year = plex_title_original_clean
 
@@ -859,15 +777,16 @@ def match_series_with_seasons(
             custom_mapping_id = retrieve_custom_mapping(plex_title, counter_season)
 
             # Custom mapping check - check user list
-            found_custom_match = False
-            for series in anilist_series:
-                if custom_mapping_id > 0 and series.id == custom_mapping_id:
+            if custom_mapping_id > 0:
+                found_custom_match = False
+                series = find_mapped_series(anilist_series, custom_mapping_id)
+                if series:
                     logger.info(
                         "[ANILIST] Used custom mapping id %s  |  title: %s | season: %s | anilist id: %s"
                         % (
                             custom_mapping_id,
                             plex_title,
-                            plex_total_seasons,
+                            counter_season,
                             custom_mapping_id,
                         )
                     )
@@ -878,7 +797,7 @@ def match_series_with_seasons(
                     matched_anilist_series.append(series)
                     update_entry(
                         plex_title,
-                        1970,
+                        plex_year,
                         plex_watched_episode_count,
                         matched_anilist_series,
                         True,
@@ -886,35 +805,35 @@ def match_series_with_seasons(
                     matched_anilist_series = []
                     found_custom_match = True
 
-            # Custom mapping check - without checking user list
-            if found_custom_match is False:
-                if custom_mapping_id > 0:
-                    logger.info(
-                        "[ANILIST] Used custom mapping id %s  |  title: %s | season: %s | anilist id: %s"
-                        % (
+                # Custom mapping check - without checking user list
+                if found_custom_match is False:
+                    if custom_mapping_id > 0:
+                        logger.info(
+                            "[ANILIST] Used custom mapping id %s  |  title: %s | season: %s | anilist id: %s"
+                            % (
+                                custom_mapping_id,
+                                plex_title,
+                                plex_total_seasons,
+                                custom_mapping_id,
+                            )
+                        )
+                        logger.warning(
+                            "[ANILIST] Adding new series id to list: %s | Plex episodes watched: %s"
+                            % (custom_mapping_id, plex_watched_episode_count)
+                        )
+                        add_by_id(
                             custom_mapping_id,
                             plex_title,
-                            plex_total_seasons,
-                            custom_mapping_id,
+                            plex_year,
+                            plex_watched_episode_count,
+                            True,
                         )
-                    )
-                    logger.warning(
-                        "[ANILIST] Adding new series id to list: %s | Plex episodes watched: %s"
-                        % (custom_mapping_id, plex_watched_episode_count)
-                    )
-                    add_by_id(
-                        custom_mapping_id,
-                        plex_title,
-                        plex_year,
-                        plex_watched_episode_count,
-                        True,
-                    )
-                    found_custom_match = True
+                        found_custom_match = True
 
-            # If custom match found continue to next
-            if found_custom_match is True:
-                counter_season += 1
-                continue
+                # If custom match found continue to next
+                if found_custom_match is True:
+                    counter_season += 1
+                    continue
 
             # Regular matching
             if found_match is False:
@@ -927,30 +846,7 @@ def match_series_with_seasons(
                             % (plex_title, counter_season, custom_mapping_id)
                         )
                     else:
-                        if series.title_english:
-                            if series.title_english.lower() in potential_titles:
-                                matched_anilist_series.append(series)
-                            else:
-                                series_title_english_clean = (
-                                    re.sub("[^A-Za-z0-9]+", "", series.title_english)
-                                    .lower()
-                                    .strip()
-                                )
-                                if series_title_english_clean in potential_titles:
-                                    matched_anilist_series.append(series)
-                        if series.title_romaji:
-                            if series.title_romaji.lower() in potential_titles:
-                                if series not in matched_anilist_series:
-                                    matched_anilist_series.append(series)
-                            else:
-                                series_title_romaji_clean = (
-                                    re.sub("[^A-Za-z0-9]+", "", series.title_romaji)
-                                    .lower()
-                                    .strip()
-                                )
-                                if series_title_romaji_clean in potential_titles:
-                                    if series not in matched_anilist_series:
-                                        matched_anilist_series.append(series)
+                        match_series_against_potential_titles(series, potential_titles, matched_anilist_series)
 
                 if found_match:
                     matched_anilist_series.append(series)
@@ -1015,6 +911,8 @@ def match_series_with_seasons(
                         % (plex_title)
                     )
         else:
+            #ignore the Plex year since Plex does not have years for seasons
+            skip_year_check = True
             custom_mapping_id = retrieve_custom_mapping(plex_title, counter_season)
             if custom_mapping_id > 0:
                 logger.info(
@@ -1022,7 +920,6 @@ def match_series_with_seasons(
                     % (plex_title, counter_season, custom_mapping_id)
                 )
                 media_id_search = custom_mapping_id
-                skip_year_check = True
             else:
                 if plex_year is not None:
                     media_id_search = find_id_season_best_match(
@@ -1049,7 +946,7 @@ def match_series_with_seasons(
                             plex_title_lookup = series.title_english
                         elif series.title_romaji is not None:
                             plex_title_lookup = series.title_romaji
-                        plex_year = series.started_year
+
                         matched_anilist_series.append(series)
                         break
 
@@ -1085,6 +982,40 @@ def match_series_with_seasons(
                     log_to_file(error_message)
 
         counter_season += 1
+
+
+def find_mapped_series(anilist_series, custom_mapping_id):
+    return next(filter(lambda s: s.id == custom_mapping_id, anilist_series), None)
+
+
+def match_series_against_potential_titles(
+    series, potential_titles, matched_anilist_series
+):
+    if series.title_english:
+        if series.title_english.lower() in potential_titles:
+            matched_anilist_series.append(series)
+        else:
+            series_title_english_clean = clean_title(series.title_english)
+            if series_title_english_clean in potential_titles:
+                matched_anilist_series.append(series)
+    if series.title_romaji:
+        if series.title_romaji.lower() in potential_titles:
+            if series not in matched_anilist_series:
+                matched_anilist_series.append(series)
+        else:
+            series_title_romaji_clean = clean_title(series.title_romaji)
+            if series_title_romaji_clean in potential_titles:
+                if series not in matched_anilist_series:
+                    matched_anilist_series.append(series)
+    if series.synonyms:
+        for synonym in series.synonyms:
+            if synonym.lower() in potential_titles:
+                if series not in matched_anilist_series:
+                    matched_anilist_series.append(series)
+            else:
+                synonym_clean = clean_title(synonym)
+                if synonym_clean in potential_titles:
+                    matched_anilist_series.append(series)
 
 
 def update_entry(
@@ -1152,8 +1083,8 @@ def update_entry(
             # series completed watched
             logger.warning(
                 "[ANILIST] Plex episode watch count [%s] was higher than the "
-                "one on AniList total episodes for that series [%s] | gonna "
-                "update AniList entry to completed"
+                "one on AniList total episodes for that series [%s] | updating "
+                "AniList entry to completed"
                 % (watched_episode_count, anilist_total_episodes)
             )
 
@@ -1175,7 +1106,7 @@ def update_entry(
             # episode watch count higher than plex
             logger.warning(
                 "[ANILIST] Plex episode watch count [%s] was higher than the one"
-                " on AniList [%s] which has total of %s episodes | gonna update "
+                " on AniList [%s] which has total of %s episodes | updating "
                 "AniList entry to currently watching"
                 % (
                     watched_episode_count,
@@ -1234,7 +1165,7 @@ def update_entry(
 def find_id_season_best_match(title, season, year):
     media_id = None
     # logger.warning('[ANILIST] Searching  AniList for title: %s | season: %s' % (title, season))
-    match_title = re.sub("[^A-Za-z0-9]+", "", title).lower().strip()
+    match_title = clean_title(title)
     match_year = int(year)
 
     match_title_season_suffix1 = "%s %s" % (match_title, int_to_roman_numeral(season))
@@ -1289,19 +1220,11 @@ def find_id_season_best_match(title, season, year):
                     if hasattr(media_item.title, "english"):
                         if media_item.title.english is not None:
                             title_english = media_item.title.english
-                            title_english_for_matching = (
-                                re.sub("[^A-Za-z0-9]+", "", title_english)
-                                .lower()
-                                .strip()
-                            )
+                            title_english_for_matching = clean_title(title_english)
                     if hasattr(media_item.title, "romaji"):
                         if media_item.title.romaji is not None:
                             title_romaji = media_item.title.romaji
-                            title_romaji_for_matching = (
-                                re.sub("[^A-Za-z0-9]+", "", title_romaji)
-                                .lower()
-                                .strip()
-                            )
+                            title_romaji_for_matching = clean_title(title_romaji)
                     if hasattr(media_item.startDate, "year"):
                         if media_item.startDate.year is not None:
                             started_year = int(media_item.startDate.year)
@@ -1313,9 +1236,7 @@ def find_id_season_best_match(title, season, year):
                         continue
 
                     for potential_title in potential_titles:
-                        potential_title = (
-                            re.sub("[^A-Za-z0-9]+", "", potential_title).lower().strip()
-                        )
+                        potential_title = clean_title(potential_title)
                         # logger.info('Comparing AniList: %s | %s[%s] <===> %s' %
                         #  (title_english_for_matching, title_romaji_for_matching, started_year, potential_title))
                         if title_english_for_matching == potential_title:
@@ -1357,7 +1278,7 @@ def find_id_season_best_match(title, season, year):
 def find_id_best_match(title, year):
     media_id = None
     # logger.warning('[ANILIST] Searching  AniList for title: %s' % (title))
-    match_title = re.sub("[^A-Za-z0-9]+", "", title).lower().strip()
+    match_title = clean_title(title)
     match_year = str(year)
 
     list_items = search_by_name(title)
@@ -1377,19 +1298,11 @@ def find_id_best_match(title, year):
                         if hasattr(media_item.title, "english"):
                             if media_item.title.english is not None:
                                 title_english = media_item.title.english
-                                title_english_for_matching = (
-                                    re.sub("[^A-Za-z0-9]+", "", title_english)
-                                    .lower()
-                                    .strip()
-                                )
+                                title_english_for_matching = clean_title(title_english)
                         if hasattr(media_item.title, "romaji"):
                             if media_item.title.romaji is not None:
                                 title_romaji = media_item.title.romaji
-                                title_romaji_for_matching = (
-                                    re.sub("[^A-Za-z0-9]+", "", title_romaji)
-                                    .lower()
-                                    .strip()
-                                )
+                                title_romaji_for_matching = clean_title(title_romaji)
                         if hasattr(media_item.startDate, "year"):
                             started_year = str(media_item.startDate.year)
 
@@ -1418,11 +1331,7 @@ def find_id_best_match(title, year):
                             if media_item.synonyms is not None:
                                 for synonym in media_item.synonyms:
                                     synonyms = synonym
-                                    synonyms_for_matching = (
-                                        re.sub("[^A-Za-z0-9]+", "", synonyms)
-                                        .lower()
-                                        .strip()
-                                    )
+                                    synonyms_for_matching = clean_title(synonyms)
                                     if (
                                         match_title == synonyms_for_matching
                                         and match_year == started_year
@@ -1518,3 +1427,7 @@ def retrieve_custom_mapping(title, season):
                 return mapping.anime_id
 
     return 0
+
+
+def clean_title(title):
+    return re.sub("[^A-Za-z0-9]+", "", title.lower().strip())
