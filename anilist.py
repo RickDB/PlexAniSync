@@ -911,6 +911,8 @@ def match_series_with_seasons(
                         % (plex_title)
                     )
         else:
+            #ignore the Plex year since Plex does not have years for seasons
+            skip_year_check = True
             custom_mapping_id = retrieve_custom_mapping(plex_title, counter_season)
             if custom_mapping_id > 0:
                 logger.info(
@@ -918,7 +920,6 @@ def match_series_with_seasons(
                     % (plex_title, counter_season, custom_mapping_id)
                 )
                 media_id_search = custom_mapping_id
-                skip_year_check = True
             else:
                 if plex_year is not None:
                     media_id_search = find_id_season_best_match(
@@ -945,7 +946,7 @@ def match_series_with_seasons(
                             plex_title_lookup = series.title_english
                         elif series.title_romaji is not None:
                             plex_title_lookup = series.title_romaji
-                        plex_year = series.started_year
+                            
                         matched_anilist_series.append(series)
                         break
 
