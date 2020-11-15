@@ -9,7 +9,7 @@ import coloredlogs
 import anilist
 import plexmodule
 
-__version__ = "1.2.6"
+__version__ = "1.2.7"
 
 # Logger settings
 log_filename = "PlexAniSync.log"
