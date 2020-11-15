@@ -911,7 +911,7 @@ def match_series_with_seasons(
                         % (plex_title)
                     )
         else:
-            #ignore the Plex year since Plex does not have years for seasons
+            # Ignore the Plex year since Plex does not have years for seasons
             skip_year_check = True
             custom_mapping_id = retrieve_custom_mapping(plex_title, counter_season)
             if custom_mapping_id > 0:
