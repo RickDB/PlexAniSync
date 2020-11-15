@@ -946,7 +946,7 @@ def match_series_with_seasons(
                             plex_title_lookup = series.title_english
                         elif series.title_romaji is not None:
                             plex_title_lookup = series.title_romaji
-                            
+
                         matched_anilist_series.append(series)
                         break
 
