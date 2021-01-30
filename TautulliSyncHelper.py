@@ -25,7 +25,7 @@ coloredlogs.install(fmt="%(asctime)s %(message)s", logger=logger)
 
 def read_settings(settings_file):
     if not os.path.isfile(settings_file):
-        logger.critical("[CONFIG] Settings file file not found: %s" % (settings_file))
+        logger.critical(f"[CONFIG] Settings file file not found: {settings_file}")
         sys.exit()
     settings = configparser.ConfigParser()
     settings.read(settings_file)
@@ -34,7 +34,7 @@ def read_settings(settings_file):
 
 if len(sys.argv) > 2:
     settings_file = sys.argv[1]
-    logger.warning("Found settings file parameter and using: %s" % (settings_file))
+    logger.warning(f"Found settings file parameter and using: {settings_file}")
 else:
     settings_file = "settings.ini"
 
@@ -51,9 +51,9 @@ custom_mappings = {}
 
 def read_custom_mappings(mapping_file):
     if not os.path.isfile(mapping_file):
-        logger.info("[MAPPING] Custom map file not found: %s" % (mapping_file))
+        logger.info(f"[MAPPING] Custom map file not found: {mapping_file}")
     else:
-        logger.info("[MAPPING] Custom map file found: %s" % (mapping_file))
+        logger.info(f"[MAPPING] Custom map file found: {mapping_file}")
         file = open(mapping_file, "r")
         yaml = YAML(typ='safe')
         file_mappings = yaml.load(file)
@@ -63,16 +63,15 @@ def read_custom_mappings(mapping_file):
             series_mappings = []
             for file_season in file_entry['seasons']:
                 season = file_season['season']
-                anime_id = file_season['animeid']
+                anilist_id = file_season['anilist-id']
                 start = 1
                 if 'start' in file_season:
                     start = file_season['start']
 
                 logger.info(
-                    "[MAPPING] Adding custom mapping | title: %s | season: %s | anilist id: %s | start: %s"
-                    % (series_title, season, anime_id, start)
+                    f"[MAPPING] Adding custom mapping | title: {series_title} | season: {season} | anilist id: {anilist_id} | start: {start}"
                 )
-                series_mappings.append(anilist.anilist_custom_mapping(season, anime_id, start))
+                series_mappings.append(anilist.anilist_custom_mapping(season, anilist_id, start))
 
             custom_mappings[series_title] = series_mappings
 
@@ -92,7 +91,7 @@ def start():
         elif len(sys.argv) == 2:
             show_title = sys.argv[1]
 
-        logger.info("Updating single show: %s" % (show_title))
+        logger.info(f"Updating single show: {show_title}")
 
     if ANILIST_SKIP_UPDATE == "true":
         logger.warning(

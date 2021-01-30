@@ -152,9 +152,9 @@ You can manually link a Plex title and season to an AniList ID, to do so:
   - title: "Plex title for series"
     seasons:
       - season: Plex season
-        animeid: AniList series ID
+        anilist-id: AniList series ID
       - season: Plex season
-        animeid: AniList series ID
+        anilist-id: AniList series ID
 ```
 
 If the Plex season should be split into 2 seasons, add an optional `start` parameter to each season like this:
@@ -163,10 +163,10 @@ If the Plex season should be split into 2 seasons, add an optional `start` param
   - title: "Re:ZERO -Starting Life in Another World-"
     seasons:
       - season: 2
-        animeid: 108632
+        anilist-id: 108632
         start: 1
       - season: 2
-        animeid: 119661
+        anilist-id: 119661
         start: 14
 ```
 

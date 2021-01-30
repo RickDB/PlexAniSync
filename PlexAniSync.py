@@ -88,15 +88,15 @@ def read_custom_mappings(mapping_file):
             series_mappings = []
             for file_season in file_entry['seasons']:
                 season = file_season['season']
-                anime_id = file_season['animeid']
+                anilist_id = file_season['anilist-id']
                 start = 1
                 if 'start' in file_season:
                     start = file_season['start']
 
                 logger.info(
-                    f"[MAPPING] Adding custom mapping | title: {series_title} | season: {season} | anilist id: {anime_id} | start: {start}"
+                    f"[MAPPING] Adding custom mapping | title: {series_title} | season: {season} | anilist id: {anilist_id} | start: {start}"
                 )
-                series_mappings.append(anilist.anilist_custom_mapping(season, anime_id, start))
+                series_mappings.append(anilist.anilist_custom_mapping(season, anilist_id, start))
 
             custom_mappings[series_title] = series_mappings
 

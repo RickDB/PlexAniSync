@@ -428,9 +428,9 @@ def match_to_plex(anilist_series, plex_series_all, plex_series_watched):
             plex_title_original_guessit = guessit(plex_title_original.lower())[
                 "title"
             ].lower()
-        except Exception as exception:
-            logger.error(
-                f"Error parsing parsing guessit title for: {plex_title} | {plex_title_sort} | {plex_title_original} :: {exception!r}"
+        except Exception:
+            logger.exception(
+                f"Error parsing parsing guessit title for: {plex_title} | {plex_title_sort} | {plex_title_original}"
             )
 
         # For linting, the variable is currently unused by might be useful in
@@ -702,8 +702,8 @@ def match_series_with_seasons(
                     plex_title_original_clean_without_year = plex_title_original.replace(
                         yearString, ""
                     ).strip()
-            except Exception as exception:
-                logger.debug("Uncaught exception: %r", exception)
+            except Exception:
+                logger.exception("Uncaught exception")
                 pass
             plex_title_guessit = plex_title
             plex_title_sort_guessit = plex_title_sort
@@ -717,9 +717,9 @@ def match_series_with_seasons(
                 plex_title_original_guessit = guessit(plex_title_original.lower())[
                     "title"
                 ].lower()
-            except Exception as exception:
-                logger.error(
-                    f"Error parsing parsing guessit title for: {plex_title} | {plex_title_sort} | {plex_title_original} :: {exception!r}"
+            except Exception:
+                logger.exception(
+                    f"Error parsing parsing guessit title for: {plex_title} | {plex_title_sort} | {plex_title_original}"
                 )
 
             # For linting, the variable is currently unused by might be useful in
