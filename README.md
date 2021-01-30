@@ -145,19 +145,39 @@ Depending on library size and server can take a few minutes to finish, for sched
 
 You can manually link a Plex title and season to an AniList ID, to do so:
 
-- From the project folder copy `custom_mappings.ini.example` to `custom_mappings.ini`
+- From the project folder copy `custom_mappings.yaml.example` to `custom_mappings.yaml`
 - Add new entries there in the following format:
 
-`Plex title for series`^`Plex season`^`AniList series ID`
+```yaml
+  - title: "Plex title for series"
+    seasons:
+      - season: Plex season
+        animeid: AniList series ID
+      - season: Plex season
+        animeid: AniList series ID
+```
 
-As shown above the values are seperated by a ^
+If the Plex season should be split into 2 seasons, add an optional `start` parameter to each season like this:
+
+```yaml
+  - title: "Re:ZERO -Starting Life in Another World-"
+    seasons:
+      - season: 2
+        animeid: 108632
+        start: 1
+      - season: 2
+        animeid: 119661
+        start: 14
+```
+
+Episodes 1-13 will be mapped to Re:Zero 2nd Season Part 1, episodes 14 and higher will be mapped to Re:Zero 2nd Season Part 2.
 
 - To find out the AniList ID you can visit the series page and copy it from the site url, like for example My Shield hero has ID 99263:
 
 https://anilist.co/anime/99263/Tate-no-Yuusha-no-Nariagari
 
 - You can remove any existing entries from the example file as they are purely instructional
-- Upon startup it will list all valid custom mappings, incorrect onces are shown as errors and are skipped
+- Upon startup it will check if the file is a valid YAML file. The most likely reason it's not is because you didn't put quotes around an anime title with special characters (e.g. ":") in it.
 
 ### Custom settings file location
 

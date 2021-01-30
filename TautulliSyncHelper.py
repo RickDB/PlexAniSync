@@ -6,6 +6,8 @@ from time import sleep
 
 import coloredlogs
 
+from ruyaml import YAML
+
 import anilist
 import plexmodule
 
@@ -43,8 +45,8 @@ plex_settings = settings["PLEX"]
 ANILIST_SKIP_UPDATE = anilist_settings["skip_list_update"].lower()
 ANILIST_ACCESS_TOKEN = anilist_settings["access_token"].strip()
 
-mapping_file = "custom_mappings.ini"
-custom_mappings = []
+mapping_file = "custom_mappings.yaml"
+custom_mappings = {}
 
 
 def read_custom_mappings(mapping_file):
@@ -53,21 +55,26 @@ def read_custom_mappings(mapping_file):
     else:
         logger.info("[MAPPING] Custom map file found: %s" % (mapping_file))
         file = open(mapping_file, "r")
-        for line in file:
-            try:
-                mappingSplit = line.split("^")
-                series_title = mappingSplit[0]
-                season = mappingSplit[1]
-                anime_id = int(mappingSplit[2])
+        yaml = YAML(typ='safe')
+        file_mappings = yaml.load(file)
+
+        for file_entry in file_mappings['entries']:
+            series_title = file_entry['title']
+            series_mappings = []
+            for file_season in file_entry['seasons']:
+                season = file_season['season']
+                anime_id = file_season['animeid']
+                start = 1
+                if 'start' in file_season:
+                    start = file_season['start']
 
                 logger.info(
-                    "[MAPPING] Adding custom mapping | title: %s | season: %s | anilist id: %s"
-                    % (series_title, season, anime_id)
+                    "[MAPPING] Adding custom mapping | title: %s | season: %s | anilist id: %s | start: %s"
+                    % (series_title, season, anime_id, start)
                 )
-                mapping = anilist.anilist_custom_mapping(series_title, season, anime_id)
-                custom_mappings.append(mapping)
-            except BaseException:
-                logger.error("[MAPPING] Invalid entry found for line: %s" % (line))
+                series_mappings.append(anilist.anilist_custom_mapping(season, anime_id, start))
+
+            custom_mappings[series_title] = series_mappings
 
 
 ## Startup section ##

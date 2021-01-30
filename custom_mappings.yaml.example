@@ -1,0 +1,19 @@
+entries:
+  - title: The Rising of the Shield Hero
+    seasons:
+      - season: 1
+        animeid: 99263
+  - title: "Re:ZERO -Starting Life in Another World-"
+    seasons:
+      - season: 2
+        animeid: 108632
+        start: 1
+      - season: 2
+        animeid: 119661
+        start: 14
+  - title: "Code Geass: Lelouch of the Rebellion"
+    seasons:
+      - season: 1
+        animeid: 1575
+      - season: 2
+        animeid: 2904

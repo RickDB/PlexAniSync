@@ -6,6 +6,8 @@ import sys
 
 import coloredlogs
 
+from ruyaml import YAML
+
 import anilist
 import plexmodule
 
@@ -41,7 +43,7 @@ coloredlogs.install(fmt="%(asctime)s %(message)s", logger=logger)
 
 def read_settings(settings_file):
     if not os.path.isfile(settings_file):
-        logger.critical("[CONFIG] Settings file file not found: %s" % (settings_file))
+        logger.critical(f"[CONFIG] Settings file file not found: {settings_file}")
         sys.exit()
     settings = configparser.ConfigParser()
     settings.read(settings_file)
@@ -50,7 +52,7 @@ def read_settings(settings_file):
 
 if len(sys.argv) > 1:
     settings_file = sys.argv[1]
-    logger.warning("Found settings file parameter and using: %s" % (settings_file))
+    logger.warning(f"Found settings file parameter and using: {settings_file}")
 else:
     settings_file = "settings.ini"
 
@@ -68,38 +70,42 @@ if "plex_episode_count_priority" in anilist_settings:
 else:
     ANILIST_PLEX_EPISODE_COUNT_PRIORITY = "false"
 
-mapping_file = "custom_mappings.ini"
-custom_mappings = []
+mapping_file = "custom_mappings.yaml"
+custom_mappings = {}
 
 
 def read_custom_mappings(mapping_file):
     if not os.path.isfile(mapping_file):
-        logger.info("[MAPPING] Custom map file not found: %s" % (mapping_file))
+        logger.info(f"[MAPPING] Custom map file not found: {mapping_file}")
     else:
-        logger.info("[MAPPING] Custom map file found: %s" % (mapping_file))
+        logger.info(f"[MAPPING] Custom map file found: {mapping_file}")
         file = open(mapping_file, "r")
-        for line in file:
-            try:
-                mappingSplit = line.split("^")
-                series_title = mappingSplit[0]
-                season = mappingSplit[1]
-                anime_id = int(mappingSplit[2])
+        yaml = YAML(typ='safe')
+        file_mappings = yaml.load(file)
+
+        for file_entry in file_mappings['entries']:
+            series_title = file_entry['title']
+            series_mappings = []
+            for file_season in file_entry['seasons']:
+                season = file_season['season']
+                anime_id = file_season['animeid']
+                start = 1
+                if 'start' in file_season:
+                    start = file_season['start']
 
                 logger.info(
-                    "[MAPPING] Adding custom mapping | title: %s | season: %s | anilist id: %s"
-                    % (series_title, season, anime_id)
+                    f"[MAPPING] Adding custom mapping | title: {series_title} | season: {season} | anilist id: {anime_id} | start: {start}"
                 )
-                mapping = anilist.anilist_custom_mapping(series_title, season, anime_id)
-                custom_mappings.append(mapping)
-            except BaseException:
-                logger.error("[MAPPING] Invalid entry found for line: %s" % (line))
+                series_mappings.append(anilist.anilist_custom_mapping(season, anime_id, start))
+
+            custom_mappings[series_title] = series_mappings
 
 
 ## Startup section ##
 
 
 def start():
-    logger.info("PlexAniSync - version: %s" % (__version__))
+    logger.info(f"PlexAniSync - version: {__version__}")
 
     if ANILIST_SKIP_UPDATE == "true":
         logger.warning(
