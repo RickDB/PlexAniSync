@@ -1,0 +1,45 @@
+entries:
+  - title: The Rising of the Shield Hero
+    seasons:
+      - season: 1
+        anilist-id: 99263
+  - title: "Re:ZERO -Starting Life in Another World-"
+    seasons:
+      - season: 2
+        anilist-id: 108632
+        start: 1
+      - season: 2
+        anilist-id: 119661
+        start: 14
+  - title: "Code Geass: Lelouch of the Rebellion"
+    seasons:
+      - season: 1
+        anilist-id: 1575
+      - season: 2
+        anilist-id: 2904
+  - title: Gintama
+    seasons:
+      - season: 1
+        anilist-id: 918
+      - season: 2
+        anilist-id: 918
+      - season: 3
+        anilist-id: 918
+      - season: 4
+        anilist-id: 918
+      - season: 5
+        anilist-id: 9969
+      - season: 6
+        anilist-id: 15417
+      - season: 7
+        anilist-id: 20996
+      - season: 8
+        anilist-id: 97889
+      - season: 9
+        anilist-id: 99714
+      - season: 10
+        anilist-id: 100784
+        start: 1
+      - season: 10
+        anilist-id: 101925
+        start: 13

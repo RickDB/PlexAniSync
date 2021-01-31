@@ -6,6 +6,8 @@ from time import sleep
 
 import coloredlogs
 
+from ruyaml import YAML
+
 import anilist
 import plexmodule
 
@@ -23,7 +25,7 @@ coloredlogs.install(fmt="%(asctime)s %(message)s", logger=logger)
 
 def read_settings(settings_file):
     if not os.path.isfile(settings_file):
-        logger.critical("[CONFIG] Settings file file not found: %s" % (settings_file))
+        logger.critical(f"[CONFIG] Settings file file not found: {settings_file}")
         sys.exit()
     settings = configparser.ConfigParser()
     settings.read(settings_file)
@@ -32,7 +34,7 @@ def read_settings(settings_file):
 
 if len(sys.argv) > 2:
     settings_file = sys.argv[1]
-    logger.warning("Found settings file parameter and using: %s" % (settings_file))
+    logger.warning(f"Found settings file parameter and using: {settings_file}")
 else:
     settings_file = "settings.ini"
 
@@ -43,31 +45,35 @@ plex_settings = settings["PLEX"]
 ANILIST_SKIP_UPDATE = anilist_settings["skip_list_update"].lower()
 ANILIST_ACCESS_TOKEN = anilist_settings["access_token"].strip()
 
-mapping_file = "custom_mappings.ini"
-custom_mappings = []
+mapping_file = "custom_mappings.yaml"
+custom_mappings = {}
 
 
 def read_custom_mappings(mapping_file):
     if not os.path.isfile(mapping_file):
-        logger.info("[MAPPING] Custom map file not found: %s" % (mapping_file))
+        logger.info(f"[MAPPING] Custom map file not found: {mapping_file}")
     else:
-        logger.info("[MAPPING] Custom map file found: %s" % (mapping_file))
+        logger.info(f"[MAPPING] Custom map file found: {mapping_file}")
         file = open(mapping_file, "r")
-        for line in file:
-            try:
-                mappingSplit = line.split("^")
-                series_title = mappingSplit[0]
-                season = mappingSplit[1]
-                anime_id = int(mappingSplit[2])
+        yaml = YAML(typ='safe')
+        file_mappings = yaml.load(file)
+
+        for file_entry in file_mappings['entries']:
+            series_title = file_entry['title']
+            series_mappings = []
+            for file_season in file_entry['seasons']:
+                season = file_season['season']
+                anilist_id = file_season['anilist-id']
+                start = 1
+                if 'start' in file_season:
+                    start = file_season['start']
 
                 logger.info(
-                    "[MAPPING] Adding custom mapping | title: %s | season: %s | anilist id: %s"
-                    % (series_title, season, anime_id)
+                    f"[MAPPING] Adding custom mapping | title: {series_title} | season: {season} | anilist id: {anilist_id} | start: {start}"
                 )
-                mapping = anilist.anilist_custom_mapping(series_title, season, anime_id)
-                custom_mappings.append(mapping)
-            except BaseException:
-                logger.error("[MAPPING] Invalid entry found for line: %s" % (line))
+                series_mappings.append(anilist.anilist_custom_mapping(season, anilist_id, start))
+
+            custom_mappings[series_title] = series_mappings
 
 
 ## Startup section ##
@@ -85,7 +91,7 @@ def start():
         elif len(sys.argv) == 2:
             show_title = sys.argv[1]
 
-        logger.info("Updating single show: %s" % (show_title))
+        logger.info(f"Updating single show: {show_title}")
 
     if ANILIST_SKIP_UPDATE == "true":
         logger.warning(

@@ -3,7 +3,7 @@ __pycache__/
 *.pyc
 *.log
 ApplyPEP8\.bat
-custom_mappings.ini
+custom_mappings.yaml
 failed_matches\.txt
 logo\.psd
 settings\.ini
