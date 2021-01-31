@@ -269,7 +269,7 @@ def get_watched_shows(shows):
 
 def get_watched_episodes_for_show_season(shows, watched_show_title, watched_season):
     logger.info(
-        "[PLEX] Retrieving episode watch count for show: {watched_show_title} | season: {watched_season}"
+        f"[PLEX] Retrieving episode watch count for show: {watched_show_title} | season: {watched_season}"
     )
 
     episodes_watched = 0
@@ -304,7 +304,7 @@ def get_watched_episodes_for_show_season(shows, watched_show_title, watched_seas
                     f"[PLEX] Error occured during retrieving of watched episodes for show {watched_show_title} [season = {watched_season}]"
                 )
 
-    logger.info(f'[PLEX] {episodes_watched} episodes watched for season: {watched_season}')
+    logger.info(f'[PLEX] {episodes_watched} episodes watched for season {watched_season}')
     return episodes_watched
 
 
