@@ -165,66 +165,30 @@ def get_watched_shows(shows):
         season_watched = 1
         episodes_watched = 0
 
-        if hasattr(show, "episodes"):
-            episodes = show.episodes()
-            season_total = max(map(lambda e: e.seasonNumber, episodes), default=1)
-            for episode in episodes:
-                if episode.isWatched:
-                    try:
-                        # If season not defined set to season 1
-                        season = 1 if not episode.seasonNumber else episode.seasonNumber
-                        if episode.index:
-                            if (
-                                episode.index > episodes_watched and season == season_watched
-                            ) or (season > season_watched):
-                                season_watched = season
-                                episodes_watched = episode.index
-                            else:
-                                episodes_watched = 0
-                    except Exception as e:
-                        logger.error(
-                            "Error during lookup_result processing, traceback: %s" % (e)
-                        )
-                        pass
-            if episodes_watched > 0:
-                # Add year if we have one otherwise fallback
-                year = 1900
-                if show.year:
-                    year = show.year
-
-                if not hasattr(show, "titleSort"):
-                    show.titleSort = show.title
-                elif show.titleSort == "":
-                    show.titleSort = show.title
-
-                # Disable original title for now, results in false positives for yet unknown reason
-
-                # if not hasattr(show, 'originalTitle'):
-                #    show.originalTitle = show.title
-                # elif show.originalTitle == '':
-                #    show.originalTitle = show.title
-                show.originalTitle = show.title
-
-                watched_show = plex_watched_series(
-                    show.title.strip(),
-                    show.titleSort.strip(),
-                    show.originalTitle.strip(),
-                    year,
-                    episodes_watched,
-                    season_total,
-                )
-                watched_series.append(watched_show)
-
-                # logger.info(
-                #    'Watched %s episodes of show: %s' % (
-                #        episodes_watched, show.title))
-        else:
-            # Probably OVA but adding as series with 1 episode and season
-            # Needs proper solution later on and requires changing AniList
-            # class to support it properly
-
-            if hasattr(show, "isWatched"):
-                if show.isWatched:
+        try:
+            if hasattr(show, "episodes"):
+                episodes = show.episodes()
+                season_total = max(map(lambda e: e.seasonNumber, episodes), default=1)
+                for episode in episodes:
+                    if episode.isWatched:
+                        try:
+                            # If season not defined set to season 1
+                            season = 1 if not episode.seasonNumber else episode.seasonNumber
+                            if episode.index:
+                                if (
+                                    episode.index > episodes_watched and season == season_watched
+                                ) or (season > season_watched):
+                                    season_watched = season
+                                    episodes_watched = episode.index
+                                else:
+                                    episodes_watched = 0
+                        except Exception as e:
+                            logger.error(
+                                "Error during lookup_result processing, traceback: %s" % (e)
+                            )
+                            pass
+                if episodes_watched > 0:
+                    # Add year if we have one otherwise fallback
                     year = 1900
                     if show.year:
                         year = show.year
@@ -246,12 +210,51 @@ def get_watched_shows(shows):
                         show.title.strip(),
                         show.titleSort.strip(),
                         show.originalTitle.strip(),
-                        show.year,
-                        1,
-                        1,
+                        year,
+                        episodes_watched,
+                        season_total,
                     )
                     watched_series.append(watched_show)
-                    ovas_found += 1
+
+                    # logger.info(
+                    #    'Watched %s episodes of show: %s' % (
+                    #        episodes_watched, show.title))
+            else:
+                # Probably OVA but adding as series with 1 episode and season
+                # Needs proper solution later on and requires changing AniList
+                # class to support it properly
+
+                if hasattr(show, "isWatched"):
+                    if show.isWatched:
+                        year = 1900
+                        if show.year:
+                            year = show.year
+
+                        if not hasattr(show, "titleSort"):
+                            show.titleSort = show.title
+                        elif show.titleSort == "":
+                            show.titleSort = show.title
+
+                        # Disable original title for now, results in false positives for yet unknown reason
+
+                        # if not hasattr(show, 'originalTitle'):
+                        #    show.originalTitle = show.title
+                        # elif show.originalTitle == '':
+                        #    show.originalTitle = show.title
+                        show.originalTitle = show.title
+
+                        watched_show = plex_watched_series(
+                            show.title.strip(),
+                            show.titleSort.strip(),
+                            show.originalTitle.strip(),
+                            show.year,
+                            1,
+                            1,
+                        )
+                        watched_series.append(watched_show)
+                        ovas_found += 1
+        except Exception as e:
+            logger.error("[PLEX] Error occured during episode processing of show %s : %s" % (show, e))
 
     logger.info(f"[PLEX] Found {len(watched_series)} watched series")
 
