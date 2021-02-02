@@ -1186,7 +1186,8 @@ def find_id_season_best_match(title, season, year):
                                 started_year = int(media_item.startDate.year)
                         else:
                             logger.warning(
-                                f"[ANILIST] Anilist series did not have year attribute so skipping this result and moving to next: {title_english} | {title_romaji}"
+                                "[ANILIST] Anilist series did not have year attribute so skipping this result and moving to next: "
+                                f"{title_english} | {title_romaji}"
                             )
                             continue
 
