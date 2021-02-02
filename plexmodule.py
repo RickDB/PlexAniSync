@@ -73,9 +73,9 @@ def authenticate():
                     logger.warning("Retrieved user token for MyPlex home user")
                     plex = PlexServer(home_server_base_url, plex_user_token)
                     logger.warning("Successfully authenticated for MyPlex home user")
-                except Exception as e:
+                except Exception:
                     logger.exception(
-                        "Error occured during Plex Home user lookup or server authentication: %s" % (e)
+                        "Error occured during Plex Home user lookup or server authentication"
                     )
             else:
                 account = MyPlexAccount(plex_user, plex_password)
@@ -86,8 +86,8 @@ def authenticate():
             )
             sys.exit()
         return plex
-    except Exception as e:
-        logger.error("Unable to authenticate to Plex Media Server, traceback: %s" % (e))
+    except Exception:
+        logger.exception("Unable to authenticate to Plex Media Server")
         return None
 
 
@@ -182,9 +182,9 @@ def get_watched_shows(shows):
                                     episodes_watched = episode.index
                                 else:
                                     episodes_watched = 0
-                        except Exception as e:
-                            logger.error(
-                                "Error during lookup_result processing, traceback: %s" % (e)
+                        except Exception:
+                            logger.exception(
+                                "Error during lookup_result processing"
                             )
                             pass
                 if episodes_watched > 0:
@@ -285,8 +285,8 @@ def get_watched_episodes_for_show_season(shows, watched_show_title, watched_seas
                         # len(watched_episodes_of_season) only works when the user didn't skip any episodes
                         episodes_watched = max(map(lambda e: e.index, watched_episodes_of_season), default=0)
                         break
-                    except Exception as e:
-                        logger.error("Error during lookup_result processing, traceback: %s" % (e))
+                    except Exception:
+                        logger.exception("Error during lookup_result processing")
                         pass
                 else:
                     # Most likely single item (Movie), falback untill we added proper fix based on additional Plex metadata
@@ -298,13 +298,13 @@ def get_watched_episodes_for_show_season(shows, watched_show_title, watched_seas
                             if show.isWatched:
                                 episodes_watched = 1
                                 break
-                    except Exception as e:
-                        logger.error(
-                            "[PLEX] Failed to get watched state for unknown object (possibly movie): %s" % (e)
+                    except Exception:
+                        logger.exception(
+                            "[PLEX] Failed to get watched state for unknown object (possibly movie)"
                         )
-            except Exception as e:
-                logger.error(
-                    "[PLEX] Error occured during retrieving of watched episodes for show {watched_show_title} [season = {watched_season}] : %s" % (e)
+            except Exception:
+                logger.exception(
+                    f"[PLEX] Error occured during retrieving of watched episodes for show {watched_show_title} [season = {watched_season}]"
                 )
 
     logger.info(f'[PLEX] {episodes_watched} episodes watched for season {watched_season}')
