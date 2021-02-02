@@ -1164,59 +1164,60 @@ def find_id_season_best_match(title, season, year):
     list_items = search_by_name(title)
     if list_items:
         for item in list_items:
-            if item[0].media:
-                for media_item in item[0].media:
-                    title_english = ""
-                    title_english_for_matching = ""
-                    title_romaji = ""
-                    title_romaji_for_matching = ""
-                    started_year = ""
+            if item[0] is not None:
+                if item[0].media:
+                    for media_item in item[0].media:
+                        title_english = ""
+                        title_english_for_matching = ""
+                        title_romaji = ""
+                        title_romaji_for_matching = ""
+                        started_year = ""
 
-                    if hasattr(media_item.title, "english"):
-                        if media_item.title.english is not None:
-                            title_english = media_item.title.english
-                            title_english_for_matching = clean_title(title_english)
-                    if hasattr(media_item.title, "romaji"):
-                        if media_item.title.romaji is not None:
-                            title_romaji = media_item.title.romaji
-                            title_romaji_for_matching = clean_title(title_romaji)
-                    if hasattr(media_item.startDate, "year"):
-                        if media_item.startDate.year is not None:
-                            started_year = int(media_item.startDate.year)
-                    else:
-                        logger.warning(
-                            f"[ANILIST] Anilist series did not have year attribute so skipping this result and moving to next: {title_english} | {title_romaji}"
-                        )
-                        continue
+                        if hasattr(media_item.title, "english"):
+                            if media_item.title.english is not None:
+                                title_english = media_item.title.english
+                                title_english_for_matching = clean_title(title_english)
+                        if hasattr(media_item.title, "romaji"):
+                            if media_item.title.romaji is not None:
+                                title_romaji = media_item.title.romaji
+                                title_romaji_for_matching = clean_title(title_romaji)
+                        if hasattr(media_item.startDate, "year"):
+                            if media_item.startDate.year is not None:
+                                started_year = int(media_item.startDate.year)
+                        else:
+                            logger.warning(
+                                f"[ANILIST] Anilist series did not have year attribute so skipping this result and moving to next: {title_english} | {title_romaji}"
+                            )
+                            continue
 
-                    for potential_title in potential_titles:
-                        potential_title = clean_title(potential_title)
-                        # logger.info('Comparing AniList: %s | %s[%s] <===> %s' %
-                        #  (title_english_for_matching, title_romaji_for_matching, started_year, potential_title))
-                        if title_english_for_matching == potential_title:
-                            if started_year < match_year:
-                                logger.warning(
-                                    f"[ANILIST] Found match: {title_english} [{media_id}] | "
-                                    f"skipping as it was released before first season ({started_year} <==> {match_year})"
-                                )
-                            else:
-                                media_id = media_item.id
-                                logger.info(
-                                    f"[ANILIST] Found match: {title_english} [{media_id}]"
-                                )
-                                break
-                        if title_romaji_for_matching == potential_title:
-                            if started_year < match_year:
-                                logger.warning(
-                                    f"[ANILIST] Found match: {title_romaji} [{media_id}] | "
-                                    f"skipping as it was released before first season ({started_year} <==> {match_year})"
-                                )
-                            else:
-                                media_id = media_item.id
-                                logger.info(
-                                    f"[ANILIST] Found match: {title_romaji} [{media_id}]"
-                                )
-                                break
+                        for potential_title in potential_titles:
+                            potential_title = clean_title(potential_title)
+                            # logger.info('Comparing AniList: %s | %s[%s] <===> %s' %
+                            #  (title_english_for_matching, title_romaji_for_matching, started_year, potential_title))
+                            if title_english_for_matching == potential_title:
+                                if started_year < match_year:
+                                    logger.warning(
+                                        f"[ANILIST] Found match: {title_english} [{media_id}] | "
+                                        f"skipping as it was released before first season ({started_year} <==> {match_year})"
+                                    )
+                                else:
+                                    media_id = media_item.id
+                                    logger.info(
+                                        f"[ANILIST] Found match: {title_english} [{media_id}]"
+                                    )
+                                    break
+                            if title_romaji_for_matching == potential_title:
+                                if started_year < match_year:
+                                    logger.warning(
+                                        f"[ANILIST] Found match: {title_romaji} [{media_id}] | "
+                                        f"skipping as it was released before first season ({started_year} <==> {match_year})"
+                                    )
+                                else:
+                                    media_id = media_item.id
+                                    logger.info(
+                                        f"[ANILIST] Found match: {title_romaji} [{media_id}]"
+                                    )
+                                    break
     if media_id == 0:
         logger.error(f"[ANILIST] No match found for title: {title}")
     return media_id
