@@ -253,8 +253,8 @@ def get_watched_shows(shows):
                         )
                         watched_series.append(watched_show)
                         ovas_found += 1
-        except Exception as e:
-            logger.error("[PLEX] Error occured during episode processing of show %s : %s" % (show, e))
+        except Exception:
+            logger.exception(f"[PLEX] Error occured during episode processing of show {show}")
 
     logger.info(f"[PLEX] Found {len(watched_series)} watched series")
 
