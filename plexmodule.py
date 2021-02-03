@@ -224,35 +224,34 @@ def get_watched_shows(shows):
                 # Needs proper solution later on and requires changing AniList
                 # class to support it properly
 
-                if hasattr(show, "isWatched"):
-                    if show.isWatched:
-                        year = 1900
-                        if show.year:
-                            year = show.year
+                if hasattr(show, "isWatched") and show.isWatched:
+                    year = 1900
+                    if show.year:
+                        year = show.year
 
-                        if not hasattr(show, "titleSort"):
-                            show.titleSort = show.title
-                        elif show.titleSort == "":
-                            show.titleSort = show.title
+                    if not hasattr(show, "titleSort"):
+                        show.titleSort = show.title
+                    elif show.titleSort == "":
+                        show.titleSort = show.title
 
-                        # Disable original title for now, results in false positives for yet unknown reason
+                    # Disable original title for now, results in false positives for yet unknown reason
 
-                        # if not hasattr(show, 'originalTitle'):
-                        #    show.originalTitle = show.title
-                        # elif show.originalTitle == '':
-                        #    show.originalTitle = show.title
-                        show.originalTitle = show.title
+                    # if not hasattr(show, 'originalTitle'):
+                    #    show.originalTitle = show.title
+                    # elif show.originalTitle == '':
+                    #    show.originalTitle = show.title
+                    show.originalTitle = show.title
 
-                        watched_show = plex_watched_series(
-                            show.title.strip(),
-                            show.titleSort.strip(),
-                            show.originalTitle.strip(),
-                            show.year,
-                            1,
-                            1,
-                        )
-                        watched_series.append(watched_show)
-                        ovas_found += 1
+                    watched_show = plex_watched_series(
+                        show.title.strip(),
+                        show.titleSort.strip(),
+                        show.originalTitle.strip(),
+                        show.year,
+                        1,
+                        1,
+                    )
+                    watched_series.append(watched_show)
+                    ovas_found += 1
         except Exception:
             logger.exception(f"[PLEX] Error occured during episode processing of show {show}")
 
@@ -294,10 +293,9 @@ def get_watched_episodes_for_show_season(shows, watched_show_title, watched_seas
                         logger.info(
                             "[PLEX] Show appears to be movie (no episodes attribute) and trying fallback approach to determine watched state"
                         )
-                        if hasattr(show, "isWatched"):
-                            if show.isWatched:
-                                episodes_watched = 1
-                                break
+                        if hasattr(show, "isWatched") and show.isWatched:
+                            episodes_watched = 1
+                            break
                     except Exception:
                         logger.exception(
                             "[PLEX] Failed to get watched state for unknown object (possibly movie)"
