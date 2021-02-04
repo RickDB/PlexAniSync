@@ -11,7 +11,7 @@ from ruyaml import YAML
 import anilist
 import plexmodule
 
-__version__ = "1.3.3"
+__version__ = "1.3.4"
 
 # Logger settings
 log_filename = "PlexAniSync.log"

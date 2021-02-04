@@ -9,8 +9,6 @@ import inflect
 import requests
 from guessit import guessit
 
-import plexmodule
-
 logger = logging.getLogger("PlexAniSync")
 
 custom_mappings = {}
@@ -364,13 +362,8 @@ def match_to_plex(anilist_series, plex_series_all, plex_series_watched):
         plex_title_clean_without_year = plex_title_clean
         plex_title_sort_clean_without_year = plex_title_sort_clean
         plex_title_original_clean_without_year = plex_title_original_clean
-        plex_watched_episode_count = plex_series.episodes_watched
         plex_year = plex_series.year
-        plex_total_seasons = plex_series.total_seasons
-
-        if plex_watched_episode_count == 0:
-            logger.info(f"[ANILIST] Series {plex_title} has 0 watched episodes, skipping")
-            continue
+        plex_seasons = plex_series.seasons
 
         try:
             if "(" in plex_title and ")" in plex_title:
@@ -437,16 +430,17 @@ def match_to_plex(anilist_series, plex_series_all, plex_series_watched):
         potential_titles = list(potential_titles_cleaned)
 
         logger.info("--------------------------------------------------")
-        if plex_total_seasons == 1:
+        if len(plex_seasons) == 1:
+            plex_watched_episode_count = plex_seasons[0].watched_episodes
             season_mappings = retrieve_season_mappings(plex_title, 1)
 
             # Custom mapping check - check user list
             if season_mappings:
-                watchcounts = map_watchcount_to_seasons(plex_title, season_mappings, plex_watched_episode_count)
+                watchcounts = map_watchcount_to_seasons(plex_title, season_mappings, plex_seasons[0].watched_episodes)
 
                 for anime_id in watchcounts:
                     logger.info(
-                        f"[ANILIST] Used custom mapping |  title: {plex_title} | season: {plex_total_seasons} | anilist id: {anime_id}"
+                        f"[ANILIST] Used custom mapping |  title: {plex_title} | season: {1} | anilist id: {anime_id}"
                     )
 
                     series = find_mapped_series(anilist_series, anime_id)
@@ -548,7 +542,7 @@ def match_to_plex(anilist_series, plex_series_all, plex_series_watched):
         elif (
             not all(matched_anilist_series)
             or not matched_anilist_series
-            and plex_total_seasons > 1
+            and len(plex_seasons) > 1
         ):
             logger.info(
                 f"Found multiple seasons so using season search instead for: {plex_title}"
@@ -560,7 +554,7 @@ def match_to_plex(anilist_series, plex_series_all, plex_series_watched):
                 plex_title_sort,
                 plex_title_original,
                 plex_year,
-                plex_total_seasons,
+                plex_seasons,
             )
 
 
@@ -571,10 +565,8 @@ def match_series_with_seasons(
     plex_title_sort,
     plex_title_original,
     plex_year,
-    plex_total_seasons,
+    plex_seasons,
 ):
-    # logger.info('[ANILIST] Plex series has more than 1 season, using
-    # alternative season search for total of %s seasons' % (plex_total_seasons))
     counter_season = 1
     counter_season_custom_mapping = 1
     custom_mapping_seasons_anilist_id = 0
@@ -582,8 +574,8 @@ def match_series_with_seasons(
     plex_watched_episode_count_custom_mapping = 0
 
     # Check if we have custom mappings for all seasons (One Piece for example)
-    if plex_total_seasons > 1:
-        while counter_season_custom_mapping <= plex_total_seasons:
+    if len(plex_seasons) > 1:
+        while counter_season_custom_mapping <= len(plex_seasons):
             season_mappings = retrieve_season_mappings(
                 plex_title, counter_season_custom_mapping
             )
@@ -591,9 +583,7 @@ def match_series_with_seasons(
             if season_mappings:
                 matched_id = season_mappings[0].anime_id
                 if custom_mapping_seasons_anilist_id == 0 or matched_id == custom_mapping_seasons_anilist_id:
-                    plex_watched_episode_count_custom_mapping += plexmodule.get_watched_episodes_for_show_season(
-                        plex_series_all, plex_title, counter_season_custom_mapping
-                    )
+                    plex_watched_episode_count_custom_mapping += plex_seasons[counter_season_custom_mapping - 1].watched_episodes
                     custom_mapping_season_count += 1
 
             custom_mapping_seasons_anilist_id = matched_id
@@ -635,16 +625,14 @@ def match_series_with_seasons(
                     True,
                 )
 
-            if custom_mapping_season_count == plex_total_seasons:
+            if custom_mapping_season_count == len(plex_seasons):
                 return
             else:
                 # Start processing of any remaining seasons
                 counter_season = custom_mapping_season_count + 1
 
-    while counter_season <= plex_total_seasons:
-        plex_watched_episode_count = plexmodule.get_watched_episodes_for_show_season(
-            plex_series_all, plex_title, counter_season
-        )
+    while counter_season <= len(plex_seasons):
+        plex_watched_episode_count = plex_seasons[counter_season - 1].watched_episodes
         if plex_watched_episode_count == 0:
             logger.info(f"[ANILIST] Series {plex_title} has 0 watched episodes for season {counter_season}, skipping")
             counter_season += 1
@@ -730,7 +718,7 @@ def match_series_with_seasons(
             season_mappings = retrieve_season_mappings(plex_title, counter_season)
             # Custom mapping check - check user list
             if season_mappings:
-                watchcounts = map_watchcount_to_seasons(plex_title, season_mappings, plex_watched_episode_count)
+                watchcounts = map_watchcount_to_seasons(plex_title, season_mappings, plex_seasons[counter_season - 1].watched_episodes)
 
                 for anime_id in watchcounts:
                     logger.info(
@@ -837,7 +825,7 @@ def match_series_with_seasons(
             skip_year_check = True
             season_mappings = retrieve_season_mappings(plex_title, counter_season)
             if season_mappings:
-                watchcounts = map_watchcount_to_seasons(plex_title, season_mappings, plex_watched_episode_count)
+                watchcounts = map_watchcount_to_seasons(plex_title, season_mappings, plex_seasons[counter_season - 1].watched_episodes)
 
                 for anime_id in watchcounts:
                     logger.info(

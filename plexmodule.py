@@ -12,15 +12,22 @@ plex_settings = dict()
 
 class plex_watched_series:
     def __init__(
-        self, title, title_sort, title_original, year, episodes_watched, total_seasons
+        self, title, title_sort, title_original, year, seasons
     ):
         self.series_id = id
         self.title = title
         self.title_sort = title_sort
         self.title_original = title_original
         self.year = year
-        self.episodes_watched = episodes_watched
-        self.total_seasons = total_seasons
+        self.seasons = seasons
+
+
+class plex_season:
+    def __init__(
+        self, season_number, watched_episodes
+    ):
+        self.season_number = season_number
+        self.watched_episodes = watched_episodes
 
 
 def authenticate():
@@ -161,33 +168,18 @@ def get_watched_shows(shows):
     ovas_found = 0
 
     for show in shows:
-        season_total = 1
-        season_watched = 1
-        episodes_watched = 0
-
         try:
-            if hasattr(show, "episodes"):
-                episodes = show.episodes()
-                season_total = max(map(lambda e: e.seasonNumber, episodes), default=1)
-                for episode in episodes:
-                    if episode.isWatched:
-                        try:
-                            # If season not defined set to season 1
-                            season = 1 if not episode.seasonNumber else episode.seasonNumber
-                            if episode.index:
-                                if (
-                                    episode.index > episodes_watched and season == season_watched
-                                ) or (season > season_watched):
-                                    season_watched = season
-                                    episodes_watched = episode.index
-                                else:
-                                    episodes_watched = 0
-                        except Exception:
-                            logger.exception(
-                                "Error during lookup_result processing"
-                            )
-                            pass
-                if episodes_watched > 0:
+            if hasattr(show, "seasons"):
+                show_seasons = show.seasons()
+                # ignore season 0 and unwatched seasons
+                show_seasons = filter(lambda season: season.seasonNumber > 0 and season.viewedLeafCount > 0, show_seasons)
+
+                seasons = []
+                for season in show_seasons:
+                    season_watchcount = get_watched_episodes_for_show_season(season)
+                    seasons.append(plex_season(season.seasonNumber, season_watchcount))
+
+                if seasons:
                     # Add year if we have one otherwise fallback
                     year = 1900
                     if show.year:
@@ -211,8 +203,7 @@ def get_watched_shows(shows):
                         show.titleSort.strip(),
                         show.originalTitle.strip(),
                         year,
-                        episodes_watched,
-                        season_total,
+                        seasons
                     )
                     watched_series.append(watched_show)
 
@@ -247,8 +238,7 @@ def get_watched_shows(shows):
                         show.titleSort.strip(),
                         show.originalTitle.strip(),
                         show.year,
-                        1,
-                        1,
+                        plex_season(1, 1)
                     )
                     watched_series.append(watched_show)
                     ovas_found += 1
@@ -269,43 +259,12 @@ def get_watched_shows(shows):
         return watched_series
 
 
-def get_watched_episodes_for_show_season(shows, watched_show_title, watched_season):
-    logger.info(
-        f"[PLEX] Retrieving episode watch count for show: {watched_show_title} | season: {watched_season}"
-    )
+def get_watched_episodes_for_show_season(season):
+    watched_episodes_of_season = [e for e in season.episodes() if e.isWatched]
+    # len(watched_episodes_of_season) only works when the user didn't skip any episodes
+    episodes_watched = max(map(lambda e: e.index, watched_episodes_of_season), default=0)
 
-    episodes_watched = 0
-    for show in shows:
-        if show.title.lower().strip() == watched_show_title.lower().strip():
-            try:
-                if hasattr(show, "episodes"):
-                    try:
-                        watched_episodes_of_season = [e for e in show.episodes() if e.isWatched and seasons_match(e, watched_season)]
-                        # len(watched_episodes_of_season) only works when the user didn't skip any episodes
-                        episodes_watched = max(map(lambda e: e.index, watched_episodes_of_season), default=0)
-                        break
-                    except Exception:
-                        logger.exception("Error during lookup_result processing")
-                        pass
-                else:
-                    # Most likely single item (Movie), falback untill we added proper fix based on additional Plex metadata
-                    try:
-                        logger.info(
-                            "[PLEX] Show appears to be movie (no episodes attribute) and trying fallback approach to determine watched state"
-                        )
-                        if hasattr(show, "isWatched") and show.isWatched:
-                            episodes_watched = 1
-                            break
-                    except Exception:
-                        logger.exception(
-                            "[PLEX] Failed to get watched state for unknown object (possibly movie)"
-                        )
-            except Exception:
-                logger.exception(
-                    f"[PLEX] Error occured during retrieving of watched episodes for show {watched_show_title} [season = {watched_season}]"
-                )
-
-    logger.info(f'[PLEX] {episodes_watched} episodes watched for season {watched_season}')
+    logger.info(f'[PLEX] {episodes_watched} episodes watched for {season.parentTitle} season {season.seasonNumber}')
     return episodes_watched
 
 
