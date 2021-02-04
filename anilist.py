@@ -441,7 +441,7 @@ def match_to_plex(anilist_series, plex_series_all, plex_series_watched):
             season_mappings = retrieve_season_mappings(plex_title, 1)
 
             # Custom mapping check - check user list
-            if len(season_mappings) > 0:
+            if season_mappings:
                 watchcounts = map_watchcount_to_seasons(plex_title, season_mappings, plex_watched_episode_count)
 
                 for anime_id in watchcounts:
@@ -588,7 +588,7 @@ def match_series_with_seasons(
                 plex_title, counter_season_custom_mapping
             )
             matched_id = 0
-            if len(season_mappings) > 0:
+            if season_mappings:
                 matched_id = season_mappings[0].anime_id
                 if custom_mapping_seasons_anilist_id == 0 or matched_id == custom_mapping_seasons_anilist_id:
                     plex_watched_episode_count_custom_mapping += plexmodule.get_watched_episodes_for_show_season(
@@ -729,7 +729,7 @@ def match_series_with_seasons(
 
             season_mappings = retrieve_season_mappings(plex_title, counter_season)
             # Custom mapping check - check user list
-            if len(season_mappings) > 0:
+            if season_mappings:
                 watchcounts = map_watchcount_to_seasons(plex_title, season_mappings, plex_watched_episode_count)
 
                 for anime_id in watchcounts:
@@ -836,7 +836,7 @@ def match_series_with_seasons(
             # ignore the Plex year since Plex does not have years for seasons
             skip_year_check = True
             season_mappings = retrieve_season_mappings(plex_title, counter_season)
-            if len(season_mappings) > 0:
+            if season_mappings:
                 watchcounts = map_watchcount_to_seasons(plex_title, season_mappings, plex_watched_episode_count)
 
                 for anime_id in watchcounts:

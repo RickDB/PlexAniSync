@@ -148,7 +148,7 @@ def get_anime_shows_filter(show_name):
         ):
             shows_filtered.append(show)
 
-    if len(shows_filtered) > 0:
+    if shows_filtered:
         logger.info("[PLEX] Found matching anime series")
     else:
         logger.info(f"[PLEX] Did not find {show_name} in anime series")
