@@ -11,7 +11,7 @@ logger = logging.getLogger("PlexAniSync")
 plex_settings = dict()
 
 
-class plex_season:
+class PlexSeason:
     def __init__(
         self, season_number: int, watched_episodes: int
     ):
@@ -19,9 +19,9 @@ class plex_season:
         self.watched_episodes = watched_episodes
 
 
-class plex_watched_series:
+class PlexWatchedSeries:
     def __init__(
-        self, title: str, title_sort: str, title_original: str, year: int, seasons: List[plex_season]
+        self, title: str, title_sort: str, title_original: str, year: int, seasons: List[PlexSeason]
     ):
         self.series_id = id
         self.title = title
@@ -174,7 +174,7 @@ def get_watched_shows(shows):
                 seasons = []
                 for season in show_seasons:
                     season_watchcount = get_watched_episodes_for_show_season(season)
-                    seasons.append(plex_season(season.seasonNumber, season_watchcount))
+                    seasons.append(PlexSeason(season.seasonNumber, season_watchcount))
 
                 if seasons:
                     # Add year if we have one otherwise fallback
@@ -195,7 +195,7 @@ def get_watched_shows(shows):
                     #    show.originalTitle = show.title
                     show.originalTitle = show.title
 
-                    watched_show = plex_watched_series(
+                    watched_show = PlexWatchedSeries(
                         show.title.strip(),
                         show.titleSort.strip(),
                         show.originalTitle.strip(),
@@ -230,12 +230,12 @@ def get_watched_shows(shows):
                     #    show.originalTitle = show.title
                     show.originalTitle = show.title
 
-                    watched_show = plex_watched_series(
+                    watched_show = PlexWatchedSeries(
                         show.title.strip(),
                         show.titleSort.strip(),
                         show.originalTitle.strip(),
                         show.year,
-                        plex_season(1, 1)
+                        [PlexSeason(1, 1)]
                     )
                     watched_series.append(watched_show)
                     ovas_found += 1

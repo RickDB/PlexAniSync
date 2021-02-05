@@ -47,7 +47,7 @@ ANILIST_SKIP_UPDATE = anilist_settings["skip_list_update"].lower()
 ANILIST_ACCESS_TOKEN = anilist_settings["access_token"].strip()
 
 mapping_file = "custom_mappings.yaml"
-custom_mappings: Dict[str, List[anilist.anilist_custom_mapping]] = {}
+custom_mappings: Dict[str, List[anilist.AnilistCustomMapping]] = {}
 
 
 def read_custom_mappings(mapping_file):
@@ -61,7 +61,7 @@ def read_custom_mappings(mapping_file):
 
         for file_entry in file_mappings['entries']:
             series_title = file_entry['title']
-            series_mappings: List[anilist.anilist_custom_mapping] = []
+            series_mappings: List[anilist.AnilistCustomMapping] = []
             for file_season in file_entry['seasons']:
                 season = file_season['season']
                 anilist_id = file_season['anilist-id']
@@ -72,7 +72,7 @@ def read_custom_mappings(mapping_file):
                 logger.info(
                     f"[MAPPING] Adding custom mapping | title: {series_title} | season: {season} | anilist id: {anilist_id} | start: {start}"
                 )
-                series_mappings.append(anilist.anilist_custom_mapping(season, anilist_id, start))
+                series_mappings.append(anilist.AnilistCustomMapping(season, anilist_id, start))
 
             custom_mappings[series_title] = series_mappings
 

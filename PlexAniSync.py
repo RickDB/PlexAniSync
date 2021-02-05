@@ -1,11 +1,11 @@
 # coding=utf-8
 import configparser
+import logging
 import logging.handlers
 import os
 import sys
-from typing import Dict, List
-
 import coloredlogs
+from typing import Dict, List
 
 from ruyaml import YAML
 
@@ -72,10 +72,10 @@ else:
     ANILIST_PLEX_EPISODE_COUNT_PRIORITY = "false"
 
 mapping_file = "custom_mappings.yaml"
-custom_mappings: Dict[str, List[anilist.anilist_custom_mapping]] = {}
+custom_mappings: Dict[str, List[anilist.AnilistCustomMapping]] = {}
 
 
-def read_custom_mappings(mapping_file) -> Dict[str, List[anilist.anilist_custom_mapping]]:
+def read_custom_mappings(mapping_file):
     if not os.path.isfile(mapping_file):
         logger.info(f"[MAPPING] Custom map file not found: {mapping_file}")
     else:
@@ -86,7 +86,7 @@ def read_custom_mappings(mapping_file) -> Dict[str, List[anilist.anilist_custom_
 
         for file_entry in file_mappings['entries']:
             series_title = file_entry['title']
-            series_mappings: List[anilist.anilist_custom_mapping] = []
+            series_mappings: List[anilist.AnilistCustomMapping] = []
             for file_season in file_entry['seasons']:
                 season = file_season['season']
                 anilist_id = file_season['anilist-id']
@@ -97,7 +97,7 @@ def read_custom_mappings(mapping_file) -> Dict[str, List[anilist.anilist_custom_
                 logger.info(
                     f"[MAPPING] Adding custom mapping | title: {series_title} | season: {season} | anilist id: {anilist_id} | start: {start}"
                 )
-                series_mappings.append(anilist.anilist_custom_mapping(season, anilist_id, start))
+                series_mappings.append(anilist.AnilistCustomMapping(season, anilist_id, start))
 
             custom_mappings[series_title] = series_mappings
 
