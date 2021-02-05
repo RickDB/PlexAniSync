@@ -3,6 +3,7 @@ import logging
 import os
 import sys
 from time import sleep
+from typing import Dict, List
 
 import coloredlogs
 
@@ -23,7 +24,7 @@ coloredlogs.install(fmt="%(asctime)s %(message)s", logger=logger)
 ## Settings section ##
 
 
-def read_settings(settings_file):
+def read_settings(settings_file) -> configparser.ConfigParser:
     if not os.path.isfile(settings_file):
         logger.critical(f"[CONFIG] Settings file file not found: {settings_file}")
         sys.exit()
@@ -46,7 +47,7 @@ ANILIST_SKIP_UPDATE = anilist_settings["skip_list_update"].lower()
 ANILIST_ACCESS_TOKEN = anilist_settings["access_token"].strip()
 
 mapping_file = "custom_mappings.yaml"
-custom_mappings = {}
+custom_mappings: Dict[str, List[anilist.anilist_custom_mapping]] = {}
 
 
 def read_custom_mappings(mapping_file):
@@ -60,7 +61,7 @@ def read_custom_mappings(mapping_file):
 
         for file_entry in file_mappings['entries']:
             series_title = file_entry['title']
-            series_mappings = []
+            series_mappings: List[anilist.anilist_custom_mapping] = []
             for file_season in file_entry['seasons']:
                 season = file_season['season']
                 anilist_id = file_season['anilist-id']
@@ -88,7 +89,7 @@ def start():
         # keep legacy method intact
         if len(sys.argv) > 2:
             show_title = sys.argv[2]
-        elif len(sys.argv) == 2:
+        else:
             show_title = sys.argv[1]
 
         logger.info(f"Updating single show: {show_title}")
@@ -128,9 +129,7 @@ def start():
         if plex_series_watched is None:
             logger.error("Found no watched shows on Plex for processing")
         else:
-            anilist.match_to_plex(
-                anilist_series, plex_anime_series, plex_series_watched
-            )
+            anilist.match_to_plex(anilist_series, plex_series_watched)
 
         logger.info("Plex to AniList sync finished")
 

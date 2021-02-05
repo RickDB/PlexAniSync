@@ -3,6 +3,7 @@ import configparser
 import logging.handlers
 import os
 import sys
+from typing import Dict, List
 
 import coloredlogs
 
@@ -11,7 +12,7 @@ from ruyaml import YAML
 import anilist
 import plexmodule
 
-__version__ = "1.3.4"
+__version__ = "1.3.5"
 
 # Logger settings
 log_filename = "PlexAniSync.log"
@@ -41,7 +42,7 @@ coloredlogs.install(fmt="%(asctime)s %(message)s", logger=logger)
 ## Settings section ##
 
 
-def read_settings(settings_file):
+def read_settings(settings_file) -> configparser.ConfigParser:
     if not os.path.isfile(settings_file):
         logger.critical(f"[CONFIG] Settings file file not found: {settings_file}")
         sys.exit()
@@ -71,10 +72,10 @@ else:
     ANILIST_PLEX_EPISODE_COUNT_PRIORITY = "false"
 
 mapping_file = "custom_mappings.yaml"
-custom_mappings = {}
+custom_mappings: Dict[str, List[anilist.anilist_custom_mapping]] = {}
 
 
-def read_custom_mappings(mapping_file):
+def read_custom_mappings(mapping_file) -> Dict[str, List[anilist.anilist_custom_mapping]]:
     if not os.path.isfile(mapping_file):
         logger.info(f"[MAPPING] Custom map file not found: {mapping_file}")
     else:
@@ -85,7 +86,7 @@ def read_custom_mappings(mapping_file):
 
         for file_entry in file_mappings['entries']:
             series_title = file_entry['title']
-            series_mappings = []
+            series_mappings: List[anilist.anilist_custom_mapping] = []
             for file_season in file_entry['seasons']:
                 season = file_season['season']
                 anilist_id = file_season['anilist-id']
@@ -156,9 +157,7 @@ def start():
         if plex_series_watched is None:
             logger.error("Found no watched shows on Plex for processing")
         else:
-            anilist.match_to_plex(
-                anilist_series, plex_anime_series, plex_series_watched
-            )
+            anilist.match_to_plex(anilist_series, plex_series_watched)
 
     logger.info("Plex to AniList sync finished")
 

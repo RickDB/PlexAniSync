@@ -2,6 +2,7 @@
 import logging
 import re
 import sys
+from typing import List
 
 from plexapi.myplex import MyPlexAccount
 from plexapi.server import PlexServer
@@ -10,9 +11,17 @@ logger = logging.getLogger("PlexAniSync")
 plex_settings = dict()
 
 
+class plex_season:
+    def __init__(
+        self, season_number: int, watched_episodes: int
+    ):
+        self.season_number = season_number
+        self.watched_episodes = watched_episodes
+
+
 class plex_watched_series:
     def __init__(
-        self, title, title_sort, title_original, year, seasons
+        self, title: str, title_sort: str, title_original: str, year: int, seasons: List[plex_season]
     ):
         self.series_id = id
         self.title = title
@@ -20,14 +29,6 @@ class plex_watched_series:
         self.title_original = title_original
         self.year = year
         self.seasons = seasons
-
-
-class plex_season:
-    def __init__(
-        self, season_number, watched_episodes
-    ):
-        self.season_number = season_number
-        self.watched_episodes = watched_episodes
 
 
 def authenticate():
@@ -60,30 +61,26 @@ def authenticate():
                         "Home authentication cancelled as certain home_user settings are invalid"
                     )
                     return None
-                try:
-                    logger.warning(
-                        f"Authenticating as admin for MyPlex home user: {home_username}"
-                    )
-                    plex_account = MyPlexAccount(plex_user, plex_password)
-                    plex_server_home = PlexServer(
-                        home_server_base_url, plex_account.authenticationToken
-                    )
 
-                    logger.warning("Retrieving home user information")
-                    plex_user_account = plex_account.user(home_username)
+                logger.warning(
+                    f"Authenticating as admin for MyPlex home user: {home_username}"
+                )
+                plex_account = MyPlexAccount(plex_user, plex_password)
+                plex_server_home = PlexServer(
+                    home_server_base_url, plex_account.authenticationToken
+                )
 
-                    logger.warning("Retrieving user token for MyPlex home user")
-                    plex_user_token = plex_user_account.get_token(
-                        plex_server_home.machineIdentifier
-                    )
+                logger.warning("Retrieving home user information")
+                plex_user_account = plex_account.user(home_username)
 
-                    logger.warning("Retrieved user token for MyPlex home user")
-                    plex = PlexServer(home_server_base_url, plex_user_token)
-                    logger.warning("Successfully authenticated for MyPlex home user")
-                except Exception:
-                    logger.exception(
-                        "Error occured during Plex Home user lookup or server authentication"
-                    )
+                logger.warning("Retrieving user token for MyPlex home user")
+                plex_user_token = plex_user_account.get_token(
+                    plex_server_home.machineIdentifier
+                )
+
+                logger.warning("Retrieved user token for MyPlex home user")
+                plex = PlexServer(home_server_base_url, plex_user_token)
+                logger.warning("Successfully authenticated for MyPlex home user")
             else:
                 account = MyPlexAccount(plex_user, plex_password)
                 plex = account.resource(plex_server).connect()
@@ -259,15 +256,10 @@ def get_watched_shows(shows):
         return watched_series
 
 
-def get_watched_episodes_for_show_season(season):
+def get_watched_episodes_for_show_season(season) -> int:
     watched_episodes_of_season = [e for e in season.episodes() if e.isWatched]
     # len(watched_episodes_of_season) only works when the user didn't skip any episodes
     episodes_watched = max(map(lambda e: e.index, watched_episodes_of_season), default=0)
 
     logger.info(f'[PLEX] {episodes_watched} episodes watched for {season.parentTitle} season {season.seasonNumber}')
     return episodes_watched
-
-
-def seasons_match(episode, season_number):
-    episode_season = (1 if not episode.seasonNumber else episode.seasonNumber)
-    return episode_season == season_number
