@@ -2,23 +2,25 @@
 import collections
 import json
 import logging
-from typing import Dict, List, Optional
-from plexmodule import PlexSeason, PlexWatchedSeries
 import re
 import time
+from typing import Dict, List, Optional
+from dataclasses import dataclass
 
 import inflect
 import requests
 from guessit import guessit
 
+from plexmodule import PlexSeason, PlexWatchedSeries
+
 logger = logging.getLogger("PlexAniSync")
 
 
+@dataclass
 class AnilistCustomMapping:
-    def __init__(self, season: int, anime_id: int, start: int):
-        self.season = season
-        self.anime_id = anime_id
-        self.start = start
+    season: int
+    anime_id: int
+    start: int
 
 
 custom_mappings: Dict[str, List[AnilistCustomMapping]] = {}
@@ -31,8 +33,8 @@ ANILIST_PLEX_EPISODE_COUNT_PRIORITY = "false"
 ANILIST_LOG_FAILED_MATCHES = False
 
 
-def to_object(o):
-    keys, values = zip(*o.items())
+def to_object(object):
+    keys, values = zip(*object.items())
     # print(keys, values)
     return collections.namedtuple("X", keys)(*values)
 
@@ -45,51 +47,35 @@ def int_to_roman_numeral(input: int) -> str:
     ints = (1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1)
     nums = ("M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I")
     result = []
-    for i in range(len(ints)):
-        count = int(input / ints[i])
+    for i, number in enumerate(ints):
+        count = int(input / number)
         result.append(nums[i] * count)
-        input -= ints[i] * count
+        input -= number * count
     return "".join(result)
 
 
 def log_to_file(message: str):
-    f = open("failed_matches.txt", "a+")
-    f.write(f"{message}\n")
-    f.close()
+    file = open("failed_matches.txt", "a+")
+    file.write(f"{message}\n")
+    file.close()
 
 
+@dataclass
 class AnilistSeries:
-    def __init__(
-        self,
-        id: int,
-        sType: str,
-        sFormat: str,
-        source: str,
-        status: str,
-        media_status: str,
-        progress: int,
-        season: str,
-        episodes,
-        title_english: str,
-        title_romaji: str,
-        synonyms: List[str],
-        started_year: int,
-        ended_year: int,
-    ):
-        self.id = id
-        self.sType = sType
-        self.sFormat = sFormat
-        self.source = source
-        self.status = status
-        self.media_status = media_status
-        self.progress = progress
-        self.season = season
-        self.episodes = episodes
-        self.title_english = title_english
-        self.title_romaji = title_romaji
-        self.synonyms = synonyms
-        self.started_year = started_year
-        self.ended_year = ended_year
+    id: int
+    series_type: str
+    series_format: str
+    source: str
+    status: str
+    media_status: str
+    progress: int
+    season: str
+    episodes: int
+    title_english: str
+    title_romaji: str
+    synonyms: List[str]
+    started_year: int
+    ended_year: int
 
 
 def search_by_id(anilist_id):
@@ -269,9 +255,9 @@ def process_user_list(username: str) -> Optional[List[AnilistSeries]]:
             return None
         else:
             for item in list_items:
-                for mediaCollection in item.MediaListCollection.lists:
-                    if hasattr(mediaCollection, "entries"):
-                        for list_entry in mediaCollection.entries:
+                for media_collection in item.MediaListCollection.lists:
+                    if hasattr(media_collection, "entries"):
+                        for list_entry in media_collection.entries:
                             if (hasattr(list_entry, "status")
                                     and list_entry.status in ["CURRENT", "PLANNING", "COMPLETED", "DROPPED", "PAUSED", "REPEATING"]
                                     and list_entry.media is not None):
@@ -305,8 +291,8 @@ def search_item_to_obj(item) -> Optional[AnilistSeries]:
 
 def mediaitem_to_object(media_item) -> AnilistSeries:
     id = media_item.media.id
-    sType = ""
-    sFormat = ""
+    series_type = ""
+    series_format = ""
     source = ""
     status = ""
     media_status = ""
@@ -326,9 +312,9 @@ def mediaitem_to_object(media_item) -> AnilistSeries:
     if hasattr(media_item.media, "status"):
         media_status = media_item.media.status
     if hasattr(media_item.media, "type"):
-        sType = media_item.media.type
+        series_type = media_item.media.type
     if hasattr(media_item.media, "format"):
-        sFormat = media_item.media.format
+        series_format = media_item.media.format
     if hasattr(media_item.media, "source"):
         source = media_item.media.source
     if hasattr(media_item.media, "season"):
@@ -348,8 +334,8 @@ def mediaitem_to_object(media_item) -> AnilistSeries:
 
     series = AnilistSeries(
         id,
-        sType,
-        sFormat,
+        series_type,
+        series_format,
         source,
         status,
         media_status,
@@ -383,21 +369,21 @@ def match_to_plex(anilist_series: List[AnilistSeries], plex_series_watched: List
         try:
             if "(" in plex_title and ")" in plex_title:
                 year = re.search(r"(\d{4})", plex_title).group(1)
-                yearString = f"({year})"
+                year_string = f"({year})"
                 plex_title_clean_without_year = plex_title.replace(
-                    yearString, ""
+                    year_string, ""
                 ).strip()
             if "(" in plex_title_sort and ")" in plex_title_sort:
                 year = re.search(r"(\d{4})", plex_title_sort).group(1)
-                yearString = f"({year})"
+                year_string = f"({year})"
                 plex_title_sort_clean_without_year = plex_title_sort.replace(
-                    yearString, ""
+                    year_string, ""
                 ).strip()
             if "(" in plex_title_original and ")" in plex_title_original:
                 year = re.search(r"(\d{4})", plex_title_original).group(1)
-                yearString = f"({year})"
+                year_string = f"({year})"
                 plex_title_original_clean_without_year = plex_title_original.replace(
-                    yearString, ""
+                    year_string, ""
                 ).strip()
         except BaseException:
             pass
@@ -638,9 +624,9 @@ def match_series_with_seasons(
 
             if custom_mapping_season_count == len(plex_seasons):
                 return
-            else:
-                # Start processing of any remaining seasons
-                counter_season = custom_mapping_season_count + 1
+
+            # Start processing of any remaining seasons
+            counter_season = custom_mapping_season_count + 1
 
     while counter_season <= len(plex_seasons):
         plex_watched_episode_count = plex_seasons[counter_season - 1].watched_episodes
@@ -665,25 +651,25 @@ def match_series_with_seasons(
             try:
                 if "(" in plex_title and ")" in plex_title:
                     year = re.search(r"(\d{4})", plex_title).group(1)
-                    yearString = f"({year})"
+                    year_string = f"({year})"
                     plex_title_clean_without_year = plex_title.replace(
-                        yearString, ""
+                        year_string, ""
                     ).strip()
                 if "(" in plex_title_sort and ")" in plex_title_sort:
                     year = re.search(r"(\d{4})", plex_title_sort).group(1)
-                    yearString = f"({year})"
+                    year_string = f"({year})"
                     plex_title_sort_clean_without_year = plex_title_sort.replace(
-                        yearString, ""
+                        year_string, ""
                     ).strip()
                 if "(" in plex_title_original and ")" in plex_title_original:
                     year = re.search(r"(\d{4})", plex_title_original).group(1)
-                    yearString = f"({year})"
+                    year_string = f"({year})"
                     plex_title_original_clean_without_year = plex_title_original.replace(
-                        yearString, ""
+                        year_string, ""
                     ).strip()
             except Exception:
                 logger.exception("Uncaught exception")
-                pass
+
             plex_title_guessit = plex_title
             plex_title_sort_guessit = plex_title_sort
             plex_title_original_guessit = plex_title_original
@@ -1115,8 +1101,8 @@ def find_id_season_best_match(title: str, season: int, year: int) -> Optional[in
 
     # oridinal season (1st 2nd etc..)
     try:
-        pEngine = inflect.engine()
-        match_title_season_suffix4 = f"{match_title} {pEngine.ordinal(season)} season"
+        p_engine = inflect.engine()
+        match_title_season_suffix4 = f"{match_title} {p_engine.ordinal(season)} season"
     except BaseException:
         logger.error(
             "Error while converting season to ordinal string, make sure Inflect pip package is installed"
@@ -1125,8 +1111,8 @@ def find_id_season_best_match(title: str, season: int, year: int) -> Optional[in
 
     # oridinal season - variation 1 (1st 2nd Thread) - see AniList ID: 21000
     try:
-        pEngine = inflect.engine()
-        match_title_season_suffix5 = f"{match_title} {pEngine.ordinal(season)} thread"
+        p_engine = inflect.engine()
+        match_title_season_suffix5 = f"{match_title} {p_engine.ordinal(season)} thread"
     except BaseException:
         logger.error(
             "Error while converting season to ordinal string, make sure Inflect pip package is installed"
@@ -1305,7 +1291,7 @@ def add_by_id(
         )
 
 
-def update_series(mediaId: int, progress: int, status: str):
+def update_series(media_id: int, progress: int, status: str):
     if ANILIST_SKIP_UPDATE == "true":
         logger.warning("Skip update is enabled in settings so not updating this item")
         return
@@ -1319,7 +1305,7 @@ def update_series(mediaId: int, progress: int, status: str):
         }
         """
 
-    variables = {"mediaId": mediaId, "status": status, "progress": int(progress)}
+    variables = {"mediaId": media_id, "status": status, "progress": int(progress)}
 
     url = "https://graphql.anilist.co"
 

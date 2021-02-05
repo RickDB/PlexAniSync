@@ -34,19 +34,19 @@ def read_settings(settings_file) -> configparser.ConfigParser:
 
 
 if len(sys.argv) > 2:
-    settings_file = sys.argv[1]
-    logger.warning(f"Found settings file parameter and using: {settings_file}")
+    SETTINGS_FILE = sys.argv[1]
+    logger.warning(f"Found settings file parameter and using: {SETTINGS_FILE}")
 else:
-    settings_file = "settings.ini"
+    SETTINGS_FILE = "settings.ini"
 
-settings = read_settings(settings_file)
+settings = read_settings(SETTINGS_FILE)
 anilist_settings = settings["ANILIST"]
 plex_settings = settings["PLEX"]
 
 ANILIST_SKIP_UPDATE = anilist_settings["skip_list_update"].lower()
 ANILIST_ACCESS_TOKEN = anilist_settings["access_token"].strip()
 
-mapping_file = "custom_mappings.yaml"
+MAPPING_FILE = "custom_mappings.yaml"
 custom_mappings: Dict[str, List[anilist.AnilistCustomMapping]] = {}
 
 
@@ -135,5 +135,5 @@ def start():
 
 
 if __name__ == "__main__":
-    read_custom_mappings(mapping_file)
+    read_custom_mappings(MAPPING_FILE)
     start()

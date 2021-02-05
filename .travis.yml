@@ -3,9 +3,10 @@ language: python
 python:
   - '3.6'
 install:
-  - pip install -U flake8
+  - pip install -U flake8 pylint
   - pip install -r requirements.txt
 before_script:
   - flake8 .
+  - pylint PlexAniSync.py TautulliSyncHelper.py plexmodule.py anilist.py
 script:
   - python PlexAniSync.py

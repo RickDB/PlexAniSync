@@ -4,9 +4,9 @@ import logging
 import logging.handlers
 import os
 import sys
-import coloredlogs
 from typing import Dict, List
 
+import coloredlogs
 from ruyaml import YAML
 
 import anilist
@@ -15,12 +15,12 @@ import plexmodule
 __version__ = "1.3.5"
 
 # Logger settings
-log_filename = "PlexAniSync.log"
+LOG_FILENAME = "PlexAniSync.log"
 logger = logging.getLogger("PlexAniSync")
 
 # Add the rotating log message handler to the standard log
 handler = logging.handlers.RotatingFileHandler(
-    log_filename, maxBytes=10000000, backupCount=5, encoding="utf-8"
+    LOG_FILENAME, maxBytes=10000000, backupCount=5, encoding="utf-8"
 )
 handler.setLevel(logging.INFO)
 logger.addHandler(handler)
@@ -52,12 +52,12 @@ def read_settings(settings_file) -> configparser.ConfigParser:
 
 
 if len(sys.argv) > 1:
-    settings_file = sys.argv[1]
-    logger.warning(f"Found settings file parameter and using: {settings_file}")
+    SETTINGS_FILE = sys.argv[1]
+    logger.warning(f"Found settings file parameter and using: {SETTINGS_FILE}")
 else:
-    settings_file = "settings.ini"
+    SETTINGS_FILE = "settings.ini"
 
-settings = read_settings(settings_file)
+settings = read_settings(SETTINGS_FILE)
 anilist_settings = settings["ANILIST"]
 plex_settings = settings["PLEX"]
 
@@ -71,7 +71,7 @@ if "plex_episode_count_priority" in anilist_settings:
 else:
     ANILIST_PLEX_EPISODE_COUNT_PRIORITY = "false"
 
-mapping_file = "custom_mappings.yaml"
+MAPPING_FILE = "custom_mappings.yaml"
 custom_mappings: Dict[str, List[anilist.AnilistCustomMapping]] = {}
 
 
@@ -163,5 +163,5 @@ def start():
 
 
 if __name__ == "__main__":
-    read_custom_mappings(mapping_file)
+    read_custom_mappings(MAPPING_FILE)
     start()

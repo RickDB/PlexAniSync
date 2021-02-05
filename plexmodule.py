@@ -3,6 +3,7 @@ import logging
 import re
 import sys
 from typing import List
+from dataclasses import dataclass
 
 from plexapi.myplex import MyPlexAccount
 from plexapi.server import PlexServer
@@ -11,24 +12,19 @@ logger = logging.getLogger("PlexAniSync")
 plex_settings = dict()
 
 
+@dataclass
 class PlexSeason:
-    def __init__(
-        self, season_number: int, watched_episodes: int
-    ):
-        self.season_number = season_number
-        self.watched_episodes = watched_episodes
+    season_number: int
+    watched_episodes: int
 
 
+@dataclass
 class PlexWatchedSeries:
-    def __init__(
-        self, title: str, title_sort: str, title_original: str, year: int, seasons: List[PlexSeason]
-    ):
-        self.series_id = id
-        self.title = title
-        self.title_sort = title_sort
-        self.title_original = title_original
-        self.year = year
-        self.seasons = seasons
+    title: str
+    title_sort: str
+    title_original: str
+    year: int
+    seasons: List[PlexSeason]
 
 
 def authenticate():
@@ -134,9 +130,9 @@ def get_anime_shows_filter(show_name):
         try:
             if "(" in show.title and ")" in show.title:
                 year = re.search(r"(\d{4})", show.title).group(1)
-                yearString = f"({year})"
+                year_string = f"({year})"
                 show_title_clean_without_year = show.title.replace(
-                    yearString, ""
+                    year_string, ""
                 ).strip()
                 show_title_clean_without_year = re.sub(
                     "[^A-Za-z0-9]+", "", show_title_clean_without_year
