@@ -17,7 +17,7 @@ This version is based on my previous project  [PlexMalSync](https://github.com/R
 
 ### Step 1 - install Python
 
-Make sure you have Python 3 installed:
+Make sure you have Python 3.7 or higher installed:
 
 [Python homepage](https://www.python.org/)
 
@@ -223,7 +223,7 @@ If you are still on the Thundernerd docker image recommend switching to this one
 
 ## Requirements
 
-[Python 3](https://www.python.org/)
+[Python 3.7 or higher](https://www.python.org/)
 
 ## Support
 
