@@ -1,7 +1,7 @@
 sudo: false
 language: python
 python:
-  - '3.6'
+  - '3.7'
 install:
   - pip install -U flake8 pylint pylint-exit
   - pip install -r requirements.txt
