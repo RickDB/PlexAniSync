@@ -136,6 +136,7 @@ def search_by_id(anilist_id):
     response = requests.post(
         url, headers=headers, json={"query": query, "variables": variables}
     )
+    check_anilist_rate_limit(response)
     return json.loads(response.content, object_hook=to_object)
 
 
@@ -190,6 +191,7 @@ def search_by_name(anilist_show_name):
     response = requests.post(
         url, headers=headers, json={"query": query, "variables": variables}
     )
+    check_anilist_rate_limit(response)
     return json.loads(response.content, object_hook=to_object)
 
 
@@ -250,6 +252,7 @@ def fetch_user_list(username):
     response = requests.post(
         url, headers=headers, json={"query": query, "variables": variables}
     )
+    check_anilist_rate_limit(response)
     return json.loads(response.content, object_hook=to_object)
 
 
@@ -277,6 +280,12 @@ def process_user_list(username):
 
     logger.info(f"[ANILIST] Found {len(anilist_series)} anime series on list")
     return anilist_series
+
+
+def check_anilist_rate_limit(response):
+    if response.headers.get('x-ratelimit-remaining') == '0':
+        logger.warning("[ANILIST] Waiting for 60 seconds because of Anilist rate-limiting")
+        time.sleep(60)
 
 
 def search_item_to_obj(item):
@@ -1316,9 +1325,10 @@ def update_series(mediaId, progress, status):
         "Content-Type": "application/json",
     }
 
-    requests.post(
+    response = requests.post(
         url, headers=headers, json={"query": query, "variables": variables}
     )
+    check_anilist_rate_limit(response)
 
 
 def retrieve_season_mappings(title, season):
