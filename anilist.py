@@ -12,17 +12,9 @@ import requests
 from guessit import guessit
 
 from plexmodule import PlexSeason, PlexWatchedSeries
+from custom_mappings import AnilistCustomMapping
 
 logger = logging.getLogger("PlexAniSync")
-
-
-@dataclass
-class AnilistCustomMapping:
-    season: int
-    anime_id: int
-    start: int
-
-
 custom_mappings: Dict[str, List[AnilistCustomMapping]] = {}
 ANILIST_ACCESS_TOKEN = ""
 ANILIST_SKIP_UPDATE = "false"
@@ -33,24 +25,24 @@ ANILIST_PLEX_EPISODE_COUNT_PRIORITY = "false"
 ANILIST_LOG_FAILED_MATCHES = False
 
 
-def to_object(object):
-    keys, values = zip(*object.items())
+def to_object(obj):
+    keys, values = zip(*obj.items())
     # print(keys, values)
     return collections.namedtuple("X", keys)(*values)
 
 
-def int_to_roman_numeral(input: int) -> str:
-    if not isinstance(input, type(1)):
-        return input
-    if not 0 < input < 4000:
-        return str(input)
+def int_to_roman_numeral(decimal: int) -> str:
+    if not isinstance(decimal, type(1)):
+        return decimal
+    if not 0 < decimal < 4000:
+        return str(decimal)
     ints = (1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1)
     nums = ("M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I")
     result = []
     for i, number in enumerate(ints):
-        count = int(input / number)
+        count = int(decimal / number)
         result.append(nums[i] * count)
-        input -= number * count
+        decimal -= number * count
     return "".join(result)
 
 
@@ -62,7 +54,7 @@ def log_to_file(message: str):
 
 @dataclass
 class AnilistSeries:
-    id: int
+    anilist_id: int
     series_type: str
     series_format: str
     source: str
@@ -100,13 +92,9 @@ def search_by_id(anilist_id):
             synonyms
             startDate {
                 year
-                month
-                day
             }
             endDate {
                 year
-                month
-                day
             }
           }
         }
@@ -156,13 +144,9 @@ def search_by_name(anilist_show_name):
                     synonyms
                     startDate {
                         year
-                        month
-                        day
                     }
                     endDate {
                         year
-                        month
-                        day
                     }
                 }
             }
@@ -207,13 +191,9 @@ def fetch_user_list(username):
                             episodes
                             startDate {
                                 year
-                                month
-                                day
                             }
                             endDate {
                                 year
-                                month
-                                day
                             }
                             title {
                                 romaji
@@ -290,7 +270,7 @@ def search_item_to_obj(item) -> Optional[AnilistSeries]:
 
 
 def mediaitem_to_object(media_item) -> AnilistSeries:
-    id = media_item.media.id
+    anilist_id = media_item.media.id
     series_type = ""
     series_format = ""
     source = ""
@@ -333,7 +313,7 @@ def mediaitem_to_object(media_item) -> AnilistSeries:
         ended_year = media_item.media.endDate.year
 
     series = AnilistSeries(
-        id,
+        anilist_id,
         series_type,
         series_format,
         source,
@@ -441,7 +421,7 @@ def match_to_plex(anilist_series: List[AnilistSeries], plex_series_watched: List
 
                 for anime_id in watchcounts:
                     logger.info(
-                        f"[ANILIST] Used custom mapping |  title: {plex_title} | season: {1} | anilist id: {anime_id}"
+                        f"[ANILIST] Used custom mapping | title: {plex_title} | season: {1} | anilist id: {anime_id}"
                     )
 
                     series = find_mapped_series(anilist_series, anime_id)
@@ -595,17 +575,17 @@ def match_series_with_seasons(
                 f"title: {plex_title} anilist id: {custom_mapping_seasons_anilist_id}"
             )
 
-            logger.warning(
-                f"[ANILIST] Adding new series id to list: {custom_mapping_seasons_anilist_id} | "
-                f"Plex episodes watched for all seasons: {plex_watched_episode_count_custom_mapping}"
-            )
-
             matched_anilist_series: List[AnilistSeries] = []
             for series in anilist_series:
-                if custom_mapping_seasons_anilist_id == series.id:
+                if custom_mapping_seasons_anilist_id == series.anilist_id:
                     matched_anilist_series.append(series)
 
             if matched_anilist_series:
+                logger.info(
+                    f"[ANILIST] Updating series id to list: {custom_mapping_seasons_anilist_id} | "
+                    f"Plex episodes watched for all seasons: {plex_watched_episode_count_custom_mapping}"
+                )
+
                 update_entry(
                     plex_title,
                     plex_year,
@@ -614,6 +594,11 @@ def match_series_with_seasons(
                     True,
                 )
             else:
+                logger.warning(
+                    f"[ANILIST] Adding new series id to list: {custom_mapping_seasons_anilist_id} | "
+                    f"Plex episodes watched for all seasons: {plex_watched_episode_count_custom_mapping}"
+                )
+
                 add_by_id(
                     custom_mapping_seasons_anilist_id,
                     plex_title,
@@ -877,7 +862,7 @@ def match_series_with_seasons(
                 # check if already on anilist list
                 series_already_listed = False
                 for series in anilist_series:
-                    if series.id == media_id_search:
+                    if series.anilist_id == media_id_search:
                         # logger.warning('[ANILIST] Plex series has more than 1 season and is already on list: %s <===>%s ' %
                         # (series.id,media_id_search))
                         series_already_listed = True
@@ -922,7 +907,7 @@ def match_series_with_seasons(
 
 
 def find_mapped_series(anilist_series: List[AnilistSeries], anime_id: int):
-    return next(filter(lambda s: s.id == anime_id, anilist_series), None)
+    return next(filter(lambda s: s.anilist_id == anime_id, anilist_series), None)
 
 
 def match_series_against_potential_titles(
@@ -1027,11 +1012,11 @@ def update_entry(
             # update most recent as otherwise will flood the notification feed
             episode_difference = watched_episode_count - anilist_episodes_watched
             if episode_difference == 1 or episode_difference > 32:
-                update_series(series.id, watched_episode_count, "COMPLETED")
+                update_series(series.anilist_id, watched_episode_count, "COMPLETED")
             else:
                 current_episodes_watched = anilist_episodes_watched + 1
                 while current_episodes_watched <= watched_episode_count:
-                    update_series(series.id, current_episodes_watched, "COMPLETED")
+                    update_series(series.anilist_id, current_episodes_watched, "COMPLETED")
                     current_episodes_watched += 1
         elif (
             watched_episode_count > anilist_episodes_watched
@@ -1049,11 +1034,11 @@ def update_entry(
             # recent as otherwise will flood the notification feed
             episode_difference = watched_episode_count - anilist_episodes_watched
             if episode_difference == 1 or episode_difference > 32:
-                update_series(series.id, watched_episode_count, "CURRENT")
+                update_series(series.anilist_id, watched_episode_count, "CURRENT")
             else:
                 current_episodes_watched = anilist_episodes_watched + 1
                 while current_episodes_watched <= watched_episode_count:
-                    update_series(series.id, current_episodes_watched, "CURRENT")
+                    update_series(series.anilist_id, current_episodes_watched, "CURRENT")
                     current_episodes_watched += 1
         elif watched_episode_count == anilist_episodes_watched:
             logger.info(
@@ -1072,7 +1057,7 @@ def update_entry(
                 # Since AniList episode count is higher we don't loop thru
                 # updating the notification feed and just set the AniList
                 # episode count once
-                update_series(series.id, watched_episode_count, "CURRENT")
+                update_series(series.anilist_id, watched_episode_count, "CURRENT")
             else:
                 logger.info(
                     f"[ANILIST] Episodes watched was higher on AniList [{anilist_episodes_watched}] than "
@@ -1324,8 +1309,8 @@ def update_series(media_id: int, progress: int, status: str):
 def retrieve_season_mappings(title: str, season: int) -> List[AnilistCustomMapping]:
     season_mappings: List[AnilistCustomMapping] = []
 
-    if custom_mappings and title in custom_mappings:
-        season_mappings = custom_mappings[title]
+    if custom_mappings and title.lower() in custom_mappings:
+        season_mappings = custom_mappings[title.lower()]
         # filter mappings by season
         season_mappings = [e for e in season_mappings if e.season == season]
 
