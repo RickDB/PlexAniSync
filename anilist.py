@@ -73,10 +73,7 @@ class AnilistSeries:
 def search_by_id(anilist_id):
     query = """
         query ($id: Int) {
-          # Define which variables will be used in the query (id)
           media: Media (id: $id, type: ANIME) {
-            # Insert our variables into the query arguments
-            # (id) (type: ANIME is hard-coded in the query)
             id
             type
             format
@@ -102,24 +99,13 @@ def search_by_id(anilist_id):
 
     variables = {"id": anilist_id}
 
-    url = "https://graphql.anilist.co"
-
-    headers = {
-        "Authorization": "Bearer " + ANILIST_ACCESS_TOKEN,
-        "Accept": "application/json",
-        "Content-Type": "application/json",
-    }
-
-    response = requests.post(
-        url, headers=headers, json={"query": query, "variables": variables}
-    )
-    check_anilist_rate_limit(response)
+    response = send_graphql_request(query, variables)
     return json.loads(response.content, object_hook=to_object)
 
 
 def search_by_name(anilist_show_name):
     query = """
-        query ($id: Int, $page: Int, $perPage: Int, $search: String) {
+        query ($page: Int, $perPage: Int, $search: String) {
             Page (page: $page, perPage: $perPage) {
                 pageInfo {
                     total
@@ -128,7 +114,7 @@ def search_by_name(anilist_show_name):
                     hasNextPage
                     perPage
                 }
-                media (id: $id, search: $search, type: ANIME) {
+                media (search: $search, type: ANIME) {
                     id
                     type
                     format
@@ -153,18 +139,8 @@ def search_by_name(anilist_show_name):
         }
         """
     variables = {"search": anilist_show_name, "page": 1, "perPage": 50}
-    url = "https://graphql.anilist.co"
 
-    headers = {
-        "Authorization": "Bearer " + ANILIST_ACCESS_TOKEN,
-        "Accept": "application/json",
-        "Content-Type": "application/json",
-    }
-
-    response = requests.post(
-        url, headers=headers, json={"query": query, "variables": variables}
-    )
-    check_anilist_rate_limit(response)
+    response = send_graphql_request(query, variables)
     return json.loads(response.content, object_hook=to_object)
 
 
@@ -210,26 +186,35 @@ def fetch_user_list(username):
 
     variables = {"username": username}
 
-    url = "https://graphql.anilist.co"
+    response = send_graphql_request(query, variables)
+    return json.loads(response.content, object_hook=to_object)
 
+
+def send_graphql_request(query, variables):
+    url = "https://graphql.anilist.co"
     headers = {
         "Authorization": "Bearer " + ANILIST_ACCESS_TOKEN,
         "Accept": "application/json",
         "Content-Type": "application/json",
     }
-
     response = requests.post(
         url, headers=headers, json={"query": query, "variables": variables}
     )
-    check_anilist_rate_limit(response)
-    return json.loads(response.content, object_hook=to_object)
+    response.raise_for_status()
+    if response.headers.get('x-ratelimit-remaining') == '0':
+        logger.warning("[ANILIST] Waiting for 60 seconds because of Anilist rate-limiting")
+        time.sleep(60)
+    else:
+        # wait a bit to not overload AniList API
+        time.sleep(0.20)
+    return response
 
 
 def process_user_list(username: str) -> Optional[List[AnilistSeries]]:
     logger.info(f"[ANILIST] Retrieving AniList list for user: {username}")
     anilist_series = []
-    list_items = fetch_user_list(username)
     try:
+        list_items = fetch_user_list(username)
         if not list_items:
             logger.critical(f"[ANILIST] Failed to return list for user: {username}")
             return None
@@ -249,15 +234,6 @@ def process_user_list(username: str) -> Optional[List[AnilistSeries]]:
 
     logger.info(f"[ANILIST] Found {len(anilist_series)} anime series on list")
     return anilist_series
-
-
-def check_anilist_rate_limit(response):
-    if response.headers.get('x-ratelimit-remaining') == '0':
-        logger.warning("[ANILIST] Waiting for 60 seconds because of Anilist rate-limiting")
-        time.sleep(60)
-    else:
-        # wait a bit to not overload AniList API
-        time.sleep(0.20)
 
 
 def search_item_to_obj(item) -> Optional[AnilistSeries]:
@@ -996,8 +972,7 @@ def update_entry(
                 pass
 
         if (
-            watched_episode_count >= anilist_total_episodes
-            and anilist_total_episodes > 0
+            watched_episode_count >= anilist_total_episodes > 0
             and anilist_media_status == "FINISHED"
         ):
             # series completed watched
@@ -1303,6 +1278,7 @@ def update_series(media_id: int, progress: int, status: str):
     response = requests.post(
         url, headers=headers, json={"query": query, "variables": variables}
     )
+    response.raise_for_status()
     check_anilist_rate_limit(response)
 
 
