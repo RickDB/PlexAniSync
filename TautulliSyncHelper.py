@@ -10,6 +10,7 @@ import coloredlogs
 from custom_mappings import AnilistCustomMapping, read_custom_mappings
 import anilist
 import plexmodule
+import graphql
 
 # Logger settings
 logger = logging.getLogger("PlexAniSync")
@@ -72,11 +73,12 @@ def start():
     # Wait a few a seconds to make sure Plex has processed watched states
     sleep(5.0)
 
+    graphql.ANILIST_ACCESS_TOKEN = ANILIST_ACCESS_TOKEN
+    graphql.ANILIST_SKIP_UPDATE = ANILIST_SKIP_UPDATE
+
     # Anilist
     anilist_username = anilist_settings["username"]
-    anilist.custom_mappings = custom_mappings
-    anilist.ANILIST_ACCESS_TOKEN = ANILIST_ACCESS_TOKEN
-    anilist.ANILIST_SKIP_UPDATE = ANILIST_SKIP_UPDATE
+    anilist.CUSTOM_MAPPINGS = custom_mappings
     anilist_series = anilist.process_user_list(anilist_username)
 
     # Plex

@@ -1,6 +1,4 @@
 # coding=utf-8
-import collections
-import json
 import logging
 import re
 import time
@@ -8,27 +6,19 @@ from typing import Dict, List, Optional
 from dataclasses import dataclass
 
 import inflect
-import requests
 from guessit import guessit
 
 from plexmodule import PlexSeason, PlexWatchedSeries
 from custom_mappings import AnilistCustomMapping
+from graphql import fetch_user_list, search_by_name, search_by_id, update_series
 
 logger = logging.getLogger("PlexAniSync")
-custom_mappings: Dict[str, List[AnilistCustomMapping]] = {}
-ANILIST_ACCESS_TOKEN = ""
-ANILIST_SKIP_UPDATE = "false"
+CUSTOM_MAPPINGS: Dict[str, List[AnilistCustomMapping]] = {}
 ANILIST_PLEX_EPISODE_COUNT_PRIORITY = "false"
 
 # Set this to True for logging failed AniList matches to
 # failed_matches.txt file
 ANILIST_LOG_FAILED_MATCHES = False
-
-
-def to_object(obj):
-    keys, values = zip(*obj.items())
-    # print(keys, values)
-    return collections.namedtuple("X", keys)(*values)
 
 
 def int_to_roman_numeral(decimal: int) -> str:
@@ -68,146 +58,6 @@ class AnilistSeries:
     synonyms: List[str]
     started_year: int
     ended_year: int
-
-
-def search_by_id(anilist_id):
-    query = """
-        query ($id: Int) {
-          media: Media (id: $id, type: ANIME) {
-            id
-            type
-            format
-            status
-            source
-            season
-            episodes
-            title {
-                romaji
-                english
-                native
-            }
-            synonyms
-            startDate {
-                year
-            }
-            endDate {
-                year
-            }
-          }
-        }
-        """
-
-    variables = {"id": anilist_id}
-
-    response = send_graphql_request(query, variables)
-    return json.loads(response.content, object_hook=to_object)
-
-
-def search_by_name(anilist_show_name):
-    query = """
-        query ($page: Int, $perPage: Int, $search: String) {
-            Page (page: $page, perPage: $perPage) {
-                pageInfo {
-                    total
-                    currentPage
-                    lastPage
-                    hasNextPage
-                    perPage
-                }
-                media (search: $search, type: ANIME) {
-                    id
-                    type
-                    format
-                    status
-                    source
-                    season
-                    episodes
-                    title {
-                        romaji
-                        english
-                        native
-                    }
-                    synonyms
-                    startDate {
-                        year
-                    }
-                    endDate {
-                        year
-                    }
-                }
-            }
-        }
-        """
-    variables = {"search": anilist_show_name, "page": 1, "perPage": 50}
-
-    response = send_graphql_request(query, variables)
-    return json.loads(response.content, object_hook=to_object)
-
-
-def fetch_user_list(username):
-    query = """
-        query ($username: String) {
-            MediaListCollection(userName: $username, type: ANIME) {
-                lists {
-                    name
-                    status
-                    isCustomList
-                    entries {
-                        id
-                        progress
-                        status
-                        repeat
-                        media {
-                            id
-                            type
-                            format
-                            status
-                            source
-                            season
-                            episodes
-                            startDate {
-                                year
-                            }
-                            endDate {
-                                year
-                            }
-                            title {
-                                romaji
-                                english
-                                native
-                            }
-                            synonyms
-                        }
-                    }
-                }
-            }
-        }
-        """
-
-    variables = {"username": username}
-
-    response = send_graphql_request(query, variables)
-    return json.loads(response.content, object_hook=to_object)
-
-
-def send_graphql_request(query, variables):
-    url = "https://graphql.anilist.co"
-    headers = {
-        "Authorization": "Bearer " + ANILIST_ACCESS_TOKEN,
-        "Accept": "application/json",
-        "Content-Type": "application/json",
-    }
-    response = requests.post(
-        url, headers=headers, json={"query": query, "variables": variables}
-    )
-    response.raise_for_status()
-    if response.headers.get('x-ratelimit-remaining') == '0':
-        logger.warning("[ANILIST] Waiting for 60 seconds because of Anilist rate-limiting")
-        time.sleep(60)
-    else:
-        # wait a bit to not overload AniList API
-        time.sleep(0.20)
-    return response
 
 
 def process_user_list(username: str) -> Optional[List[AnilistSeries]]:
@@ -1251,42 +1101,11 @@ def add_by_id(
         )
 
 
-def update_series(media_id: int, progress: int, status: str):
-    if ANILIST_SKIP_UPDATE == "true":
-        logger.warning("Skip update is enabled in settings so not updating this item")
-        return
-    query = """
-        mutation ($mediaId: Int, $status: MediaListStatus, $progress: Int) {
-            SaveMediaListEntry (mediaId: $mediaId, status: $status, progress: $progress) {
-                id
-                status,
-                progress
-            }
-        }
-        """
-
-    variables = {"mediaId": media_id, "status": status, "progress": int(progress)}
-
-    url = "https://graphql.anilist.co"
-
-    headers = {
-        "Authorization": "Bearer " + ANILIST_ACCESS_TOKEN,
-        "Accept": "application/json",
-        "Content-Type": "application/json",
-    }
-
-    response = requests.post(
-        url, headers=headers, json={"query": query, "variables": variables}
-    )
-    response.raise_for_status()
-    check_anilist_rate_limit(response)
-
-
 def retrieve_season_mappings(title: str, season: int) -> List[AnilistCustomMapping]:
     season_mappings: List[AnilistCustomMapping] = []
 
-    if custom_mappings and title.lower() in custom_mappings:
-        season_mappings = custom_mappings[title.lower()]
+    if CUSTOM_MAPPINGS and title.lower() in CUSTOM_MAPPINGS:
+        season_mappings = CUSTOM_MAPPINGS[title.lower()]
         # filter mappings by season
         season_mappings = [e for e in season_mappings if e.season == season]
 

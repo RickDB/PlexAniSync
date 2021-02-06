@@ -2,7 +2,7 @@
 import logging
 import re
 import sys
-from typing import List
+from typing import List, Optional
 from dataclasses import dataclass
 
 from plexapi.myplex import MyPlexAccount
@@ -155,9 +155,9 @@ def get_anime_shows_filter(show_name):
     return shows_filtered
 
 
-def get_watched_shows(shows):
+def get_watched_shows(shows) -> Optional[List[PlexWatchedSeries]]:
     logger.info("[PLEX] Retrieving watch count for series")
-    watched_series = []
+    watched_series: List[PlexWatchedSeries] = []
     ovas_found = 0
 
     for show in shows:

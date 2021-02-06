@@ -11,6 +11,7 @@ import coloredlogs
 from custom_mappings import AnilistCustomMapping, read_custom_mappings
 import anilist
 import plexmodule
+import graphql
 
 __version__ = "1.3.5"
 
@@ -97,12 +98,13 @@ def start():
         except BaseException:
             pass
 
+    graphql.ANILIST_ACCESS_TOKEN = ANILIST_ACCESS_TOKEN
+    graphql.ANILIST_SKIP_UPDATE = ANILIST_SKIP_UPDATE
+
     # Anilist
     anilist_username = anilist_settings["username"]
-    anilist.custom_mappings = custom_mappings
-    anilist.ANILIST_ACCESS_TOKEN = ANILIST_ACCESS_TOKEN
+    anilist.CUSTOM_MAPPINGS = custom_mappings
     anilist.ANILIST_PLEX_EPISODE_COUNT_PRIORITY = ANILIST_PLEX_EPISODE_COUNT_PRIORITY
-    anilist.ANILIST_SKIP_UPDATE = ANILIST_SKIP_UPDATE
     anilist_series = anilist.process_user_list(anilist_username)
 
     # Plex
