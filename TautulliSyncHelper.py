@@ -84,8 +84,7 @@ def start():
             "AniList skip list update enabled in settings, will match but NOT update your list"
         )
 
-    # Wait a few a seconds to make sure Plex has processed watched states
-    sleep(5.0)
+    anilist.clean_failed_matches_file()
 
     # Anilist
     anilist_username = anilist_settings["username"]
@@ -99,6 +98,8 @@ def start():
     elif not anilist_series:
         logger.error("No items found on your AniList list to process")
     else:
+        # Wait a few a seconds to make sure Plex has processed watched states
+        sleep(5.0)
         plexmodule.plex_settings = plex_settings
         plex_anime_series = plexmodule.get_anime_shows_filter(show_title)
 

@@ -93,13 +93,7 @@ def start():
             "Plex episode watched count will take priority over AniList, this will always update AniList watched count over Plex data"
         )
 
-    # Cleanup any old logs
-    exists = os.path.isfile("failed_matches.txt")
-    if exists:
-        try:
-            os.remove("failed_matches.txt")
-        except BaseException:
-            pass
+    anilist.clean_failed_matches_file()
 
     # Anilist
     anilist_username = anilist_settings["username"]

@@ -42,6 +42,14 @@ def log_to_file(message: str):
     file.close()
 
 
+def clean_failed_matches_file():
+    try:
+        # create or overwrite the file with empty content
+        open("failed_matches.txt", 'w').close()
+    except BaseException:
+        pass
+
+
 @dataclass
 class AnilistSeries:
     anilist_id: int
