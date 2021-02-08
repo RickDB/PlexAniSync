@@ -5,6 +5,10 @@ import sys
 from typing import List, Optional
 from dataclasses import dataclass
 
+from requests import Session
+from requests.adapters import HTTPAdapter
+from urllib3.poolmanager import PoolManager
+
 from plexapi.myplex import MyPlexAccount
 from plexapi.server import PlexServer
 
@@ -27,6 +31,14 @@ class PlexWatchedSeries:
     seasons: List[PlexSeason]
 
 
+class HostNameIgnoringAdapter(HTTPAdapter):
+    def init_poolmanager(self, connections, maxsize, block=..., **pool_kwargs):
+        self.poolmanager = PoolManager(num_pools=connections,
+                                       maxsize=maxsize,
+                                       block=block,
+                                       assert_hostname=False)
+
+
 def authenticate():
     method = plex_settings["authentication_method"].lower()
     try:
@@ -39,11 +51,14 @@ def authenticate():
         home_server_base_url = ""
 
     try:
+        session = Session()
+        session.mount("https://", HostNameIgnoringAdapter())
+
         # Direct connection
         if method == "direct":
             base_url = plex_settings["base_url"]
             token = plex_settings["token"]
-            plex = PlexServer(base_url, token)
+            plex = PlexServer(base_url, token, session)
 
         # Myplex connection
         elif method == "myplex":
@@ -63,7 +78,7 @@ def authenticate():
                 )
                 plex_account = MyPlexAccount(plex_user, plex_password)
                 plex_server_home = PlexServer(
-                    home_server_base_url, plex_account.authenticationToken
+                    home_server_base_url, plex_account.authenticationToken, session
                 )
 
                 logger.warning("Retrieving home user information")
@@ -75,10 +90,10 @@ def authenticate():
                 )
 
                 logger.warning("Retrieved user token for MyPlex home user")
-                plex = PlexServer(home_server_base_url, plex_user_token)
+                plex = PlexServer(home_server_base_url, plex_user_token, session)
                 logger.warning("Successfully authenticated for MyPlex home user")
             else:
-                account = MyPlexAccount(plex_user, plex_password)
+                account = MyPlexAccount(plex_user, plex_password, session=session)
                 plex = account.resource(plex_server).connect()
         else:
             logger.critical(
