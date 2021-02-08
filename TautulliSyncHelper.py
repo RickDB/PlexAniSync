@@ -11,6 +11,8 @@ import anilist
 import plexmodule
 import graphql
 
+__version__ = "1.3.6"
+
 # Logger settings
 logger = logging.getLogger("PlexAniSync")
 coloredlogs.install(fmt="%(asctime)s %(message)s", logger=logger)
@@ -60,6 +62,8 @@ if "log_failed_matches" in anilist_settings:
 
 ## Startup section ##
 def start():
+    logger.info(f"PlexAniSync - version: {__version__}")
+
     if len(sys.argv) < 2:
         logger.error("No show title specified in arguments so cancelling updating")
         sys.exit()
