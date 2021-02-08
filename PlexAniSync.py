@@ -45,7 +45,7 @@ coloredlogs.install(fmt="%(asctime)s %(message)s", logger=logger)
 def read_settings(settings_file) -> configparser.ConfigParser:
     if not os.path.isfile(settings_file):
         logger.critical(f"[CONFIG] Settings file file not found: {settings_file}")
-        sys.exit()
+        sys.exit(1)
     settings = configparser.ConfigParser()
     settings.read(settings_file)
     return settings

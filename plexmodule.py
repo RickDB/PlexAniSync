@@ -36,7 +36,8 @@ class HostNameIgnoringAdapter(HTTPAdapter):
         self.poolmanager = PoolManager(num_pools=connections,
                                        maxsize=maxsize,
                                        block=block,
-                                       assert_hostname=False)
+                                       assert_hostname=False,
+                                       **pool_kwargs)
 
 
 def authenticate():
@@ -99,20 +100,15 @@ def authenticate():
             logger.critical(
                 "[PLEX] Failed to authenticate due to invalid settings or authentication info, exiting..."
             )
-            sys.exit()
+            sys.exit(1)
         return plex
     except Exception:
         logger.exception("Unable to authenticate to Plex Media Server")
-        return None
+        sys.exit(1)
 
 
 def get_anime_shows():
     plex = authenticate()
-    if plex is None:
-        logger.error(
-            "Plex authentication failed, check access to your Plex Media Server and settings"
-        )
-        return None
 
     sections = plex_settings["anime_section"].split("|")
     shows = []
