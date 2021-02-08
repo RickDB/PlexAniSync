@@ -4,11 +4,10 @@ import logging
 import logging.handlers
 import os
 import sys
-from typing import Dict, List
 
 import coloredlogs
 
-from custom_mappings import AnilistCustomMapping, read_custom_mappings
+from custom_mappings import read_custom_mappings
 import anilist
 import plexmodule
 import graphql
@@ -62,30 +61,34 @@ settings = read_settings(SETTINGS_FILE)
 anilist_settings = settings["ANILIST"]
 plex_settings = settings["PLEX"]
 
-ANILIST_SKIP_UPDATE = anilist_settings["skip_list_update"].lower()
-ANILIST_ACCESS_TOKEN = anilist_settings["access_token"].strip()
+graphql.ANILIST_ACCESS_TOKEN = anilist_settings["access_token"].strip()
+
+if "skip_list_update" in anilist_settings:
+    graphql.ANILIST_SKIP_UPDATE = anilist_settings["skip_list_update"].lower().strip() == "true"
 
 if "plex_episode_count_priority" in anilist_settings:
-    ANILIST_PLEX_EPISODE_COUNT_PRIORITY = (
-        anilist_settings["plex_episode_count_priority"].lower().strip()
+    anilist.ANILIST_PLEX_EPISODE_COUNT_PRIORITY = (
+        anilist_settings["plex_episode_count_priority"].lower().strip() == "true"
     )
-else:
-    ANILIST_PLEX_EPISODE_COUNT_PRIORITY = "false"
 
-
-custom_mappings: Dict[str, List[AnilistCustomMapping]] = {}
+if "log_failed_matches" in anilist_settings:
+    anilist.ANILIST_LOG_FAILED_MATCHES = (
+        anilist_settings["log_failed_matches"].lower().strip() == "true"
+    )
 
 
 ## Startup section ##
 def start():
     logger.info(f"PlexAniSync - version: {__version__}")
 
-    if ANILIST_SKIP_UPDATE == "true":
+    anilist.CUSTOM_MAPPINGS = read_custom_mappings()
+
+    if graphql.ANILIST_SKIP_UPDATE:
         logger.warning(
             "AniList skip list update enabled in settings, will match but NOT update your list"
         )
 
-    if ANILIST_PLEX_EPISODE_COUNT_PRIORITY == "true":
+    if anilist.ANILIST_PLEX_EPISODE_COUNT_PRIORITY:
         logger.warning(
             "Plex episode watched count will take priority over AniList, this will always update AniList watched count over Plex data"
         )
@@ -98,13 +101,8 @@ def start():
         except BaseException:
             pass
 
-    graphql.ANILIST_ACCESS_TOKEN = ANILIST_ACCESS_TOKEN
-    graphql.ANILIST_SKIP_UPDATE = ANILIST_SKIP_UPDATE
-
     # Anilist
     anilist_username = anilist_settings["username"]
-    anilist.CUSTOM_MAPPINGS = custom_mappings
-    anilist.ANILIST_PLEX_EPISODE_COUNT_PRIORITY = ANILIST_PLEX_EPISODE_COUNT_PRIORITY
     anilist_series = anilist.process_user_list(anilist_username)
 
     # Plex
@@ -136,5 +134,4 @@ def start():
 
 
 if __name__ == "__main__":
-    custom_mappings = read_custom_mappings()
     start()

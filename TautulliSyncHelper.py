@@ -3,11 +3,10 @@ import logging
 import os
 import sys
 from time import sleep
-from typing import Dict, List
 
 import coloredlogs
 
-from custom_mappings import AnilistCustomMapping, read_custom_mappings
+from custom_mappings import read_custom_mappings
 import anilist
 import plexmodule
 import graphql
@@ -43,11 +42,20 @@ settings = read_settings(SETTINGS_FILE)
 anilist_settings = settings["ANILIST"]
 plex_settings = settings["PLEX"]
 
-ANILIST_SKIP_UPDATE = anilist_settings["skip_list_update"].lower()
-ANILIST_ACCESS_TOKEN = anilist_settings["access_token"].strip()
+graphql.ANILIST_ACCESS_TOKEN = anilist_settings["access_token"].strip()
 
-MAPPING_FILE = "custom_mappings.yaml"
-custom_mappings: Dict[str, List[AnilistCustomMapping]] = {}
+if "skip_list_update" in anilist_settings:
+    graphql.ANILIST_SKIP_UPDATE = anilist_settings["skip_list_update"].lower().strip() == "true"
+
+if "plex_episode_count_priority" in anilist_settings:
+    anilist.ANILIST_PLEX_EPISODE_COUNT_PRIORITY = (
+        anilist_settings["plex_episode_count_priority"].lower().strip() == "true"
+    )
+
+if "log_failed_matches" in anilist_settings:
+    anilist.ANILIST_LOG_FAILED_MATCHES = (
+        anilist_settings["log_failed_matches"].lower().strip() == "true"
+    )
 
 
 ## Startup section ##
@@ -65,7 +73,9 @@ def start():
 
         logger.info(f"Updating single show: {show_title}")
 
-    if ANILIST_SKIP_UPDATE == "true":
+    anilist.CUSTOM_MAPPINGS = read_custom_mappings()
+
+    if graphql.ANILIST_SKIP_UPDATE:
         logger.warning(
             "AniList skip list update enabled in settings, will match but NOT update your list"
         )
@@ -73,12 +83,8 @@ def start():
     # Wait a few a seconds to make sure Plex has processed watched states
     sleep(5.0)
 
-    graphql.ANILIST_ACCESS_TOKEN = ANILIST_ACCESS_TOKEN
-    graphql.ANILIST_SKIP_UPDATE = ANILIST_SKIP_UPDATE
-
     # Anilist
     anilist_username = anilist_settings["username"]
-    anilist.CUSTOM_MAPPINGS = custom_mappings
     anilist_series = anilist.process_user_list(anilist_username)
 
     # Plex
@@ -107,5 +113,4 @@ def start():
 
 
 if __name__ == "__main__":
-    custom_mappings = read_custom_mappings()
     start()

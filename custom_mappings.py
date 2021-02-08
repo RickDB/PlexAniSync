@@ -39,7 +39,7 @@ def read_custom_mappings():
                     start = file_season['start']
 
                 logger.info(
-                    f"[MAPPING] Adding custom mapping | title: {series_title} | season: {season} | anilist id: {anilist_id} | start: {start}"
+                    f"[MAPPING] Adding custom mapping | title: {file_entry['title']} | season: {season} | anilist id: {anilist_id} | start: {start}"
                 )
                 series_mappings.append(AnilistCustomMapping(season, anilist_id, start))
 

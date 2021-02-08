@@ -12,7 +12,7 @@ logger = logging.getLogger("PlexAniSync")
 
 
 ANILIST_ACCESS_TOKEN = ""
-ANILIST_SKIP_UPDATE = "false"
+ANILIST_SKIP_UPDATE = False
 
 
 def search_by_id(anilist_id: int):
@@ -136,7 +136,7 @@ def fetch_user_list(username: str):
 
 
 def update_series(media_id: int, progress: int, status: str):
-    if ANILIST_SKIP_UPDATE == "true":
+    if ANILIST_SKIP_UPDATE:
         logger.warning("[ANILIST] Skip update is enabled in settings so not updating this item")
         return
     query = """

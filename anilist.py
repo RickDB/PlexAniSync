@@ -14,7 +14,7 @@ from graphql import fetch_user_list, search_by_name, search_by_id, update_series
 
 logger = logging.getLogger("PlexAniSync")
 CUSTOM_MAPPINGS: Dict[str, List[AnilistCustomMapping]] = {}
-ANILIST_PLEX_EPISODE_COUNT_PRIORITY = "false"
+ANILIST_PLEX_EPISODE_COUNT_PRIORITY = False
 
 # Set this to True for logging failed AniList matches to
 # failed_matches.txt file
@@ -722,7 +722,7 @@ def match_series_with_seasons(
                     )
             else:
                 error_message = (
-                    f"[ANILIST] Failed to find valid season title match on AniList for: {plex_title_lookup}"
+                    f"[ANILIST] Failed to find valid season title match on AniList for: {plex_title_lookup} season {counter_season}"
                 )
                 logger.error(error_message)
 
@@ -871,7 +871,7 @@ def update_entry(
             )
         elif (
             anilist_episodes_watched > watched_episode_count
-            and ANILIST_PLEX_EPISODE_COUNT_PRIORITY == "true"
+            and ANILIST_PLEX_EPISODE_COUNT_PRIORITY
         ):
             if watched_episode_count > 0:
                 logger.info(
