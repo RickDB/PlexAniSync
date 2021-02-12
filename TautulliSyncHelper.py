@@ -11,7 +11,7 @@ import anilist
 import plexmodule
 import graphql
 
-__version__ = "1.3.8"
+__version__ = "1.3.9"
 
 # Logger settings
 logger = logging.getLogger("PlexAniSync")
@@ -34,11 +34,18 @@ def read_settings(settings_file) -> configparser.ConfigParser:
     return settings
 
 
-if len(sys.argv) > 2:
+if len(sys.argv) < 2:
+    logger.error("No show title specified in arguments so cancelling updating")
+    sys.exit(1)
+elif len(sys.argv) > 2:
     SETTINGS_FILE = sys.argv[1]
     logger.warning(f"Found settings file parameter and using: {SETTINGS_FILE}")
+    # If we have custom settings file parameter use different arg index to
+    # keep legacy method intact
+    show_title = sys.argv[2]
 else:
     SETTINGS_FILE = "settings.ini"
+    show_title = sys.argv[1]
 
 settings = read_settings(SETTINGS_FILE)
 anilist_settings = settings["ANILIST"]
@@ -63,19 +70,7 @@ if "log_failed_matches" in anilist_settings:
 ## Startup section ##
 def start():
     logger.info(f"PlexAniSync - version: {__version__}")
-
-    if len(sys.argv) < 2:
-        logger.error("No show title specified in arguments so cancelling updating")
-        sys.exit(1)
-    else:
-        # If we have custom settings file parameter use different arg index to
-        # keep legacy method intact
-        if len(sys.argv) > 2:
-            show_title = sys.argv[2]
-        else:
-            show_title = sys.argv[1]
-
-        logger.info(f"Updating single show: {show_title}")
+    logger.info(f"Updating single show: {show_title}")
 
     anilist.CUSTOM_MAPPINGS = read_custom_mappings()
 

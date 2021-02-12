@@ -1,7 +1,6 @@
 # coding=utf-8
 import logging
 import re
-import time
 from typing import Dict, List, Optional
 from dataclasses import dataclass
 
@@ -372,17 +371,6 @@ def match_to_plex(anilist_series: List[AnilistSeries], plex_series_watched: List
                     for series in anilist_series:
                         match_series_against_potential_titles(series, potential_titles, matched_anilist_series)
 
-                    if found_match:
-                        matched_anilist_series.append(series)
-                        update_entry(
-                            plex_title,
-                            plex_year,
-                            plex_watched_episode_count,
-                            matched_anilist_series,
-                            skip_year_check,
-                        )
-                        break
-
                 # Series not listed so search for it
                 if not all(matched_anilist_series) or not matched_anilist_series:
                     logger.warning(f"[ANILIST] Plex series was not on your AniList list: {plex_title}")
@@ -424,15 +412,25 @@ def match_to_plex(anilist_series: List[AnilistSeries], plex_series_watched: List
                                 False,
                             )
                             break
-                        else:
-                            # wait a bit to not overload AniList API
-                            time.sleep(0.10)
 
                     if not media_id_search:
-                        logger.error(
-                            "[ANILIST] Failed to find valid match on AniList for: %s"
-                            % (plex_title)
+                        error_message = (
+                            f"[ANILIST] Failed to find valid match on AniList for: {plex_title}"
                         )
+                        logger.error(error_message)
+                        if ANILIST_LOG_FAILED_MATCHES:
+                            log_to_file(error_message)
+
+                # Series exists on list so checking if update required
+                else:
+                    update_entry(
+                        plex_title,
+                        plex_year,
+                        plex_watched_episode_count,
+                        matched_anilist_series,
+                        skip_year_check,
+                    )
+                    matched_anilist_series = []
             else:
                 media_id_search = None
                 # ignore the Plex year since Plex does not have years for seasons
@@ -579,7 +577,7 @@ def update_entry(
             logger.info(
                 "[ANILIST] Series is already marked as completed on AniList so skipping update"
             )
-            continue
+            return
 
         if hasattr(series, "started_year") and year != series.started_year:
             if ignore_year is False:
@@ -640,10 +638,9 @@ def update_entry(
             if episode_difference == 1 or episode_difference > 32:
                 update_series(series.anilist_id, watched_episode_count, "COMPLETED")
             else:
-                current_episodes_watched = anilist_episodes_watched + 1
-                while current_episodes_watched <= watched_episode_count:
+                for current_episodes_watched in range(anilist_episodes_watched + 1, watched_episode_count + 1):
                     update_series(series.anilist_id, current_episodes_watched, "COMPLETED")
-                    current_episodes_watched += 1
+            return
         elif (
             watched_episode_count > anilist_episodes_watched
             and anilist_total_episodes > 0
@@ -662,14 +659,15 @@ def update_entry(
             if episode_difference == 1 or episode_difference > 32:
                 update_series(series.anilist_id, watched_episode_count, "CURRENT")
             else:
-                current_episodes_watched = anilist_episodes_watched + 1
-                while current_episodes_watched <= watched_episode_count:
+                for current_episodes_watched in range(anilist_episodes_watched + 1, watched_episode_count + 1):
                     update_series(series.anilist_id, current_episodes_watched, "CURRENT")
-                    current_episodes_watched += 1
+            return
+
         elif watched_episode_count == anilist_episodes_watched:
             logger.info(
                 "[ANILIST] Episodes watched was the same on AniList and Plex so skipping update"
             )
+            return
         elif (
             anilist_episodes_watched > watched_episode_count
             and ANILIST_PLEX_EPISODE_COUNT_PRIORITY
@@ -684,6 +682,7 @@ def update_entry(
                 # updating the notification feed and just set the AniList
                 # episode count once
                 update_series(series.anilist_id, watched_episode_count, "CURRENT")
+                return
             else:
                 logger.info(
                     f"[ANILIST] Episodes watched was higher on AniList [{anilist_episodes_watched}] than "
