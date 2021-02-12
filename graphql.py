@@ -161,17 +161,22 @@ def send_graphql_request(query: str, variables: Dict[str, Any]):
         "Accept": "application/json",
         "Content-Type": "application/json",
     }
-    response = requests.post(
-        url, headers=headers, json={"query": query, "variables": variables}
-    )
-    response.raise_for_status()
-    if response.headers.get('x-ratelimit-remaining') == '0':
-        logger.warning("[ANILIST] Waiting for 60 seconds because of Anilist rate-limiting")
-        time.sleep(60)
-    else:
-        # wait a bit to not overload AniList API
-        time.sleep(0.20)
-    return response
+
+    while True:
+        response = requests.post(
+            url, headers=headers, json={"query": query, "variables": variables}
+        )
+        if response.status_code == 429:
+            wait_time = int(response.headers.get('retry-after', 0))
+            logger.warning(f"[ANILIST] Rate limit hit, waiting for {wait_time}s")
+            time.sleep(wait_time + 1)
+
+        else:
+            response.raise_for_status()
+
+            # wait a bit to not overload AniList API
+            time.sleep(0.20)
+            return response
 
 
 def to_object(obj):
