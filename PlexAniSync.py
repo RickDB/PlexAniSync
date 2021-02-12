@@ -47,7 +47,7 @@ def read_settings(settings_file) -> configparser.ConfigParser:
         logger.critical(f"[CONFIG] Settings file file not found: {settings_file}")
         sys.exit(1)
     settings = configparser.ConfigParser()
-    settings.read(settings_file)
+    settings.read(settings_file, encoding="utf-8")
     return settings
 
 
