@@ -37,7 +37,7 @@ def int_to_roman_numeral(decimal: int) -> str:
 
 
 def log_to_file(message: str):
-    file = open("failed_matches.txt", "a+")
+    file = open("failed_matches.txt", "a+", encoding="utf-8")
     file.write(f"{message}\n")
     file.close()
 

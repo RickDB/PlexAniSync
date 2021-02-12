@@ -24,7 +24,7 @@ def read_custom_mappings():
         logger.info(f"[MAPPING] Custom map file not found: {MAPPING_FILE}")
     else:
         logger.info(f"[MAPPING] Custom map file found: {MAPPING_FILE}")
-        file = open(MAPPING_FILE, "r")
+        file = open(MAPPING_FILE, "r", encoding="utf-8")
         yaml = YAML(typ='safe')
         file_mappings = yaml.load(file)
 
