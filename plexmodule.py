@@ -11,6 +11,7 @@ from urllib3.poolmanager import PoolManager
 
 from plexapi.myplex import MyPlexAccount
 from plexapi.server import PlexServer
+from plexapi.video import Show
 
 logger = logging.getLogger("PlexAniSync")
 plex_settings = dict()
@@ -29,6 +30,7 @@ class PlexWatchedSeries:
     title_original: str
     year: int
     seasons: List[PlexSeason]
+    anilist_id: Optional[int]
 
 
 class HostNameIgnoringAdapter(HTTPAdapter):
@@ -107,11 +109,11 @@ def authenticate():
         sys.exit(1)
 
 
-def get_anime_shows():
+def get_anime_shows() -> List[Show]:
     plex = authenticate()
 
     sections = plex_settings["anime_section"].split("|")
-    shows = []
+    shows: List[Show] = []
     for section in sections:
         try:
             logger.info(f"[PLEX] Retrieving anime series from section: {section}")
@@ -166,13 +168,18 @@ def get_anime_shows_filter(show_name):
     return shows_filtered
 
 
-def get_watched_shows(shows) -> Optional[List[PlexWatchedSeries]]:
+def get_watched_shows(shows: List[Show]) -> Optional[List[PlexWatchedSeries]]:
     logger.info("[PLEX] Retrieving watch count for series")
     watched_series: List[PlexWatchedSeries] = []
     ovas_found = 0
 
     for show in shows:
         try:
+            anilist_id = None
+            match = re.search(r"me\.sachaw\.agents\.anilist://([0-9]+)", show.guid)
+            if match:
+                anilist_id = int(match.group(1))
+
             if hasattr(show, "seasons"):
                 show_seasons = show.seasons()
                 # ignore season 0 and unwatched seasons
@@ -187,7 +194,7 @@ def get_watched_shows(shows) -> Optional[List[PlexWatchedSeries]]:
                     # Add year if we have one otherwise fallback
                     year = 1900
                     if show.year:
-                        year = show.year
+                        year = int(show.year)
 
                     if not hasattr(show, "titleSort"):
                         show.titleSort = show.title
@@ -207,7 +214,8 @@ def get_watched_shows(shows) -> Optional[List[PlexWatchedSeries]]:
                         show.titleSort.strip(),
                         show.originalTitle.strip(),
                         year,
-                        seasons
+                        seasons,
+                        anilist_id
                     )
                     watched_series.append(watched_show)
 
@@ -222,7 +230,7 @@ def get_watched_shows(shows) -> Optional[List[PlexWatchedSeries]]:
                 if hasattr(show, "isWatched") and show.isWatched:
                     year = 1900
                     if show.year:
-                        year = show.year
+                        year = int(show.year)
 
                     if not hasattr(show, "titleSort"):
                         show.titleSort = show.title
@@ -241,8 +249,9 @@ def get_watched_shows(shows) -> Optional[List[PlexWatchedSeries]]:
                         show.title.strip(),
                         show.titleSort.strip(),
                         show.originalTitle.strip(),
-                        show.year,
-                        [PlexSeason(1, 1)]
+                        year,
+                        [PlexSeason(1, 1)],
+                        anilist_id
                     )
                     watched_series.append(watched_show)
                     ovas_found += 1
