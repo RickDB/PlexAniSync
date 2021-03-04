@@ -195,6 +195,9 @@ def match_to_plex(anilist_series: List[AnilistSeries], plex_series_watched: List
 
                 custom_mapping_seasons_anilist_id = matched_id
 
+            if custom_mapping_season_count == 1:
+                custom_mapping_season_count = 0
+
             # If we had custom mappings for multiple seasons with the same ID use
             # cumulative episode count and skip per season processing
             if custom_mapping_season_count > 1:
