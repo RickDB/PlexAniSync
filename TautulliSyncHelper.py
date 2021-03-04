@@ -11,7 +11,7 @@ import anilist
 import plexmodule
 import graphql
 
-__version__ = "1.3.9"
+__version__ = "1.3.10"
 
 # Logger settings
 logger = logging.getLogger("PlexAniSync")
