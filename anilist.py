@@ -471,27 +471,28 @@ def find_id_season_best_match(title: str, season: int, year: int) -> Optional[in
 
     match_title_season_suffix1 = f"{match_title} {int_to_roman_numeral(season)}"
     match_title_season_suffix2 = f"{match_title} season {season}"
-    match_title_season_suffix3 = f"{match_title} {season}"
+    match_title_season_suffix3 = f"{match_title} part {season}"
+    match_title_season_suffix4 = f"{match_title} {season}"
 
     # oridinal season (1st 2nd etc..)
     try:
         p_engine = inflect.engine()
-        match_title_season_suffix4 = f"{match_title} {p_engine.ordinal(season)} season"
-    except BaseException:
-        logger.error(
-            "Error while converting season to ordinal string, make sure Inflect pip package is installed"
-        )
-        match_title_season_suffix4 = match_title_season_suffix2
-
-    # oridinal season - variation 1 (1st 2nd Thread) - see AniList ID: 21000
-    try:
-        p_engine = inflect.engine()
-        match_title_season_suffix5 = f"{match_title} {p_engine.ordinal(season)} thread"
+        match_title_season_suffix5 = f"{match_title} {p_engine.ordinal(season)} season"
     except BaseException:
         logger.error(
             "Error while converting season to ordinal string, make sure Inflect pip package is installed"
         )
         match_title_season_suffix5 = match_title_season_suffix2
+
+    # oridinal season - variation 1 (1st 2nd Thread) - see AniList ID: 21000
+    try:
+        p_engine = inflect.engine()
+        match_title_season_suffix6 = f"{match_title} {p_engine.ordinal(season)} thread"
+    except BaseException:
+        logger.error(
+            "Error while converting season to ordinal string, make sure Inflect pip package is installed"
+        )
+        match_title_season_suffix6 = match_title_season_suffix2
 
     potential_titles = [
         match_title_season_suffix1.lower().strip(),
@@ -499,6 +500,7 @@ def find_id_season_best_match(title: str, season: int, year: int) -> Optional[in
         match_title_season_suffix3.lower().strip(),
         match_title_season_suffix4.lower().strip(),
         match_title_season_suffix5.lower().strip(),
+        match_title_season_suffix6.lower().strip(),
     ]
 
     list_items = search_by_name(title)
