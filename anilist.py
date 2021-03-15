@@ -212,7 +212,7 @@ def match_to_plex(anilist_series: List[AnilistSeries], plex_series_watched: List
                 mapped_season_count = custom_mapping_season_count
 
                 if custom_mapping_season_count == len(plex_seasons):
-                    return
+                    continue
 
         # Start processing of any remaining seasons
         for plex_season in plex_seasons[mapped_season_count:]:
