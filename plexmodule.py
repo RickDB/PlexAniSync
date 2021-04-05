@@ -11,7 +11,7 @@ from urllib3.poolmanager import PoolManager
 
 from plexapi.myplex import MyPlexAccount
 from plexapi.server import PlexServer
-from plexapi.video import Show
+from plexapi.video import Episode, Season, Show
 
 logger = logging.getLogger("PlexAniSync")
 plex_settings = dict()
@@ -272,10 +272,10 @@ def get_watched_shows(shows: List[Show]) -> Optional[List[PlexWatchedSeries]]:
         return watched_series
 
 
-def get_watched_episodes_for_show_season(season) -> int:
-    watched_episodes_of_season = [e for e in season.episodes() if e.isWatched]
+def get_watched_episodes_for_show_season(season: Season) -> int:
+    watched_episodes_of_season: List[Episode] = season.watched()
     # len(watched_episodes_of_season) only works when the user didn't skip any episodes
-    episodes_watched = max(map(lambda e: e.index, watched_episodes_of_season), default=0)
+    episodes_watched = max(map(lambda e: int(e.index), watched_episodes_of_season), default=0)
 
     logger.info(f'[PLEX] {episodes_watched} episodes watched for {season.parentTitle} season {season.seasonNumber}')
     return episodes_watched
