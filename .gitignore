@@ -9,3 +9,5 @@ logo\.psd
 settings\.ini
 update_anilist\.bat
 update_anilist_test\.bat
+.idea
+venv
