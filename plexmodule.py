@@ -113,7 +113,7 @@ def authenticate():
 def get_anime_shows() -> List[Show]:
     plex = authenticate()
 
-    sections = plex_settings["anime_section"].split("|")
+    sections = PlexAniSync.cfg.PLEX.anime_section.split("|")
     shows: List[Show] = []
     for section in sections:
         try:
