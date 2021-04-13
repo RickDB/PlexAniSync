@@ -1,17 +1,17 @@
 # coding=utf-8
 import logging
 import re
-from typing import Dict, List, Optional
 from dataclasses import dataclass
+from typing import Dict, List, Optional
 
 import inflect
 from guessit import guessit
 
-from plexmodule import PlexWatchedSeries
 from custom_mappings import AnilistCustomMapping
 from graphql import fetch_user_list, search_by_name, search_by_id, update_series
+from plexmodule import PlexWatchedSeries
 
-logging = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 CUSTOM_MAPPINGS: Dict[str, List[AnilistCustomMapping]] = {}
 ANILIST_PLEX_EPISODE_COUNT_PRIORITY = False
 
