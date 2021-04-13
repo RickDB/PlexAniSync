@@ -39,7 +39,8 @@ class Config(object, metaclass=Singleton):
             'logFailedMatches': True
         },
         'notifications': {
-            'verbose': True
+            'verbose': True,
+            'notify_failed_matches': False
         },
         'PLEX': {
             'anime_section': '',
