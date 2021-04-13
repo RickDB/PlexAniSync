@@ -31,97 +31,285 @@ https://github.com/RickDB/PlexAniSync/archive/master.zip
 
 ### Step 3 - Configuration
 
-From the project directory rename `settings.ini.example` to `settings.ini`, open `settings.ini` with your favorite text editor and edit where needed.
+## Sample Configuration
 
-
-#### Plex
-
-Only choose one of the authentication methods, MyPlex is the easiest.
-
-##### MyPlex authentication (prefered)
-
-For MyPlex authentication you will need your Plex server name and Plex account login information, for example:
-
+```json
+{
+  "ANILIST": {
+    "access_token": "",
+    "plex_episode_count_priority": false,
+    "skip_list_update": false,
+    "username": ""
+  },
+  "Direct_IP": {
+    "base_url": "",
+    "token": ""
+  },
+  "MyPlex": {
+    "home_server_base_url": "http://127.0.0.1:32400",
+    "home_user_sync": false,
+    "home_username": "Megumin",
+    "myplex_password": "",
+    "myplex_user": "",
+    "server": ""
+  },
+  "PLEX": {
+    "anime_section": "",
+    "authentication_method": "direct"
+  },
+  "core": {
+    "debug": false,
+    "logFailedMatches": true,
+    "notify_failed_matches": true
+  },
+  "notifications": {
+    "verbose": true
+  }
+}
 ```
-[PLEX]
-anime_section = Anime
-authentication_method = myplex
+## Core
 
-server = Sadala
-myplex_user = Goku
-myplex_password = kamehameha
-```
-
-This completes the MyPlex authentication and **only** if you want to sync against a specific Plex Home user which isn't the admin user follow the below instructions:
-
-For this to work lookup the home username on your Plex server and also fill in your full Plex server URL, for example:
-
-```
-[PLEX]
-anime_section = Anime
-authentication_method = myplex
-
-# MyPlex
-server = Sadala
-myplex_user = John # has to be the Plex admin user acount
-myplex_password = Doe
-
-# if you enable home_user_sync it will only sync against that specific Plex home user, it requires the full url of your Plex server just like with the Direct IP method
-# home_username is the actual Plex home username and not their e-mail address, this is also case sensitive
-
-home_user_sync = True
-home_username = Megumin # the home user account you want to sync with and can not be the admin user
-home_server_base_url = http://127.0.0.1:32400
-```
-
-##### Direct Plex authentication (advanced users)
-
-The direct authentication method is for users that don't want to use Plex its online authentication system however is more complex to setup, for this you need to find your token manually:
-
-https://support.plex.tv/articles/204059436-finding-an-authentication-token-x-plex-token/
-
-Afterwards can enter your full Plex site url and above authentication token, for example:
-
-```
-[PLEX]
-anime_section = Anime
-authentication_method = direct
-
-base_url = http://192.168.1.234:32400
-token = abcdef123456789
+```json
+  "core": {
+    "debug": false
+  },
 ```
 
-##### Section configuration
+`debug` - Toggle debug messages in the log. Default is `false`.
 
-In the settings file enter your Plex library / section name containing your Anime, for example:
+- Set to `true`, if you are having issues and want to diagnose why.
 
+## ANILIST
+
+```json
+"ANILIST": {
+    "access_token": "",
+    "plex_episode_count_priority": false,
+    "skip_list_update": false,
+    "username": ""
+  },
 ```
-[PLEX]
-anime_section = Anime
-```
 
-Multiple libraries are now supported and you separate them by using the pipeline ("|") character like so:
-
-```
-[PLEX]
-anime_section = Anime|Anime2
-```
-
-#### AniList
-
-For AniList you need get a so called `access_token` which you can retrieve via this link and if not logged in will ask you to do so:
-
-https://anilist.co/api/v2/oauth/authorize?client_id=1549&response_type=token
-
-Make sure to copy the entire key as it is pretty long and paste that in the settings file under 'access_token', no need to enclose it just paste it as-is.
+You will need `access_token` which can be grab using from https://anilist.co/api/v2/oauth/authorize?client_id=1549&response_type=token
+_Note: Make sure to copy the entire key as it is pretty long and paste that in the config file under `access_token` make sure to enclose it._
 
 Afterwards make sure to also fill in your AniList username as well which is your actual username not your e-mail address like for example:
 
+```json
+"ANILIST": {
+    "access_token": "iLikeToastyGoblins",
+    "username": "Netsplite"
+  },
 ```
-[ANILIST]
-username = GoblinSlayer
-access_token = iLikeToastyGoblins.
+
+## Direct_IP
+
+```json
+"Direct_IP": {
+    "base_url": "",
+    "token": ""
+  },
 ```
+
+you can use direct IP to connect to Plex Server you just need the base_url by default it should be `http://127.0.0.1:32400` if the server is a local machine.
+
+Then you can grab the toke by following this https://support.plex.tv/articles/204059436-finding-an-authentication-token-x-plex-token/
+
+_Note: This is quite advance and it's recommended to use myplex method but if you feel ballsy then go ahead._
+
+## MyPlex
+
+```json
+"MyPlex": {
+    "home_server_base_url": "",
+    "home_user_sync": false,
+    "home_username": "",
+    "myplex_password": "",
+    "myplex_user": "",
+    "server": ""
+  },
+```
+
+Myplex method is one of the easiest way to connect all you have to do is insert `myplex_password` which is your plex password.
+then just pass the `myplex_user` which will be your username for Plex
+
+If you want to sync home user then set `home_user_sync` to `true` and fill in `home_username`, `home_server_base_url`
+which should be the same with the `base_url` then the Plex `server` name.
+
+Also For MyPlex authentication you will need your Plex server name and Plex account login information, for example:
+
+```json
+"MyPlex": {
+    "home_server_base_url": "http://127.0.0.1:32400",
+    "myplex_password": "TooOpAlwaysWin",
+    "myplex_user": "Goku",
+    "server": "RemBestWaifu"
+  },
+```
+
+This completes the MyPlex authentication
+
+_Note: Again if you want to sync againts home user which is not the admin then just fill in the rest and set `home_user_sync` to `true`._
+
+## PLEX
+
+```json
+"PLEX": {
+    "anime_section": "",
+    "authentication_method": "direct"
+  },
+```
+
+**THIS IS REALLY IMPORTANT SPECIALLY `anime_section`** you will need to specify which library you have your Animes, Otherwise it will fail to work.
+**Also you will need to set the authentication method either `direct or myplex` choose one otherwise it will throw an error.**
+Multiple libraries are now supported and you separate them by using the pipeline ("|") character like so:
+
+```json
+"PLEX": {
+    "anime_section": "Weeb|HomeWork",
+    "authentication_method": "direct"
+  },
+```
+
+## Notifications
+
+```json
+"notifications": {
+  "Apprise": {
+    "service": "apprise",
+    "url": "",
+    "title": ""
+  },
+  "verbose": false
+},
+```
+
+Notification alerts for PlexAniSync tasks using apprise and etc you can send notification directly to the discord server.
+
+For manual (i.e. CLI) commands, you need to add the `--notifications` flag.
+
+Supported `services`:
+
+- `apprise`
+- `pushover`
+- `slack`
+
+_Note: The key name can be anything, but the `service` key must be must be the exact service name (e.g. `pushover`). See below for example._
+
+```json
+"notifications": {
+  "anyname": {
+    "service": "pushover",
+  }
+},
+```
+
+### General
+
+`verbose` - Toggle detailed notifications.
+
+- Default is `true`.
+
+- Set to `false` if you want to reduce the amount of detailed notifications (e.g. just the total vs detailed log).
+
+```json
+"notifications": {
+  "verbose": true
+},
+```
+
+### Apprise
+
+```json
+"notifications": {
+  "Apprise": {
+    "service": "apprise",
+    "url": "",
+    "title": ""
+  },
+  "verbose": false
+},
+```
+
+`url` - Apprise service URL (see [here](https://github.com/caronc/apprise)).
+
+- Required.
+
+`title` - Notification Title.
+
+- Optional.
+
+- Default is ` ` is empty.
+
+### Pushover
+
+```json
+"notifications": {
+  "pushover": {
+    "service": "pushover",
+    "app_token": "",
+    "user_token": "",
+    "priority": 0
+  },
+  "verbose": false
+},
+```
+
+`app_token` - App Token from [Pushover.net](https://pushover.net).
+
+- Required.
+
+`user_token` - User Token from [Pushover.net](https://pushover.net).
+
+- Required.
+
+`priority` - [Priority](https://pushover.net/api#priority) of the notifications.
+
+- Optional.
+
+- Choices are: `-2`, `-1`, `0`, `1`, `2`.
+
+- Values are not quoted.
+
+- Default is `0`.
+
+### Slack
+
+```json
+"notifications": {
+  "slack": {
+    "service": "slack",
+    "webhook_url": "",
+    "channel": "",
+    "sender_name": "",
+    "sender_icon": ""
+  },
+  "verbose": false
+},
+```
+
+`webhook_url` - [Webhook URL](https://my.slack.com/services/new/incoming-webhook/).
+
+- Required.
+
+`channel` - Slack channel to send the notifications to.
+
+- Optional.
+
+- Default is blank.
+
+`sender_name` - Sender's name for the notifications.
+
+- Optional.
+
+- Default is `` is empty.
+
+`sender_icon` - Icon to use for the notifications.
+
+- Optional.
+
+- Default is `:movie_camera:`
+
 
 ### Step 4 - Install requirements
 
