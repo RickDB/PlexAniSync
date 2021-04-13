@@ -2,16 +2,15 @@
 import logging
 import re
 import sys
-from typing import List, Optional
 from dataclasses import dataclass
-
-from requests import Session
-from requests.adapters import HTTPAdapter
-from urllib3.poolmanager import PoolManager
+from typing import List, Optional
 
 from plexapi.myplex import MyPlexAccount
 from plexapi.server import PlexServer
 from plexapi.video import Episode, Season, Show
+from requests import Session
+from requests.adapters import HTTPAdapter
+from urllib3.poolmanager import PoolManager
 
 import PlexAniSync
 
