@@ -35,7 +35,8 @@ class AttrConfig(AttrDict):
 class Config(object, metaclass=Singleton):
     base_config = {
         'core': {
-            'debug': False
+            'debug': False,
+            'logFailedMatches': True
         },
         'notifications': {
             'verbose': True
