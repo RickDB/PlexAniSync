@@ -36,11 +36,11 @@ class Config(object, metaclass=Singleton):
     base_config = {
         'core': {
             'debug': False,
-            'logFailedMatches': True
+            'logFailedMatches': True,
+            'notify_failed_matches': False
         },
         'notifications': {
             'verbose': True,
-            'notify_failed_matches': False
         },
         'PLEX': {
             'anime_section': '',
