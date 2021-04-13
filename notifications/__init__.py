@@ -1,7 +1,7 @@
 from misc.log import logger
-from .apprise import Apprise
-from .pushover import Pushover
-from .slack import Slack
+from notifications.pushover import Pushover
+from notifications.slack import Slack
+from notifications.apprise import Apprise
 
 log = logger.get_logger(__name__)
 
