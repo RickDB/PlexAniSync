@@ -1,5 +1,4 @@
 # coding=utf-8
-import configparser
 import logging
 import logging.handlers
 import os
@@ -7,10 +6,10 @@ import sys
 
 import coloredlogs
 
-from custom_mappings import read_custom_mappings
 import anilist
-import plexmodule
 import graphql
+import plexmodule
+from custom_mappings import read_custom_mappings
 from misc.config import Config
 from misc.log import logger
 from notifications import Notifications
@@ -42,7 +41,6 @@ notify = Notifications()
 
 # Notifications
 init_notifications()
-
 
 # Install colored logs
 coloredlogs.install(fmt="%(asctime)s %(message)s", logger=logger)
