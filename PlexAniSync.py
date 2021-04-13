@@ -19,6 +19,23 @@ __version__ = "1.3.12"
 # Load logger
 log = logger.get_logger('PlexAniSync')
 
+# Install colored logs
+coloredlogs.install(fmt="%(asctime)s %(message)s", logger=log)
+
+config = os.path.join(os.path.dirname(os.path.realpath(sys.argv[0])), "config.json")
+cache_file = os.path.join(os.path.dirname(os.path.realpath(sys.argv[0])), "cache.db")
+log_file = os.path.join(os.path.dirname(os.path.realpath(sys.argv[0])), "activity.log")
+
+# Load config
+cfg = Config(configfile=config, cachefile=cache_file, logfile=log_file).cfg
+
+# Settings section
+graphql.ANILIST_SKIP_UPDATE = cfg.ANILIST.skip_list_update
+graphql.ANILIST_ACCESS_TOKEN = cfg.ANILIST.access_token.strip()
+anilist.ANILIST_PLEX_EPISODE_COUNT_PRIORITY = cfg.ANILIST.plex_episode_count_priority
+anilist.ANILIST_LOG_FAILED_MATCHES = cfg.core.logFailedMatches
+anilist_username = cfg.ANILIST.username
+
 
 ############################################################
 # MISC
@@ -42,30 +59,8 @@ notify = Notifications()
 # Notifications
 init_notifications()
 
-# Install colored logs
-coloredlogs.install(fmt="%(asctime)s %(message)s", logger=logger)
 
-# Enable this if you want to also log all messages coming from imported libraries
-# coloredlogs.install(level='DEBUG')
-
-
-config = os.path.join(os.path.dirname(os.path.realpath(sys.argv[0])), "config.json")
-cache_file = os.path.join(os.path.dirname(os.path.realpath(sys.argv[0])), "cache.db")
-log_file = os.path.join(os.path.dirname(os.path.realpath(sys.argv[0])), "activity.log")
-
-# Load config
-cfg = Config(configfile=config, cachefile=cache_file, logfile=log_file).cfg
-
-
-## Settings section ##
-graphql.ANILIST_SKIP_UPDATE = cfg.ANILIST.skip_list_update
-anilist.ANILIST_ACCESS_TOKEN = cfg.ANILIST.access_token.strip()
-anilist.ANILIST_PLEX_EPISODE_COUNT_PRIORITY = cfg.ANILIST.plex_episode_count_priority
-anilist.ANILIST_LOG_FAILED_MATCHES = cfg.core.logFailedMatches
-anilist_username = cfg.ANILIST.username
-
-
-## Startup section ##
+# Startup section
 def start():
     logging.info(f"PlexAniSync - version: {__version__}")
 
@@ -78,7 +73,8 @@ def start():
 
     if anilist.ANILIST_PLEX_EPISODE_COUNT_PRIORITY:
         logging.warning(
-            "Plex episode watched count will take priority over AniList, this will always update AniList watched count over Plex data"
+            "Plex episode watched count will take priority over AniList, this will always update AniList watched "
+            "count over Plex data "
         )
 
     anilist.clean_failed_matches_file()
