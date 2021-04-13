@@ -47,7 +47,6 @@ def init_notifications():
         for notification_name, notification_config in cfg.notifications.items():
             if notification_name.lower() == 'verbose':
                 continue
-
             notify.load(**notification_config)
     except Exception:
         log.exception("Exception initializing notification agents: ")
@@ -107,6 +106,12 @@ def start():
             anilist.match_to_plex(anilist_series, plex_series_watched)
 
     logging.info("Plex to AniList sync finished")
+
+    # if notification in config is set to true then send the failed matches notifications.
+    if cfg.core.notify_failed_matches:
+        with open(file='failed_matches.txt', mode='r') as f:
+            data = f.read()
+            notify.send(message=data)
 
 
 if __name__ == "__main__":
