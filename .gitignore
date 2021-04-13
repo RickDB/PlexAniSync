@@ -11,3 +11,4 @@ update_anilist\.bat
 update_anilist_test\.bat
 .idea
 venv
+config.json
