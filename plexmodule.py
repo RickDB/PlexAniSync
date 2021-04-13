@@ -2,18 +2,19 @@
 import logging
 import re
 import sys
-from typing import List, Optional
 from dataclasses import dataclass
-
-from requests import Session
-from requests.adapters import HTTPAdapter
-from urllib3.poolmanager import PoolManager
+from typing import List, Optional
 
 from plexapi.myplex import MyPlexAccount
 from plexapi.server import PlexServer
 from plexapi.video import Episode, Season, Show
+from requests import Session
+from requests.adapters import HTTPAdapter
+from urllib3.poolmanager import PoolManager
 
-logger = logging.getLogger("PlexAniSync")
+import PlexAniSync
+
+logger = logging.getLogger(__name__)
 plex_settings = dict()
 
 
@@ -43,11 +44,11 @@ class HostNameIgnoringAdapter(HTTPAdapter):
 
 
 def authenticate():
-    method = plex_settings["authentication_method"].lower()
+    method = PlexAniSync.cfg.PLEX.authentication_method.lower()
     try:
-        home_user_sync = plex_settings["home_user_sync"].lower()
-        home_username = plex_settings["home_username"]
-        home_server_base_url = plex_settings["home_server_base_url"]
+        home_user_sync = PlexAniSync.cfg.MyPlex.home_user_sync
+        home_username = PlexAniSync.cfg.MyPlex.home_username
+        home_server_base_url = PlexAniSync.cfg.MyPlex.home_server_base_url
     except Exception:
         home_user_sync = "false"
         home_username = ""
@@ -59,24 +60,24 @@ def authenticate():
 
         # Direct connection
         if method == "direct":
-            base_url = plex_settings["base_url"]
-            token = plex_settings["token"]
+            base_url = PlexAniSync.cfg.Direct_IP.base_url
+            token = PlexAniSync.cfg.Direct_IP.token
             plex = PlexServer(base_url, token, session)
 
         # Myplex connection
         elif method == "myplex":
-            plex_server = plex_settings["server"]
-            plex_user = plex_settings["myplex_user"]
-            plex_password = plex_settings["myplex_password"]
+            plex_server = PlexAniSync.cfg.MyPlex.server
+            plex_user = PlexAniSync.cfg.MyPlex.server.myplex_user
+            plex_password = PlexAniSync.cfg.MyPlex.server.myplex_password
 
-            if home_user_sync == "true":
-                if home_username == "":
-                    logger.error(
+            if home_user_sync:
+                if home_username == '':
+                    logging.error(
                         "Home authentication cancelled as certain home_user settings are invalid"
                     )
                     return None
 
-                logger.warning(
+                logging.warning(
                     f"Authenticating as admin for MyPlex home user: {home_username}"
                 )
                 plex_account = MyPlexAccount(plex_user, plex_password)
@@ -84,46 +85,46 @@ def authenticate():
                     home_server_base_url, plex_account.authenticationToken, session
                 )
 
-                logger.warning("Retrieving home user information")
+                logging.warning("Retrieving home user information")
                 plex_user_account = plex_account.user(home_username)
 
-                logger.warning("Retrieving user token for MyPlex home user")
+                logging.warning("Retrieving user token for MyPlex home user")
                 plex_user_token = plex_user_account.get_token(
                     plex_server_home.machineIdentifier
                 )
 
-                logger.warning("Retrieved user token for MyPlex home user")
+                logging.warning("Retrieved user token for MyPlex home user")
                 plex = PlexServer(home_server_base_url, plex_user_token, session)
-                logger.warning("Successfully authenticated for MyPlex home user")
+                logging.warning("Successfully authenticated for MyPlex home user")
             else:
                 account = MyPlexAccount(plex_user, plex_password, session=session)
                 plex = account.resource(plex_server).connect()
         else:
-            logger.critical(
+            logging.critical(
                 "[PLEX] Failed to authenticate due to invalid settings or authentication info, exiting..."
             )
             sys.exit(1)
         return plex
     except Exception:
-        logger.exception("Unable to authenticate to Plex Media Server")
+        logging.exception("Unable to authenticate to Plex Media Server")
         sys.exit(1)
 
 
 def get_anime_shows() -> List[Show]:
     plex = authenticate()
 
-    sections = plex_settings["anime_section"].split("|")
+    sections = PlexAniSync.cfg.PLEX.anime_section.split("|")
     shows: List[Show] = []
     for section in sections:
         try:
-            logger.info(f"[PLEX] Retrieving anime series from section: {section}")
+            logging.info(f"[PLEX] Retrieving anime series from section: {section}")
             shows_search = plex.library.section(section.strip()).search()
             shows += shows_search
-            logger.info(
+            logging.info(
                 f"[PLEX] Found {len(shows_search)} anime series in section: {section}"
             )
         except BaseException:
-            logger.error(
+            logging.error(
                 f"Could not find library [{section}] on your Plex Server, check the library "
                 "name in AniList settings file and also verify that your library "
                 "name in Plex has no trailing spaces in it"
@@ -162,14 +163,14 @@ def get_anime_shows_filter(show_name):
             shows_filtered.append(show)
 
     if shows_filtered:
-        logger.info("[PLEX] Found matching anime series")
+        logging.info("[PLEX] Found matching anime series")
     else:
-        logger.info(f"[PLEX] Did not find {show_name} in anime series")
+        logging.info(f"[PLEX] Did not find {show_name} in anime series")
     return shows_filtered
 
 
 def get_watched_shows(shows: List[Show]) -> Optional[List[PlexWatchedSeries]]:
-    logger.info("[PLEX] Retrieving watch count for series")
+    logging.info("[PLEX] Retrieving watch count for series")
     watched_series: List[PlexWatchedSeries] = []
     ovas_found = 0
 
@@ -256,12 +257,12 @@ def get_watched_shows(shows: List[Show]) -> Optional[List[PlexWatchedSeries]]:
                     watched_series.append(watched_show)
                     ovas_found += 1
         except Exception:
-            logger.exception(f"[PLEX] Error occured during episode processing of show {show}")
+            logging.exception(f"[PLEX] Error occured during episode processing of show {show}")
 
-    logger.info(f"[PLEX] Found {len(watched_series)} watched series")
+    logging.info(f"[PLEX] Found {len(watched_series)} watched series")
 
     if ovas_found > 0:
-        logger.info(
+        logging.info(
             f"[PLEX] Watched series also contained {ovas_found} releases with no episode attribute (probably movie / OVA), "
             "support for this is still experimental"
         )
@@ -277,5 +278,5 @@ def get_watched_episodes_for_show_season(season: Season) -> int:
     # len(watched_episodes_of_season) only works when the user didn't skip any episodes
     episodes_watched = max(map(lambda e: int(e.index), watched_episodes_of_season), default=0)
 
-    logger.info(f'[PLEX] {episodes_watched} episodes watched for {season.parentTitle} season {season.seasonNumber}')
+    logging.info(f'[PLEX] {episodes_watched} episodes watched for {season.parentTitle} season {season.seasonNumber}')
     return episodes_watched
