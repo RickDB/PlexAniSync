@@ -48,6 +48,9 @@ class Logger:
     def get_logger(self, name):
         return self.root_logger.getChild(name)
 
+config = os.path.join(os.path.dirname(os.path.realpath(sys.argv[0])), "config.json")
+cache_file = os.path.join(os.path.dirname(os.path.realpath(sys.argv[0])), "cache.db")
+log_file = os.path.join(os.path.dirname(os.path.realpath(sys.argv[0])), "activity.log")
 
 # Default logger if it's false then just log the INFO instead of DEBUG
-logger = Logger(Config().logfile, logging.DEBUG if Config().cfg.core.debug else logging.INFO)
+logger = Logger(Config(config, cache_file, log_file).logfile, logging.DEBUG if Config(configfile=config, cachefile=cache_file, logfile=log_file).cfg.core.debug else logging.INFO)
