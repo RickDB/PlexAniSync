@@ -139,26 +139,11 @@ def get_anime_shows_filter(show_name):
     for show in shows:
         show_title_clean_without_year = show.title
         filter_title_clean_without_year = re.sub("[^A-Za-z0-9]+", "", show_name)
+        show_title_clean_without_year = re.sub(r"\(\d{4}\)", "", show_title_clean_without_year)
+        show_title_clean_without_year = re.sub("[^A-Za-z0-9]+", "", show_title_clean_without_year)
 
-        try:
-            if "(" in show.title and ")" in show.title:
-                year = re.search(r"(\d{4})", show.title).group(1)
-                year_string = f"({year})"
-                show_title_clean_without_year = show.title.replace(
-                    year_string, ""
-                ).strip()
-                show_title_clean_without_year = re.sub(
-                    "[^A-Za-z0-9]+", "", show_title_clean_without_year
-                )
-        except BaseException:
-            pass
-
-        if show.title.lower().strip() == show_name.lower().strip():
-            shows_filtered.append(show)
-        elif (
-            show_title_clean_without_year.lower().strip()
-            == filter_title_clean_without_year.lower().strip()
-        ):
+        if (show.title.lower().strip() == show_name.lower().strip()
+                or show_title_clean_without_year.lower().strip() == filter_title_clean_without_year.lower().strip()):
             shows_filtered.append(show)
 
     if shows_filtered:

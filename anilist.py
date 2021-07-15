@@ -743,13 +743,13 @@ def update_entry(
             and anilist_total_episodes > 0
         ):
             # episode watch count higher than plex
+            new_status = status if status == "REPEATING" else "CURRENT"
             logger.warning(
                 f"[ANILIST] Plex episode watch count [{watched_episode_count}] was higher than the one"
                 f" on AniList [{anilist_episodes_watched}] which has total of {anilist_total_episodes} "
-                "episodes | updating AniList entry to currently watching"
+                f"episodes | updating AniList entry to {new_status}"
             )
 
-            new_status = status if status == "REPEATING" else "CURRENT"
             update_episode_incremental(series, watched_episode_count, anilist_episodes_watched, new_status)
             return
 
