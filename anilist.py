@@ -238,33 +238,11 @@ def match_to_plex(anilist_series: List[AnilistSeries], plex_series_watched: List
             if season_number == 1:
                 found_match = False
                 plex_title_clean = clean_title(plex_title)
-                plex_title_clean_without_year = plex_title_clean
                 plex_title_sort_clean = clean_title(plex_title_sort)
                 plex_title_original_clean = clean_title(plex_title_original)
-                plex_title_sort_clean_without_year = plex_title_sort_clean
-                plex_title_original_clean_without_year = plex_title_original_clean
-
-                try:
-                    if "(" in plex_title and ")" in plex_title:
-                        year = re.search(r"(\d{4})", plex_title).group(1)
-                        year_string = f"({year})"
-                        plex_title_clean_without_year = plex_title.replace(
-                            year_string, ""
-                        ).strip()
-                    if "(" in plex_title_sort and ")" in plex_title_sort:
-                        year = re.search(r"(\d{4})", plex_title_sort).group(1)
-                        year_string = f"({year})"
-                        plex_title_sort_clean_without_year = plex_title_sort.replace(
-                            year_string, ""
-                        ).strip()
-                    if "(" in plex_title_original and ")" in plex_title_original:
-                        year = re.search(r"(\d{4})", plex_title_original).group(1)
-                        year_string = f"({year})"
-                        plex_title_original_clean_without_year = plex_title_original.replace(
-                            year_string, ""
-                        ).strip()
-                except Exception:
-                    logger.exception("Uncaught exception")
+                plex_title_without_year = re.sub(r"\(\d{4}\)", "", plex_title).strip()
+                plex_title_sort_without_year = re.sub(r"\(\d{4}\)", "", plex_title_sort).strip()
+                plex_title_original_without_year = re.sub(r"\(\d{4}\)", "", plex_title_original).strip()
 
                 plex_title_guessit = plex_title
                 plex_title_sort_guessit = plex_title_sort
@@ -295,9 +273,10 @@ def match_to_plex(anilist_series: List[AnilistSeries], plex_series_watched: List
                     plex_title_sort_guessit,
                     plex_title_clean,
                     plex_title_sort_clean,
-                    plex_title_clean_without_year,
-                    plex_title_sort_clean_without_year,
-                    plex_title_original_clean_without_year,
+                    plex_title_original_clean,
+                    plex_title_without_year,
+                    plex_title_sort_without_year,
+                    plex_title_original_without_year,
                 ]
 
                 # Remove duplicates from potential title list
@@ -336,9 +315,9 @@ def match_to_plex(anilist_series: List[AnilistSeries], plex_series_watched: List
                         plex_title.lower(),
                         plex_title_sort.lower(),
                         plex_title_original.lower(),
-                        plex_title_clean_without_year,
-                        plex_title_sort_clean_without_year,
-                        plex_title_original_clean_without_year,
+                        plex_title_without_year,
+                        plex_title_sort_without_year,
+                        plex_title_original_without_year,
                     ]
 
                     # Remove duplicates from potential title list
@@ -757,15 +736,7 @@ def update_entry(
                 "AniList entry to completed"
             )
 
-            # calculate episode difference and iterate up so activity stream
-            # lists episodes watched if episode difference exceeds 32 only
-            # update most recent as otherwise will flood the notification feed
-            episode_difference = watched_episode_count - anilist_episodes_watched
-            if episode_difference == 1 or episode_difference > 32:
-                update_series(series.anilist_id, watched_episode_count, "COMPLETED")
-            else:
-                for current_episodes_watched in range(anilist_episodes_watched + 1, watched_episode_count + 1):
-                    update_series(series.anilist_id, current_episodes_watched, "COMPLETED")
+            update_episode_incremental(series, watched_episode_count, anilist_episodes_watched, "COMPLETED")
             return
         elif (
             watched_episode_count > anilist_episodes_watched
@@ -778,15 +749,8 @@ def update_entry(
                 "episodes | updating AniList entry to currently watching"
             )
 
-            # calculate episode difference and iterate up so activity stream lists
-            # episodes watched if episode difference exceeds 32 only update most
-            # recent as otherwise will flood the notification feed
-            episode_difference = watched_episode_count - anilist_episodes_watched
-            if episode_difference == 1 or episode_difference > 32:
-                update_series(series.anilist_id, watched_episode_count, "CURRENT")
-            else:
-                for current_episodes_watched in range(anilist_episodes_watched + 1, watched_episode_count + 1):
-                    update_series(series.anilist_id, current_episodes_watched, "CURRENT")
+            new_status = status if status == "REPEATING" else "CURRENT"
+            update_episode_incremental(series, watched_episode_count, anilist_episodes_watched, new_status)
             return
 
         elif watched_episode_count == anilist_episodes_watched:
@@ -823,6 +787,18 @@ def update_entry(
             logger.info(
                 "[ANILIST] AniList total episodes was 0 so most likely invalid data"
             )
+
+
+def update_episode_incremental(series: AnilistSeries, watched_episode_count: int, anilist_episodes_watched: int, new_status: str):
+    # calculate episode difference and iterate up so activity stream lists
+    # episodes watched if episode difference exceeds 32 only update most
+    # recent as otherwise will flood the notification feed
+    episode_difference = watched_episode_count - anilist_episodes_watched
+    if episode_difference > 32:
+        update_series(series.anilist_id, watched_episode_count, new_status)
+    else:
+        for current_episodes_watched in range(anilist_episodes_watched + 1, watched_episode_count + 1):
+            update_series(series.anilist_id, current_episodes_watched, new_status)
 
 
 def retrieve_season_mappings(title: str, season: int) -> List[AnilistCustomMapping]:
