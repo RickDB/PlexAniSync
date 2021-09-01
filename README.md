@@ -1,5 +1,6 @@
 # Plex to AniList Sync
-[![Build Status](https://travis-ci.com/RickDB/PlexAniSync.svg?branch=master)](https://travis-ci.com/RickDB/PlexAniSync)[![Docker Pulls](https://img.shields.io/docker/pulls/rickdb/plexanisync)](https://hub.docker.com/r/rickdb/plexanisync)
+[![Build Status](https://travis-ci.com/RickDB/PlexAniSync.svg?branch=master)](https://travis-ci.com/RickDB/PlexAniSync)![Docker](https://github.com/rickdb/Docker-PlexAniSync/actions/workflows/docker-publish.yml/badge.svg)
+
 
 ![Logo](logo.png)
 
@@ -215,11 +216,10 @@ https://github.com/RickDB/PlexAniSync/wiki/Tautulli-sync-script
 
 ## Docker
 
-There's also a Docker version based on [Thundernerd's](https://github.com/Thundernerd) which you can find here:
+Docker version is located here:
 
-[Docker](https://hub.docker.com/r/rickdb/plexanisync)
+[Docker - Github Packages](https://github.com/RickDB/Docker-PlexAniSync/pkgs/container/plexanisync)
 
-If you are still on the Thundernerd docker image recommend switching to this one as it will be kept in sync with latest PlexAniSync changes.
 
 ## Requirements
 
