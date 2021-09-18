@@ -44,7 +44,7 @@ def log_to_file(message: str):
 def clean_failed_matches_file():
     try:
         # create or overwrite the file with empty content
-        open("failed_matches.txt", 'w').close()
+        open("failed_matches.txt", 'w', encoding="utf-8").close()
     except BaseException:
         pass
 
@@ -229,11 +229,6 @@ def match_to_plex(anilist_series: List[AnilistSeries], plex_series_watched: List
             matched_anilist_series = []
             skip_year_check = False
 
-            if plex_anilist_id:
-                logger.info(f"[ANILIST] Series {plex_title} has Anilist ID {plex_anilist_id} in its metadata, using that for updating")
-                add_or_update_show_by_id(anilist_series, plex_title, plex_year, True, plex_watched_episode_count, plex_anilist_id)
-                continue
-
             # for first season use regular search
             if season_number == 1:
                 found_match = False
@@ -300,6 +295,12 @@ def match_to_plex(anilist_series: List[AnilistSeries], plex_series_watched: List
                         add_or_update_show_by_id(anilist_series, plex_title, plex_year, True, watchcounts[anime_id], anime_id)
 
                     # If custom match found continue to next
+                    continue
+
+                # Reordered checks from above to ensure that custom mappings always take precedent
+                if plex_anilist_id:
+                    logger.info(f"[ANILIST] Series {plex_title} has Anilist ID {plex_anilist_id} in its metadata, using that for updating")
+                    add_or_update_show_by_id(anilist_series, plex_title, plex_year, True, plex_watched_episode_count, plex_anilist_id)
                     continue
 
                 # Regular matching
