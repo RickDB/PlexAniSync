@@ -42,7 +42,7 @@ class HostNameIgnoringAdapter(HTTPAdapter):
                                        **pool_kwargs)
 
 
-def authenticate():
+def authenticate() -> PlexServer:
     method = plex_settings["authentication_method"].lower()
     try:
         home_user_sync = plex_settings["home_user_sync"].lower()
@@ -72,9 +72,9 @@ def authenticate():
             if home_user_sync == "true":
                 if home_username == "":
                     logger.error(
-                        "Home authentication cancelled as certain home_user settings are invalid"
+                        "Home authentication cancelled as home_username is empty"
                     )
-                    return None
+                    sys.exit(1)
 
                 logger.warning(
                     f"Authenticating as admin for MyPlex home user: {home_username}"
