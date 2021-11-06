@@ -12,7 +12,7 @@ import anilist
 import plexmodule
 import graphql
 
-__version__ = "1.3.14"
+__version__ = "1.3.15"
 
 # Logger settings
 LOG_FILENAME = "PlexAniSync.log"

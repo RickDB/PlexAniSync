@@ -1,10 +1,12 @@
 # coding=utf-8
 import os
 import logging
+import sys
 from typing import List
 from dataclasses import dataclass
 
-from ruyaml import YAML
+import yamale
+from yamale.yamale_error import YamaleError
 
 
 logger = logging.getLogger("PlexAniSync")
@@ -24,19 +26,29 @@ def read_custom_mappings():
         logger.info(f"[MAPPING] Custom map file not found: {MAPPING_FILE}")
     else:
         logger.info(f"[MAPPING] Custom map file found: {MAPPING_FILE}")
-        file = open(MAPPING_FILE, "r", encoding="utf-8")
-        yaml = YAML(typ='safe')
-        file_mappings = yaml.load(file)
+        schema = yamale.make_schema('./custom_mappings_schema.yaml', parser='ruamel')
 
-        for file_entry in file_mappings['entries']:
+        # Create a Data object
+        file_mappings = yamale.make_data(MAPPING_FILE, parser='ruamel')
+
+        try:
+            # Validate data against the schema same as before.
+            yamale.validate(schema, file_mappings)
+        except YamaleError as e:
+            logger.error('Custom Mappings validation failed!\n')
+            for result in e.results:
+                for error in result.errors:
+                    logger.error(f"{error}\n")
+            sys.exit(1)
+
+        for file_entry in file_mappings[0][0]['entries']:
             series_title = str(file_entry['title']).lower()
+            synonyms = file_entry.get('synonyms', [])
             series_mappings: List[AnilistCustomMapping] = []
             for file_season in file_entry['seasons']:
                 season = file_season['season']
                 anilist_id = file_season['anilist-id']
-                start = 1
-                if 'start' in file_season:
-                    start = file_season['start']
+                start = file_season.get('start', 1)
 
                 logger.info(
                     f"[MAPPING] Adding custom mapping | title: {file_entry['title']} | season: {season} | anilist id: {anilist_id} | start: {start}"
@@ -44,4 +56,6 @@ def read_custom_mappings():
                 series_mappings.append(AnilistCustomMapping(season, anilist_id, start))
 
             custom_mappings[series_title] = series_mappings
+            for synonym in synonyms:
+                custom_mappings[synonym] = series_mappings
     return custom_mappings

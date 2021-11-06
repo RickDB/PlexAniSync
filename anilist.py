@@ -287,12 +287,12 @@ def match_to_plex(anilist_series: List[AnilistSeries], plex_series_watched: List
                 if season_mappings:
                     watchcounts = map_watchcount_to_seasons(plex_title, season_mappings, plex_season.watched_episodes)
 
-                    for anime_id in watchcounts:
+                    for anime_id, watchcount in watchcounts.items():
                         logger.info(
                             f"[ANILIST] Used custom mapping | title: {plex_title} | season: {season_number} | anilist id: {anime_id}"
                         )
 
-                        add_or_update_show_by_id(anilist_series, plex_title, plex_year, True, watchcounts[anime_id], anime_id)
+                        add_or_update_show_by_id(anilist_series, plex_title, plex_year, True, watchcount, anime_id)
 
                     # If custom match found continue to next
                     continue
@@ -376,11 +376,11 @@ def match_to_plex(anilist_series: List[AnilistSeries], plex_series_watched: List
                 if season_mappings:
                     watchcounts = map_watchcount_to_seasons(plex_title, season_mappings, plex_season.watched_episodes)
 
-                    for anime_id in watchcounts:
+                    for anime_id, watchcount in watchcounts.items():
                         logger.info(
                             f"[ANILIST] Used custom mapping |  title: {plex_title} | season: {season_number} | anilist id: {anime_id}"
                         )
-                        add_or_update_show_by_id(anilist_series, plex_title, plex_year, True, watchcounts[anime_id], anime_id)
+                        add_or_update_show_by_id(anilist_series, plex_title, plex_year, True, watchcount, anime_id)
 
                     # If custom match found continue to next
                     continue

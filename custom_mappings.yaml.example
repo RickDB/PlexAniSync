@@ -43,3 +43,9 @@ entries:
       - season: 10
         anilist-id: 101925
         start: 13
+  - title: 'Shaman King (2021)'
+    synonyms:
+      - 'Shaman King'
+    seasons:
+      - season: 1
+        anilist-id: 119675

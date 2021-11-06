@@ -180,6 +180,12 @@ https://anilist.co/anime/99263/Tate-no-Yuusha-no-Nariagari
 - You can remove any existing entries from the example file as they are purely instructional
 - Upon startup it will check if the file is a valid YAML file. The most likely reason it's not is because you didn't put quotes around an anime title with special characters (e.g. ":") in it.
 
+#### Community mappings
+
+There are some mappings provided by the Github community at https://github.com/RickDB/PlexAniSync-Custom-Mappings/. For now you can use the mapping files by copying parts into your own mapping file.
+
+The feature of synonyms was introduced for the community mappings where you can specify that a show can have one of multiple titles but should be mapped the same way. See Shaman King (2021) in the example mapping file.
+
 ### Custom settings file location
 
 If you want to load a different settings.in file you can do so by supplying it in the first argument like so:
