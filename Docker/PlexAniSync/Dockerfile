@@ -13,11 +13,11 @@ ENV PLEX_SECTION=Anime \
 
 ENV PATH="${PATH}:~/.local/bin"
 
-ADD ../../* /plexanisync/
+ADD ./* /plexanisync/
 
 RUN cd /plexanisync && \
     python3 -m pip install -r requirements.txt && \
     cd ..
 
-ADD ./run/* /plexanisync/
+ADD Docker/PlexAniSync/run/* /plexanisync/
 CMD ["/plexanisync/runsync.sh"]

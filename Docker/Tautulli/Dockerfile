@@ -6,7 +6,7 @@ ENV PLEX_SECTION=Anime \
     ANI_USERNAME='' \
     ANI_TOKEN=''
 
-ADD ../../* /plexanisync/
+ADD ./* /plexanisync/
 
 RUN cd /plexanisync && \
     python -m pip install -r requirements.txt && \
@@ -14,5 +14,5 @@ RUN cd /plexanisync && \
 
 LABEL autoheal=true
 
-COPY ./run/start.sh /app/
-COPY ./run/settingsupdater.py /plexanisync/
+COPY Docker/Tautulli/run/start.sh /app/
+COPY Docker/Tautulli/run/settingsupdater.py /plexanisync/
