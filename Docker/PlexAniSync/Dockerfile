@@ -1,6 +1,6 @@
 FROM python:3.9-alpine
 
-RUN apk add --no-cache --update ca-certificates tzdata && \
+RUN apk add --no-cache --update ca-certificates tzdata build-base && \
     update-ca-certificates && \
     rm -rf /root/.cache
 
