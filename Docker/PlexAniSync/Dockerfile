@@ -19,5 +19,5 @@ RUN cd /plexanisync && \
     python3 -m pip install -r requirements.txt && \
     cd ..
 
-ADD run/* /plexanisync/
+ADD ./run/* /plexanisync/
 CMD ["/plexanisync/runsync.sh"]

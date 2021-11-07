@@ -14,5 +14,5 @@ RUN cd /plexanisync && \
 
 LABEL autoheal=true
 
-COPY run/start.sh /app/
-COPY run/settingsupdater.py /plexanisync/
+COPY ./run/start.sh /app/
+COPY ./run/settingsupdater.py /plexanisync/
