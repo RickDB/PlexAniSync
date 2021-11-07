@@ -20,4 +20,7 @@ RUN cd /plexanisync && \
     cd ..
 
 ADD Docker/PlexAniSync/run/* /plexanisync/
+
+LABEL org.opencontainers.image.documentation=https://github.com/RickDB/PlexAniSync/blob/master/Docker/PlexAniSync/README.md
+
 CMD ["/plexanisync/runsync.sh"]

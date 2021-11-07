@@ -15,6 +15,7 @@ RUN apt-get update && \
     cd ..
 
 LABEL autoheal=true
+LABEL org.opencontainers.image.documentation=https://github.com/RickDB/PlexAniSync/blob/master/Docker/Tautulli/README.md
 
 COPY Docker/Tautulli/run/start.sh /app/
 COPY Docker/Tautulli/run/settingsupdater.py /plexanisync/
