@@ -1,6 +1,6 @@
 FROM python:3.9-alpine
 
-RUN apk add --no-cache --update ca-certificates tzdata build-base && \
+RUN apk add --no-cache --update ca-certificates tzdata py3-ruamel.yaml && \
     update-ca-certificates && \
     rm -rf /root/.cache
 
@@ -16,7 +16,7 @@ ENV PATH="${PATH}:~/.local/bin"
 ADD ./* /plexanisync/
 
 RUN cd /plexanisync && \
-    python3 -m pip install -r requirements.txt && \
+    python3 -m pip install $(grep -ivE "ruamel.yaml" requirements.txt) && \
     cd ..
 
 ADD Docker/PlexAniSync/run/* /plexanisync/

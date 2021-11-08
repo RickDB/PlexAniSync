@@ -8,9 +8,7 @@ ENV PLEX_SECTION=Anime \
 
 ADD ./* /plexanisync/
 
-RUN apt-get update && \
-    apt-get install -y build-essential && \
-    cd /plexanisync && \
+RUN cd /plexanisync && \
     python -m pip install -r requirements.txt && \
     cd ..
 
