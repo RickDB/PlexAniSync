@@ -86,7 +86,7 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
   build-docker-tautulli:
-    needs: lint
+    needs: build-docker-plexanisync
     runs-on: ubuntu-latest
     permissions:
       contents: read
