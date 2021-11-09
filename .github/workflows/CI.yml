@@ -41,7 +41,7 @@ jobs:
     
     env:
       # rickdb/plexanisync
-      IMAGE_NAME: ${{ github.repository_owner }}/plexanisync
+      IMAGE_NAME: rickdb/plexanisync
 
     steps:
       - name: Checkout repository
@@ -83,8 +83,10 @@ jobs:
       - name: Push image with containerd
         if: github.event_name != 'pull_request'
         run: |
-          echo ${{ steps.meta.outputs.tags }}
-          sudo ctr i push --user "${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}" ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          while IFS= read -r line; do
+            sudo ctr i push --user "${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}" $line
+          done <<< "${{ steps.meta.outputs.tags }}"
+          
   build-docker-tautulli:
     needs: lint
     runs-on: ubuntu-latest
@@ -94,7 +96,7 @@ jobs:
 
     env:
       # rickdb/plexanisync
-      IMAGE_NAME: ${{ github.repository_owner }}/tautulli-plexanisync
+      IMAGE_NAME: rickdb/tautulli-plexanisync
 
     steps:
       - name: Checkout repository
