@@ -79,6 +79,7 @@ jobs:
         run: |
           sudo ctr i import --base-name ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }} --digests --all-platforms /tmp/plexanisync-image.tar
           while IFS= read -r line; do
+            echo "Pushing $line"
             sudo ctr i push --user "${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}" $line
           done <<< "${{ steps.meta.outputs.tags }}"
           
@@ -120,7 +121,6 @@ jobs:
           context: .
           file: ./Docker/Tautulli/Dockerfile
           platforms: linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64
-          push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           outputs: type=oci,dest=/tmp/tautulli-image.tar
@@ -129,5 +129,6 @@ jobs:
         run: |
           sudo ctr i import --base-name ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }} --digests --all-platforms /tmp/tautulli-image.tar
           while IFS= read -r line; do
+            echo "Pushing $line"
             sudo ctr i push --user "${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}" $line
           done <<< "${{ steps.meta.outputs.tags }}"
