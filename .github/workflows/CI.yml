@@ -49,7 +49,9 @@ jobs:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1       
+        uses: docker/setup-buildx-action@v1
+        with:
+          buildkitd-flags: --debug   
       # Add tags to metadata
       - name: Docker meta
         id: meta
@@ -102,7 +104,9 @@ jobs:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1       
+        uses: docker/setup-buildx-action@v1
+        with:
+          buildkitd-flags: --debug   
       # Add tags to metadata
       - name: Docker meta
         id: meta
