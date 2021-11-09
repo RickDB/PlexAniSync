@@ -50,8 +50,8 @@ jobs:
         uses: docker/setup-qemu-action@v1
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
-        with:
-          buildkitd-flags: --debug   
+      - name: Set up containerd
+        uses: crazy-max/ghaction-setup-containerd@v1
       # Add tags to metadata
       - name: Docker meta
         id: meta
@@ -65,17 +65,6 @@ jobs:
             type=semver,pattern={{major}}.{{minor}}
           flavor: latest=true
 
-      # Login against a Docker registry except on PR
-      # https://github.com/docker/login-action
-      - name: Log into registry ${{ env.REGISTRY }}
-        if: github.event_name != 'pull_request'
-        uses: docker/login-action@v1
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-          logout: false
-
       # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/build-push-action@v2
       - name: Build and push Docker image
@@ -84,9 +73,18 @@ jobs:
           context: .
           file: ./Docker/PlexAniSync/Dockerfile
           platforms: linux/386,linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64,linux/ppc64le
-          push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          outputs: type=oci,dest=/tmp/plexanisync-image.tar
+      - name: Import image in containerd
+        if: github.event_name != 'pull_request'
+        run: |
+          sudo ctr i import --base-name ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }} --digests --all-platforms /tmp/plexanisync-image.tar
+      - name: Push image with containerd
+        if: github.event_name != 'pull_request'
+        run: |
+          echo ${{ steps.meta.outputs.tags }}
+          sudo ctr i push --user "${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}" ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
   build-docker-tautulli:
     needs: lint
     runs-on: ubuntu-latest
