@@ -9,9 +9,6 @@ on:
     branches: [ master ]
   workflow_dispatch:
 
-env:
-  PUSH: github.event_name != 'pull_request'
-
 jobs:
   lint:
     runs-on: ubuntu-latest
@@ -37,7 +34,7 @@ jobs:
     with:
       dockerfile: ./Docker/PlexAniSync/Dockerfile
       imagename: ${{ github.repository_owner }}/plexanisync
-      push: ${{ env.PUSH }}
+      push: github.event_name != 'pull_request'
           
   build-docker-tautulli:
     needs: lint
@@ -45,4 +42,4 @@ jobs:
     with:
       dockerfile: ./Docker/Tautulli/Dockerfile
       imagename: ${{ github.repository_owner }}/tautulli-plexanisync
-      push: ${{ env.PUSH }}
+      push: github.event_name != 'pull_request'
