@@ -10,8 +10,7 @@ on:
   workflow_dispatch:
 
 env:
-  # Use docker.io for Docker Hub if empty
-  REGISTRY: ghcr.io
+  PUSH: github.event_name != 'pull_request'
 
 jobs:
   lint:
@@ -34,105 +33,16 @@ jobs:
         pylint PlexAniSync.py TautulliSyncHelper.py plexmodule.py anilist.py custom_mappings.py || pylint-exit --error-fail --warn-fail $?
   build-docker-plexanisync:
     needs: lint
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-    
-    env:
-      # rickdb/plexanisync
-      IMAGE_NAME: rickdb/plexanisync
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
-      - name: Set up containerd
-        uses: crazy-max/ghaction-setup-containerd@v1
-      # Add tags to metadata
-      - name: Docker meta
-        id: meta
-        uses: docker/metadata-action@v3
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          tags: |
-            type=ref,event=branch
-            type=ref,event=pr
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
-          flavor: latest=true
-
-      - name: Build Docker image
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          file: ./Docker/PlexAniSync/Dockerfile
-          platforms: linux/386,linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64,linux/ppc64le
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          outputs: type=oci,dest=/tmp/plexanisync-image.tar
-      - name: Push image with containerd
-        if: github.event_name != 'pull_request'
-        run: |
-          sudo ctr i import --base-name ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }} --digests --all-platforms /tmp/plexanisync-image.tar
-          while IFS= read -r line; do
-            echo "Pushing $line"
-            for i in {1..5}; do 
-              sudo ctr i push --user "${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}" $line && break || sleep 15;
-            done
-          done <<< "${{ steps.meta.outputs.tags }}"
+    with: ${{ github.repository }}/.github/workflows/build-docker-image.yml@master
+      inputs:
+        dockerfile: ./Docker/PlexAniSync/Dockerfile
+        imagename: ${{ github.repository_owner }}/plexanisync
+        push: ${{ env.PUSH }}
           
   build-docker-tautulli:
     needs: lint
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-
-    env:
-      # rickdb/plexanisync
-      IMAGE_NAME: rickdb/tautulli-plexanisync
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
-      - name: Set up containerd
-        uses: crazy-max/ghaction-setup-containerd@v1
-      # Add tags to metadata
-      - name: Docker meta
-        id: meta
-        uses: docker/metadata-action@v3
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          tags: |
-            type=ref,event=branch
-            type=ref,event=pr
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
-
-      - name: Build Docker image
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          file: ./Docker/Tautulli/Dockerfile
-          platforms: linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          outputs: type=oci,dest=/tmp/tautulli-image.tar
-      - name: Push image with containerd
-        if: github.event_name != 'pull_request'
-        run: |
-          sudo ctr i import --base-name ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }} --digests --all-platforms /tmp/tautulli-image.tar
-          while IFS= read -r line; do
-            echo "Pushing $line"
-            for i in {1..5}; do 
-              sudo ctr i push --user "${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}" $line && break || sleep 15;
-            done
-          done <<< "${{ steps.meta.outputs.tags }}"
+    with: ${{ github.repository }}/.github/workflows/build-docker-image.yml@master
+      inputs:
+        dockerfile: ./Docker/Tautulli/Dockerfile
+        imagename: ${{ github.repository_owner }}/tautulli-plexanisync
+        push: ${{ env.PUSH }}
