@@ -9,6 +9,9 @@ on:
       imagename:
         required: true
         type: string
+      platforms:
+        required: true
+        type: string
       push:
         required: true
         type: boolean
@@ -54,7 +57,7 @@ jobs:
         with:
           context: .
           file: ${{ inputs.dockerfile }}
-          platforms: linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64
+          platforms: ${{ inputs.platforms }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           outputs: type=oci,dest=/tmp/image.tar
