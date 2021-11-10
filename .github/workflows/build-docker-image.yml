@@ -19,7 +19,6 @@ env:
 
 jobs:
   build:
-    needs: lint
     runs-on: ubuntu-latest
     permissions:
       contents: read
