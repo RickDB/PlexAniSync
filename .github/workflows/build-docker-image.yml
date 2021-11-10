@@ -51,6 +51,7 @@ jobs:
             type=ref,event=pr
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
+          flavor: latest=true
 
       - name: Build Docker image
         uses: docker/build-push-action@v2
