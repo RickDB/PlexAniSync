@@ -34,7 +34,7 @@ jobs:
     with:
       dockerfile: ./Docker/PlexAniSync/Dockerfile
       imagename: ${{ github.repository_owner }}/plexanisync
-      push: github.event_name != 'pull_request'
+      push: ${{ github.event_name != 'pull_request' }}
           
   build-docker-tautulli:
     needs: lint
@@ -42,4 +42,4 @@ jobs:
     with:
       dockerfile: ./Docker/Tautulli/Dockerfile
       imagename: ${{ github.repository_owner }}/tautulli-plexanisync
-      push: github.event_name != 'pull_request'
+      push: ${{ github.event_name != 'pull_request' }}
