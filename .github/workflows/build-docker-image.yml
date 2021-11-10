@@ -38,6 +38,9 @@ jobs:
         uses: docker/setup-qemu-action@v1
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
+        with:
+          buildkitd-flags: --debug
+          driver-opts: image=moby/buildkit:v0.9.1
       - name: Set up containerd
         uses: crazy-max/ghaction-setup-containerd@v1
       # Add tags to metadata
@@ -52,7 +55,12 @@ jobs:
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
           flavor: latest=true
-
+      - name: Log into registry ${{ env.REGISTRY }}
+        uses: docker/login-action@v1
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
       - name: Build Docker image
         uses: docker/build-push-action@v2
         with:
@@ -61,14 +69,4 @@ jobs:
           platforms: ${{ inputs.platforms }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          outputs: type=oci,dest=/tmp/image.tar
-      - name: Push image with containerd
-        if: ${{ inputs.push }}
-        run: |
-          sudo ctr i import --base-name ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }} --digests --all-platforms /tmp/image.tar
-          while IFS= read -r line; do
-            echo "Pushing $line"
-            for i in {1..5}; do 
-              sudo ctr i push --user "${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}" $line && break || sleep 15;
-            done
-          done <<< "${{ steps.meta.outputs.tags }}"
+          push: ${{ inputs.push }}
