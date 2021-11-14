@@ -34,15 +34,20 @@ def read_settings(settings_file) -> configparser.ConfigParser:
     return settings
 
 
+SETTINGS_FILE = os.getenv("SETTINGS_FILE", "settings.ini")
+
 if len(sys.argv) < 2:
     logger.error("No show title specified in arguments so cancelling updating")
     sys.exit(1)
-elif len(sys.argv) > 2:
-    SETTINGS_FILE = sys.argv[1]
-    logger.warning(f"Found settings file parameter and using: {SETTINGS_FILE}")
-    # If we have custom settings file parameter use different arg index to
-    # keep legacy method intact
-    show_title = sys.argv[2]
+
+if SETTINGS_FILE is None or SETTINGS_FILE == "":
+    # fallback to default settings.ini
+    if len(sys.argv) > 2:
+        SETTINGS_FILE = sys.argv[1]
+        logger.warning(f"Found settings file parameter and using: {SETTINGS_FILE}")
+        # If we have custom settings file parameter use different arg index to
+        # keep legacy method intact
+        show_title = sys.argv[2]
 else:
     SETTINGS_FILE = "settings.ini"
     show_title = sys.argv[1]
