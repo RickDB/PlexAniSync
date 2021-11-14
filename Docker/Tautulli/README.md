@@ -28,11 +28,26 @@ docker run -d \
   ghcr.io/rickdb/tautulli-plexanisync
 ```
 
+### Docker Command Custom Setting File
+
+```
+docker run -d \
+  --name=tautulli-plexanisync \
+  -e TZ=<timezone> \
+  -e SETTINGS_FILE="/config/settings.ini" \
+  -p 8181:8181 \
+  -v <path to tautulli data directory>:/config \
+  -v <path to custom_mappings.yaml>:/plexanisync/custom_mappings.yaml \
+  --restart unless-stopped \
+  ghcr.io/rickdb/tautulli-plexanisync
+```
+
 ### Environment Variables
 
 Since this is a combination of docker images, environment variables of both images have to be configured.
 
 See:
+
 - [Tautulli](https://github.com/Tautulli/Tautulli-Wiki/wiki/Installation#docker)
 - [PlexAniSync](https://github.com/RickDB/PlexAniSync/Docker/PlexAniSync/README.md#environment-variables)
 
