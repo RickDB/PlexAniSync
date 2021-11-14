@@ -51,11 +51,14 @@ def read_settings(settings_file) -> configparser.ConfigParser:
     return settings
 
 
-if len(sys.argv) > 1:
-    SETTINGS_FILE = sys.argv[1]
-    logger.warning(f"Found settings file parameter and using: {SETTINGS_FILE}")
-else:
-    SETTINGS_FILE = "settings.ini"
+SETTINGS_FILE = os.getenv("SETTINGS_FILE", "settings.ini")
+if SETTINGS_FILE is None or SETTINGS_FILE == "":
+    # fallback to default settings.ini
+    if len(sys.argv) > 1:
+        SETTINGS_FILE = sys.argv[1]
+        logger.warning(f"Found settings file parameter and using: {SETTINGS_FILE}")
+    else:
+        SETTINGS_FILE = "settings.ini"
 
 settings = read_settings(SETTINGS_FILE)
 anilist_settings = settings["ANILIST"]
