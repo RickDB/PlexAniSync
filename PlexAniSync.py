@@ -51,7 +51,7 @@ def read_settings(settings_file) -> configparser.ConfigParser:
     return settings
 
 
-SETTINGS_FILE = os.getenv("SETTINGS_FILE", "settings.ini")
+SETTINGS_FILE = os.getenv("SETTINGS_FILE") or "settings.ini"
 
 if len(sys.argv) > 1:
     SETTINGS_FILE = sys.argv[1]
