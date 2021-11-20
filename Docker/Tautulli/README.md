@@ -2,12 +2,6 @@
 
 A combination of [Tautulli](https://github.com/Tautulli/Tautulli) and PlexAniSync.
 
-<div>
-  
-  ![Docker](https://github.com/rickdb/PlexAniSync/actions/workflows/docker-publish-tautulli.yml/badge.svg)
-  
-</div>
-
 ## Usage
 
 ### Docker Command
@@ -33,6 +27,7 @@ docker run -d \
 Since this is a combination of docker images, environment variables of both images have to be configured.
 
 See:
+
 - [Tautulli](https://github.com/Tautulli/Tautulli-Wiki/wiki/Installation#docker)
 - [PlexAniSync](https://github.com/RickDB/PlexAniSync/Docker/PlexAniSync/README.md#environment-variables)
 

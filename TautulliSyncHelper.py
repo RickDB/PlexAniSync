@@ -34,6 +34,8 @@ def read_settings(settings_file) -> configparser.ConfigParser:
     return settings
 
 
+SETTINGS_FILE = os.getenv("SETTINGS_FILE", "settings.ini")
+
 if len(sys.argv) < 2:
     logger.error("No show title specified in arguments so cancelling updating")
     sys.exit(1)
@@ -44,7 +46,6 @@ elif len(sys.argv) > 2:
     # keep legacy method intact
     show_title = sys.argv[2]
 else:
-    SETTINGS_FILE = "settings.ini"
     show_title = sys.argv[1]
 
 settings = read_settings(SETTINGS_FILE)

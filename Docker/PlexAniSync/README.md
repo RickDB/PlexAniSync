@@ -1,9 +1,8 @@
 # Docker-PlexAniSync
-![Docker](https://github.com/rickdb/PlexAniSync/actions/workflows/docker-publish-plexanisync.yml/badge.svg)
 
 ## Usage
 
-### docker
+### Docker Run
 
 ```
 docker run -d \
@@ -21,17 +20,18 @@ docker run -d \
 
 ### Environment Variables
 
-| ID                          | Default                  | Required | Note                                                                                                                                                                         |
-| --------------------------- | ------------------------ | :------: | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| PLEX_SECTION                | Anime                    | &#10003; | The library where your anime resides                                                                                                                                         |
-| PLEX_URL                    | http://127.0.0.1:32400   | &#10003; | The address to your Plex Media Server, for example: http://127.0.0.1:32400                                                                                                   |
-| PLEX_TOKEN                  | -                        | &#10003; | Follow [this guide](https://support.plex.tv/articles/204059436-finding-an-authentication-token-x-plex-token/)                                                                |
-| ANI_USERNAME                | -                        | &#10003; | Your [AniList.co](http://www.anilist.co) username                                                                                                                            |
-| ANI_TOKEN                   | -                        | &#10003; | Get it [here](https://anilist.co/api/v2/oauth/authorize?client_id=1549&response_type=token)                                                                                  |
-| INTERVAL                    | 3600                     | &#10005; | The time in between syncs                                                                                                                                                    |
-| PLEX_EPISODE_COUNT_PRIORITY | -                        | &#10005; | If set to True, Plex episode watched count will take priority over AniList (default = False)                                                                                 |
-| SKIP_LIST_UPDATE            | -                        | &#10005; | If set to True, it will NOT update your AniList which is useful if you want to do a test run to check if everything lines up properly. (default = False)                     |
-| LOG_FAILED_MATCHES          | -                        | &#10005; | If set to True, failed matches will be written to /plexanisync/failed_matches.txt (default = False)                                                                          |
+| ID                          | Default                | Required | Note                                                                                                                                                     |
+| --------------------------- | ---------------------- | :-------: | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| PLEX_SECTION                | Anime                  | &#10003;* | The library where your anime resides                                                                                                                     |
+| PLEX_URL                    | http://127.0.0.1:32400 | &#10003;* | The address to your Plex Media Server, for example: http://127.0.0.1:32400                                                                               |
+| PLEX_TOKEN                  | -                      | &#10003;* | Follow [this guide](https://support.plex.tv/articles/204059436-finding-an-authentication-token-x-plex-token/)                                            |
+| ANI_USERNAME                | -                      | &#10003;* | Your [AniList.co](http://www.anilist.co) username                                                                                                        |
+| ANI_TOKEN                   | -                      | &#10003;* | Get it [here](https://anilist.co/api/v2/oauth/authorize?client_id=1549&response_type=token)                                                              |
+| PLEX_EPISODE_COUNT_PRIORITY | -                      | &#10005;  | If set to True, Plex episode watched count will take priority over AniList (default = False)                                                             |
+| SKIP_LIST_UPDATE            | -                      | &#10005;  | If set to True, it will NOT update your AniList which is useful if you want to do a test run to check if everything lines up properly. (default = False) |
+| LOG_FAILED_MATCHES          | -                      | &#10005;  | If set to True, failed matches will be written to /plexanisync/failed_matches.txt (default = False)                                                      |
+| SETTINGS_FILE               | -                      | &#10005;  | Location of a custom settings.ini for more advanced configuration. Makes all settings above obsolete. See section below for usage.                       |
+| INTERVAL                    | 3600                   | &#10005;  | The time in between syncs in seconds                                                                                                                     |
 
 ### Custom mappings
 
@@ -42,3 +42,14 @@ In order to provide a [custom_mappings.yaml file](https://github.com/RickDB/Plex
 ```
 
 You can modify the file on the host system anytime and it will be used during the next run. Restarting the container is not necessary.
+
+### Custom settings.ini
+
+If you want to use other Plex login mechanisms, you can use your own settings.ini file by mapping it into the container and setting the environment variable `SETTINGS_FILE` with the path to the file inside the container.
+
+If the settings file is located at `/docker/plexanisync/settings.ini` and you want to place it to `/config/settings.ini`, use the following volume mapping and environment variable:
+
+```
+-v '/docker/plexanisync/settings.ini:/config/settings.ini:ro'
+-e 'SETTINGS_FILE=/config/settings.ini'
+```

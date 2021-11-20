@@ -10,14 +10,27 @@ ENV PLEX_SECTION=Anime \
     ANI_USERNAME='' \
     ANI_TOKEN='' \
     INTERVAL=3600 \
-    PATH="${PATH}:~/.local/bin"
+    SETTINGS_FILE=''
 
-ADD ./* /plexanisync/
-ADD Docker/PlexAniSync/run/* /plexanisync/
+ENV PATH="${PATH}:~/.local/bin"
 
-RUN cd /plexanisync && \
-    python3 -m pip install -r requirements.txt && \
-    cd ..
+# run this before copying requirements for cache efficiency
+RUN pip install --upgrade pip
+
+#set work directory early so remaining paths can be relative
+WORKDIR /plexanisync
+
+# Adding requirements file to current directory
+# just this file first to cache the pip install step when code changes
+# Use copy since we are not getting anything from remote or URL
+COPY requirements.txt .
+COPY Docker/PlexAniSync/run/. .
+
+# Install dependencies
+RUN python3 -m pip install -r requirements.txt
+
+# copy code itself from context to image
+COPY . .
 
 LABEL org.opencontainers.image.documentation=https://github.com/RickDB/PlexAniSync/blob/master/Docker/PlexAniSync/README.md
 
