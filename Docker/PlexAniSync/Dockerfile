@@ -9,8 +9,7 @@ ENV PLEX_SECTION=Anime \
     PLEX_TOKEN='' \
     ANI_USERNAME='' \
     ANI_TOKEN='' \
-    INTERVAL=3600 \
-    SETTINGS_FILE=''
+    INTERVAL=3600
 
 ENV PATH="${PATH}:~/.local/bin"
 

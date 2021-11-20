@@ -7,8 +7,7 @@ ENV PLEX_SECTION=Anime \
     PLEX_URL=http://127.0.0.1:32400 \
     PLEX_TOKEN='' \
     ANI_USERNAME='' \
-    ANI_TOKEN='' \
-    SETTINGS_FILE=''
+    ANI_TOKEN=''
 
 # run this before copying requirements for cache efficiency
 RUN pip install --upgrade pip
