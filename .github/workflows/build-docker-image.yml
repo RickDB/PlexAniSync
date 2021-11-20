@@ -38,11 +38,6 @@ jobs:
         uses: docker/setup-qemu-action@v1
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
-        with:
-          buildkitd-flags: --debug
-          driver-opts: image=moby/buildkit:v0.9.1
-      - name: Set up containerd
-        uses: crazy-max/ghaction-setup-containerd@v1
       # Add tags to metadata
       - name: Docker meta
         id: meta
