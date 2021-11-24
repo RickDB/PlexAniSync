@@ -31,3 +31,4 @@ LABEL autoheal=true
 LABEL org.opencontainers.image.documentation=https://github.com/RickDB/PlexAniSync/blob/master/Docker/Tautulli/README.md
 
 ENTRYPOINT ["/app/start.sh"]
+CMD ["python" "Tautulli.py" "--datadir" "/config"]
