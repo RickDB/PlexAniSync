@@ -27,8 +27,7 @@ RUN python3 -m pip install -r requirements.txt
 
 COPY ./* /plexanisync/
 
+WORKDIR /app
+
 LABEL autoheal=true
 LABEL org.opencontainers.image.documentation=https://github.com/RickDB/PlexAniSync/blob/master/Docker/Tautulli/README.md
-
-ENTRYPOINT ["/app/start.sh"]
-CMD ["python", "Tautulli.py", "--datadir", "/config"]
