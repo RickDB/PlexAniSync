@@ -1,7 +1,9 @@
 FROM tautulli/tautulli
 
 RUN apt-get update && \
-    apt-get install -y build-essential
+    apt-get install -y \
+    build-essential \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 ENV PLEX_SECTION=Anime \
     PLEX_URL=http://127.0.0.1:32400 \
