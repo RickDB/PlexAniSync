@@ -25,7 +25,8 @@ COPY Docker/Tautulli/run/settingsupdater.py /plexanisync/
 # Install dependencies
 RUN python3 -m pip install -r requirements.txt
 
-COPY ./* /plexanisync/
+# copy code itself from context to image
+COPY . .
 
 WORKDIR /app
 

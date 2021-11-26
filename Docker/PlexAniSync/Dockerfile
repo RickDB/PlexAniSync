@@ -1,8 +1,7 @@
-FROM python:3.9-alpine
+FROM python:3.9-slim
 
-RUN apk add --no-cache --update ca-certificates tzdata build-base && \
-    update-ca-certificates && \
-    rm -rf /root/.cache
+RUN apt-get update && \
+    apt-get install -y build-essential
 
 ENV PLEX_SECTION=Anime \
     PLEX_URL=http://127.0.0.1:32400 \
