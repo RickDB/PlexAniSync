@@ -24,11 +24,11 @@ WORKDIR /plexanisync
 # just this file first to cache the pip install step when code changes
 # Use copy since we are not getting anything from remote or URL
 COPY requirements.txt .
-COPY Docker/PlexAniSync/run/. .
 
 # Install dependencies
-RUN python3 -m pip install -r requirements.txt
+RUN pip install -r requirements.txt
 
+COPY Docker/PlexAniSync/run/. .
 # copy code itself from context to image
 COPY . .
 

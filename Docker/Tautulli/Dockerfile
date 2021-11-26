@@ -21,13 +21,13 @@ WORKDIR /plexanisync
 # just this file first to cache the pip install step when code changes
 # Use copy since we are not getting anything from remote or URL
 COPY requirements.txt .
-COPY Docker/Tautulli/run/start.sh /app/
-COPY Docker/Tautulli/run/settingsupdater.py /plexanisync/
 
 # Install dependencies
-RUN python3 -m pip install -r requirements.txt
+RUN pip install -r requirements.txt
 
 # copy code itself from context to image
+COPY Docker/Tautulli/run/start.sh /app/
+COPY Docker/Tautulli/run/settingsupdater.py /plexanisync/
 COPY . .
 
 WORKDIR /app
