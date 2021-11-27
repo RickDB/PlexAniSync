@@ -5,11 +5,9 @@ RUN apt-get update && \
     build-essential \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-WORKDIR /plexanisync
-
 COPY requirements.txt .
 # install dependencies to the local user directory (eg. /root/.local)
-RUN pip install --user -r requirements.txt
+RUN pip install --user --no-warn-script-location -r requirements.txt
 
 FROM python:3.9-slim
 
