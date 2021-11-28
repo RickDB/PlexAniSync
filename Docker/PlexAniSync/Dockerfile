@@ -14,7 +14,10 @@ FROM python:3.9-slim
 WORKDIR /plexanisync
 
 # copy only the dependencies installation from the 1st stage image
-COPY --from=builder /root/.local/lib/python3.9/site-packages/* /usr/local/lib/python3.9/site-packages
+COPY --from=builder /root/.local /root/.local
+# update PATH environment variable
+ENV PATH=/root/.local:$PATH
+ENV PYTHONPATH=/root/.local/lib/python3.9/site-packages
 
 ENV PLEX_SECTION=Anime \
     PLEX_URL=http://127.0.0.1:32400 \
