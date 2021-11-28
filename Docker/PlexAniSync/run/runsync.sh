@@ -11,7 +11,7 @@ run() {
 # Main body of script
 ###
 
-if [[ -z "${SETTINGS_FILE}" ]]; then
+if [[ -z ${SETTINGS_FILE+x} ]]; then
   echo "Updating settings.ini"
   python /plexanisync/settingsupdater.py
   run
