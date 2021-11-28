@@ -5,7 +5,6 @@ from typing import Dict, List, Optional
 from dataclasses import dataclass
 
 import inflect
-from guessit import guessit
 
 from plexmodule import PlexWatchedSeries
 from custom_mappings import AnilistCustomMapping
@@ -239,33 +238,10 @@ def match_to_plex(anilist_series: List[AnilistSeries], plex_series_watched: List
                 plex_title_sort_without_year = re.sub(r"\(\d{4}\)", "", plex_title_sort).strip()
                 plex_title_original_without_year = re.sub(r"\(\d{4}\)", "", plex_title_original).strip()
 
-                plex_title_guessit = plex_title
-                plex_title_sort_guessit = plex_title_sort
-                plex_title_original_guessit = plex_title_original
-
-                try:
-                    plex_title_guessit = guessit(plex_title.lower())["title"].lower()
-                    plex_title_sort_guessit = guessit(plex_title_sort.lower())[
-                        "title"
-                    ].lower()
-                    plex_title_original_guessit = guessit(plex_title_original.lower())[
-                        "title"
-                    ].lower()
-                except Exception:
-                    logger.exception(
-                        f"Error parsing parsing guessit title for: {plex_title} | {plex_title_sort} | {plex_title_original}"
-                    )
-
-                # For linting, the variable is currently unused by might be useful in
-                # the future
-                assert plex_title_original_guessit
-
                 potential_titles = [
                     plex_title.lower(),
                     plex_title_sort.lower(),
                     plex_title_original.lower(),
-                    plex_title_guessit,
-                    plex_title_sort_guessit,
                     plex_title_clean,
                     plex_title_sort_clean,
                     plex_title_original_clean,
