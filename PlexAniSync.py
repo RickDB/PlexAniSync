@@ -11,8 +11,7 @@ from custom_mappings import read_custom_mappings
 import anilist
 import plexmodule
 import graphql
-
-__version__ = "1.3.16"
+from _version import __version__
 
 # Logger settings
 LOG_FILENAME = "PlexAniSync.log"
