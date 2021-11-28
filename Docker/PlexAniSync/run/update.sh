@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 echo "Updating PlexAniSync"
 wget https://github.com/RickDB/PlexAniSync/archive/master.zip &&\
 unzip master.zip &&\
