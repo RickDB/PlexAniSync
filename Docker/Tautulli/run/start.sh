@@ -10,7 +10,7 @@ usermod -o -u "$PUID" tautulli
 chown -R tautulli:tautulli /config
 chown -R tautulli:tautulli /plexanisync
 
-if [[ -z "${SETTINGS_FILE+x}" ]]; then
+if [[ -z "${SETTINGS_FILE}" ]]; then
   echo "Updating settings.ini"
   gosu tautulli "python" "/plexanisync/settingsupdater.py"
 else
