@@ -137,8 +137,9 @@ Now that configuration is finished and requirements have been installed we can f
 
 `python PlexAniSync.py`
 
-Depending on library size and server can take a few minutes to finish, for scheduled syncing you can create a cronjob or windows task which runs it every 30 minutes for instance.
+Depending on library size and server can take a few minutes to finish, for scheduled syncing you can create a cronjob, systemd timer or windows task which runs it every 30 minutes for instance.
 
+See [Systemd service](https://github.com/RickDB/PlexAniSync/wiki/Systemd-service) for a tutorial on how to set up a timer with systemd.
 
 ## Optional features
 
