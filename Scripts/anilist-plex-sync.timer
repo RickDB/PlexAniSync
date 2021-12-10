@@ -1,0 +1,8 @@
+[Unit]
+Description=Execution timer for Plex Anilist Sync service
+
+[Timer]
+OnCalendar=*:0/15 #(This is every 15 minutes, but you can also put in "daily" for example)
+
+[Install]
+WantedBy=timers.target
