@@ -9,8 +9,6 @@ from dataclasses import dataclass
 import yamale
 from yamale.yamale_error import YamaleError
 
-
-
 logger = logging.getLogger("PlexAniSync")
 MAPPING_FILE = "custom_mappings.yaml"
 
@@ -25,7 +23,7 @@ class AnilistCustomMapping:
 def read_custom_mappings(url):
     if url is not None or url != "":
         web_custom_mapping = get_custom_mapping_web(url)
-        
+
     custom_mappings = {}
     if web_custom_mapping is not None:
         logger.info(f"[MAPPING] Custom mapping found on web, using: {url}")
@@ -36,7 +34,7 @@ def read_custom_mappings(url):
         return
     else:
         logger.info(f"[MAPPING] Custom mapping found locally, using: {MAPPING_FILE}")
-        
+
     schema = yamale.make_schema('./custom_mappings_schema.yaml', parser='ruamel')
 
     # Create a Data object
@@ -95,8 +93,9 @@ def get_custom_mapping_web(url):
             if os.path.exists("temp_valid.yaml"):
                 os.remove("temp_valid.yaml")
             return response.text
-        except BaseException as e :
-            logger.error(f'Custom Mappings url validation failed!\n Check the url: {url} \n if it\'s a valid yaml file.')
+        except BaseException:
+            logger.error(
+                f'Custom Mappings url validation failed!\n Check the url: {url} \n if it\'s a valid yaml file.')
             if os.path.exists("temp_valid.yaml"):
                 os.remove("temp_valid.yaml")
             return None
