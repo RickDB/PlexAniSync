@@ -798,7 +798,7 @@ def retrieve_season_mappings(title: str, season: int) -> List[AnilistCustomMappi
 
 
 def map_watchcount_to_seasons(title: str, season_mappings: List[AnilistCustomMapping], watched_episodes: int) -> Dict[
-    int, int]:
+        int, int]:
     # mapping from anilist-id to watched episodes
     episodes_in_anilist_entry: Dict[int, int] = {}
     total_mapped_episodes = 0

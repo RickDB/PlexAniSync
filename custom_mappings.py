@@ -27,7 +27,7 @@ def read_custom_mappings(url):
     custom_mappings = {}
     if web_custom_mapping is not None:
         logger.info(f"[MAPPING] Custom mapping found on web, using: {url}")
-        with open(MAPPING_FILE, "w") as f:
+        with open(MAPPING_FILE, "w", encoding="UTF-8") as f:
             f.write(web_custom_mapping)
     elif not os.path.isfile(MAPPING_FILE):
         logger.info(f"[MAPPING] Custom map file not found: {MAPPING_FILE}")
@@ -75,14 +75,14 @@ def get_custom_mapping_web(url):
     # Check if url is present
     if url is None or url == "":
         logger.info("[MAPPING] No custom mapping url provided, skipping")
-        logger.info("[MAPPING] Using default mapping file: {}".format(MAPPING_FILE))
+        logger.info(f"[MAPPING] Using default mapping file: {MAPPING_FILE}")
         return
     # Get url and read the data
     response = requests.get(url)
     if response.status_code == 200:
         try:
             # temporary file to store the data and check if it is valid
-            with open("temp_valid.yaml", "w") as f:
+            with open("temp_valid.yaml", "w", encoding="UTF - 8") as f:
                 f.write(response.text)
 
             schema = yamale.make_schema('./custom_mappings_schema.yaml', parser='ruamel')
