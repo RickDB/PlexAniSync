@@ -67,12 +67,12 @@ if "skip_list_update" in anilist_settings:
 
 if "plex_episode_count_priority" in anilist_settings:
     anilist.ANILIST_PLEX_EPISODE_COUNT_PRIORITY = (
-            anilist_settings["plex_episode_count_priority"].lower().strip() == "true"
+        anilist_settings["plex_episode_count_priority"].lower().strip() == "true"
     )
 
 if "log_failed_matches" in anilist_settings:
     anilist.ANILIST_LOG_FAILED_MATCHES = (
-            anilist_settings["log_failed_matches"].lower().strip() == "true"
+        anilist_settings["log_failed_matches"].lower().strip() == "true"
     )
 
 
