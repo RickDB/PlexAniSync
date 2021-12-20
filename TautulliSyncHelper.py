@@ -6,11 +6,11 @@ from time import sleep
 
 import coloredlogs
 
-from custom_mappings import read_custom_mappings
 import anilist
-import plexmodule
 import graphql
+import plexmodule
 from _version import __version__
+from custom_mappings import read_custom_mappings
 
 # Logger settings
 logger = logging.getLogger("PlexAniSync")
@@ -59,12 +59,12 @@ if "skip_list_update" in anilist_settings:
 
 if "plex_episode_count_priority" in anilist_settings:
     anilist.ANILIST_PLEX_EPISODE_COUNT_PRIORITY = (
-        anilist_settings["plex_episode_count_priority"].lower().strip() == "true"
+            anilist_settings["plex_episode_count_priority"].lower().strip() == "true"
     )
 
 if "log_failed_matches" in anilist_settings:
     anilist.ANILIST_LOG_FAILED_MATCHES = (
-        anilist_settings["log_failed_matches"].lower().strip() == "true"
+            anilist_settings["log_failed_matches"].lower().strip() == "true"
     )
 
 

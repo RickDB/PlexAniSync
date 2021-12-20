@@ -7,9 +7,7 @@ from typing import Any, Dict
 
 import requests
 
-
 logger = logging.getLogger("PlexAniSync")
-
 
 ANILIST_ACCESS_TOKEN = ""
 ANILIST_SKIP_UPDATE = False

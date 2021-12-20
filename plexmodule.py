@@ -2,16 +2,15 @@
 import logging
 import re
 import sys
-from typing import List, Optional
 from dataclasses import dataclass
-
-from requests import Session
-from requests.adapters import HTTPAdapter
-from urllib3.poolmanager import PoolManager
+from typing import List, Optional
 
 from plexapi.myplex import MyPlexAccount
 from plexapi.server import PlexServer
 from plexapi.video import Episode, Season, Show
+from requests import Session
+from requests.adapters import HTTPAdapter
+from urllib3.poolmanager import PoolManager
 
 logger = logging.getLogger("PlexAniSync")
 plex_settings = dict()
@@ -168,7 +167,8 @@ def get_watched_shows(shows: List[Show]) -> Optional[List[PlexWatchedSeries]]:
             if hasattr(show, "seasons"):
                 show_seasons = show.seasons()
                 # ignore season 0 and unwatched seasons
-                show_seasons = filter(lambda season: season.seasonNumber > 0 and season.viewedLeafCount > 0, show_seasons)
+                show_seasons = filter(lambda season: season.seasonNumber > 0 and season.viewedLeafCount > 0,
+                                      show_seasons)
 
                 seasons = []
                 for season in show_seasons:

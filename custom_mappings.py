@@ -1,11 +1,11 @@
 # coding=utf-8
-import os
 import logging
+import os
 import sys
-import requests
-from typing import List
 from dataclasses import dataclass
+from typing import List
 
+import requests
 import yamale
 from yamale.yamale_error import YamaleError
 
