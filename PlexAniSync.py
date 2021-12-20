@@ -51,6 +51,7 @@ def read_settings(settings_file) -> configparser.ConfigParser:
 
 
 SETTINGS_FILE = os.getenv("SETTINGS_FILE") or "settings.ini"
+CUSTOM_MAPPING_URL = os.getenv("CUSTOM_MAPPING_URL")
 
 if len(sys.argv) > 1:
     SETTINGS_FILE = sys.argv[1]
@@ -80,7 +81,13 @@ if "log_failed_matches" in anilist_settings:
 def start():
     logger.info(f"PlexAniSync - version: {__version__}")
 
-    anilist.CUSTOM_MAPPINGS = read_custom_mappings()
+    # Check env is custom mapping url is provided if not use the one from the settings.ini
+    if CUSTOM_MAPPING_URL is None or CUSTOM_MAPPING_URL == "":
+        custom_mappings_url = plex_settings["custom_mapping_url"]
+    else:
+        custom_mappings_url = CUSTOM_MAPPING_URL
+
+    anilist.CUSTOM_MAPPINGS = read_custom_mappings(custom_mappings_url)
 
     if graphql.ANILIST_SKIP_UPDATE:
         logger.warning(
