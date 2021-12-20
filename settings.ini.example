@@ -19,6 +19,7 @@ myplex_password = Doe
 home_user_sync = False
 home_username = Megumin
 home_server_base_url = http://127.0.0.1:32400
+custom_mapping_url =
 
 [ANILIST]
 access_token = SomeVeryLongAccessToken
