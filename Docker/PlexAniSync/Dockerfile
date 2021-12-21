@@ -25,8 +25,7 @@ ENV PLEX_SECTION=Anime \
     PLEX_TOKEN='' \
     ANI_USERNAME='' \
     ANI_TOKEN='' \
-    INTERVAL=3600 \
-    CUSTOM_MAPPING_URL='https://raw.githubusercontent.com/RickDB/PlexAniSync-Custom-Mappings/main/series-tvdb.en.yaml'
+    INTERVAL=3600 
 
 COPY Docker/PlexAniSync/run/. .
 # copy code itself from context to image

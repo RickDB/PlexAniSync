@@ -24,8 +24,7 @@ ENV PLEX_SECTION=Anime \
     PLEX_URL=http://127.0.0.1:32400 \
     PLEX_TOKEN='' \
     ANI_USERNAME='' \
-    ANI_TOKEN='' \
-    CUSTOM_MAPPING_URL='https://raw.githubusercontent.com/RickDB/PlexAniSync-Custom-Mappings/main/series-tvdb.en.yaml'
+    ANI_TOKEN='' 
 
 # copy code itself from context to image
 COPY Docker/Tautulli/run/start.sh /app/

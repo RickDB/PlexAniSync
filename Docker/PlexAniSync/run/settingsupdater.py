@@ -8,7 +8,6 @@ config['PLEX'] = {
     'authentication_method': 'direct',
     'base_url': os.environ.get('PLEX_URL'),
     'token': os.environ.get('PLEX_TOKEN'),
-    'custom_mapping_url': os.environ.get('CUSTOM_MAPPING_URL'),
 }
 
 config['ANILIST'] = {
