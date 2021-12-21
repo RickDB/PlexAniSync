@@ -1,0 +1,17 @@
+# PlexAniSync: Community urls
+remotes:
+  - name: "RickDB (TVDB) and RickDB (TMDB)"
+    urls:
+      - "https://raw.githubusercontent.com/RickDB/PlexAniSync-Custom-Mappings/main/series-tvdb.en.yaml"
+
+  - name: "RickDB (TMDB)"
+    urls:
+      - "https://raw.githubusercontent.com/RickDB/PlexAniSync-Custom-Mappings/main/movies-tmdb.en.yaml"
+
+
+# OR
+remotes:
+  - name: "RickDB (TVDB) and RickDB (TMDB)"
+    urls:
+      - "https://raw.githubusercontent.com/RickDB/PlexAniSync-Custom-Mappings/main/series-tvdb.en.yaml"
+      - "https://raw.githubusercontent.com/RickDB/PlexAniSync-Custom-Mappings/main/movies-tmdb.en.yaml"
