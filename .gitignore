@@ -4,8 +4,10 @@ __pycache__/
 *.log
 ApplyPEP8\.bat
 custom_mappings.yaml
+remote_mappings.yaml
 failed_matches\.txt
 logo\.psd
 settings\.ini
 update_anilist\.bat
 update_anilist_test\.bat
+
