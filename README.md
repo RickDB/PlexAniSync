@@ -178,6 +178,13 @@ Episodes 1-13 will be mapped to Re:Zero 2nd Season Part 1, episodes 14 and highe
 
 https://anilist.co/anime/99263/Tate-no-Yuusha-no-Nariagari
 
+```yaml
+  - title: "Plex title for series"
+    ignore: true
+```
+
+Prevent a series from syncing. If "seasons" is not set, "ignore: true" is inferred.
+
 - You can remove any existing entries from the example file as they are purely instructional
 - Upon startup it will check if the file is a valid YAML file. The most likely reason it's not is because you didn't put quotes around an anime title with special characters (e.g. ":") in it.
 
