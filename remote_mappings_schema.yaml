@@ -1,5 +1,0 @@
-remotes: list(include('remote'), min=1)
----
-remote:
-  name: str()
-  urls: list(str(), required=False)
