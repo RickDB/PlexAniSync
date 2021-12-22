@@ -221,6 +221,15 @@ Depending on your OS make sure to place the show name between single or double q
 
 https://github.com/RickDB/PlexAniSync/wiki/Tautulli-sync-script
 
+### Telegram Integration
+
+We can inform you via Telegram about start / errors / finish of the sync process. This is especially useful for automatic daily syncs. In case an error occurs or a new anime got added that needs a custom mapping you are always informed.
+
+To enable this you first have to create a new Telegram Bot by talking to the neat helper [BotFather](https://t.me/BotFather). From him you get a "bot_token" which you have to save in the `settings.ini`. After that you also need a chat
+where to send the messages to. For that add the bot to any chatroom and use a bot like [IDBot](https://t.me/myidbot) to get the chats id. Save this to `chat_id` in the `settings.ini`.
+
+Last but not least you have to enable the integration by settings `eneabled` in the `[TELEGRAM]` section of `settings.ini` to `True`.
+
 ## Docker
 
 Docker version is located here: [PlexAniSync](https://github.com/RickDB/PlexAniSync/pkgs/container/plexanisync)
