@@ -46,9 +46,9 @@ def read_custom_mappings():
         sys.exit(1)
     if remote_custom_mapping is not None:
         # loop through list tuple
-        for index, tuple in enumerate(remote_custom_mapping):
-            mapping_location = tuple[0]
-            yaml_content = tuple[1]
+        for _, value in enumerate(remote_custom_mapping):
+            mapping_location = value[0]
+            yaml_content = value[1]
             try:
                 file_mappings_remote = yamale.make_data(content=yaml_content, parser='ruamel')
                 yamale.validate(schema, file_mappings_remote)
