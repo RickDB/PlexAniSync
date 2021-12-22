@@ -1,3 +1,4 @@
+remote-urls: list(str(), required=False)
 entries: list(include('entry'), min=1)
 ---
 entry:
