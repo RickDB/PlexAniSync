@@ -7,7 +7,7 @@ inflect==5.3.0
 PlexAPI==4.8.0
 pyreadline3==3.3
 PyYAML==6.0
-requests==2.26.0
+requests==2.27.1
 ruamel.yaml==0.17.19
 ruamel.yaml.clib==0.2.6
 urllib3==1.26.7
