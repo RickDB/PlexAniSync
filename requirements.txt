@@ -5,7 +5,7 @@ humanfriendly==10.0
 idna==3.3
 inflect==5.3.0
 PlexAPI==4.9.1
-pyreadline3==3.3
+pyreadline3==3.4.1
 PyYAML==6.0
 requests==2.27.1
 ruamel.yaml==0.17.20
