@@ -80,7 +80,7 @@ if "log_failed_matches" in anilist_settings:
 def start():
     logger.info(f"PlexAniSync - version: {__version__}")
 
-    anilist.CUSTOM_MAPPINGS = read_custom_mappings()
+    anilist.CUSTOM_MAPPINGS, anilist.IGNORED_TITLES = read_custom_mappings()
 
     if graphql.ANILIST_SKIP_UPDATE:
         logger.warning(

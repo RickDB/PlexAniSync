@@ -3,7 +3,8 @@ entries: list(include('entry'), min=1)
 entry:
   title: str()
   synonyms: list(str(), required=False)
-  seasons: list(include('season'), min=1)
+  seasons: list(include('season'), required=False, min=1)
+  ignore: bool(required=False)
 
 season:
   season: int(min=1)

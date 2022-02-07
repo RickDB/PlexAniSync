@@ -12,6 +12,7 @@ from graphql import fetch_user_list, search_by_name, search_by_id, update_series
 
 logger = logging.getLogger("PlexAniSync")
 CUSTOM_MAPPINGS: Dict[str, List[AnilistCustomMapping]] = {}
+IGNORED_TITLES: List[str] = []
 ANILIST_PLEX_EPISODE_COUNT_PRIORITY = False
 
 # Set this to True for logging failed AniList matches to
@@ -178,6 +179,10 @@ def match_to_plex(anilist_series: List[AnilistSeries], plex_series_watched: List
         plex_watched_episode_count_custom_mapping = 0
 
         logger.info("--------------------------------------------------")
+
+        if plex_title in IGNORED_TITLES:
+            logger.info(f'[ANILIST] Ignored: {plex_title}')
+            continue
 
         # Check if we have custom mappings for all seasons (One Piece for example)
         if len(plex_seasons) > 1:
