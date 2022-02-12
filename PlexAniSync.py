@@ -11,6 +11,7 @@ from custom_mappings import read_custom_mappings
 import anilist
 import plexmodule
 import graphql
+import telegram
 from _version import __version__
 
 # Logger settings
@@ -59,6 +60,8 @@ if len(sys.argv) > 1:
 settings = read_settings(SETTINGS_FILE)
 anilist_settings = settings["ANILIST"]
 plex_settings = settings["PLEX"]
+telegram_settings = settings["TELEGRAM"]
+telegram.setup(telegram_settings)
 
 graphql.ANILIST_ACCESS_TOKEN = anilist_settings["access_token"].strip()
 
@@ -79,6 +82,7 @@ if "log_failed_matches" in anilist_settings:
 ## Startup section ##
 def start():
     logger.info(f"PlexAniSync - version: {__version__}")
+    telegram.starting_sync(__version__)
 
     anilist.CUSTOM_MAPPINGS = read_custom_mappings()
 
@@ -123,6 +127,7 @@ def start():
         else:
             anilist.match_to_plex(anilist_series, plex_series_watched)
 
+    telegram.report_to_telegram()
     logger.info("Plex to AniList sync finished")
 
 

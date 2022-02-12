@@ -26,3 +26,11 @@ plex_episode_count_priority = False
 skip_list_update = False
 username = SomeUsername
 log_failed_matches = False
+
+[TELEGRAM]
+# Set enabled to True to get Telegram notifications upon finish
+enabled = False
+# Only send errors and no start / finish indicators
+errors_only = False
+bot_token = TOKEN
+chat_id = CHAT_ID
