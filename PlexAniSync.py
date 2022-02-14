@@ -1,25 +1,25 @@
 # coding=utf-8
 import configparser
 import logging
-import logging.handlers
+from logging.handlers import RotatingFileHandler
 import os
 import sys
 
 import coloredlogs
 
-from custom_mappings import read_custom_mappings
 import anilist
-import plexmodule
 import graphql
+import plexmodule
 from _version import __version__
+from custom_mappings import read_custom_mappings
 
 # Logger settings
 LOG_FILENAME = "PlexAniSync.log"
 logger = logging.getLogger("PlexAniSync")
 
 # Add the rotating log message handler to the standard log
-handler = logging.handlers.RotatingFileHandler(
-    LOG_FILENAME, maxBytes=10000000, backupCount=5, encoding="utf-8"
+handler = RotatingFileHandler(
+    LOG_FILENAME, maxBytes=10_000_000, backupCount=5, encoding="utf-8"
 )
 handler.setLevel(logging.INFO)
 logger.addHandler(handler)

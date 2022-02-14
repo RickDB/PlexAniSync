@@ -6,11 +6,11 @@ from time import sleep
 
 import coloredlogs
 
-from custom_mappings import read_custom_mappings
 import anilist
-import plexmodule
 import graphql
+import plexmodule
 from _version import __version__
+from custom_mappings import read_custom_mappings
 
 # Logger settings
 logger = logging.getLogger("PlexAniSync")
