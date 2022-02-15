@@ -37,7 +37,7 @@ def read_custom_mappings() -> Dict[str, List[AnilistCustomMapping]]:
         # Validate data against the schema same as before.
         yamale.validate(schema, file_mappings_local)
     except YamaleError as e:
-        logger.error('Custom Mappings validation failed!\n')
+        logger.error('[MAPPING] Custom Mappings validation failed!\n')
         for result in e.results:
             for error in result.errors:
                 logger.error(f"{error}\n")
@@ -65,8 +65,10 @@ def read_custom_mappings() -> Dict[str, List[AnilistCustomMapping]]:
     return custom_mappings
 
 
-def add_mappings(custom_mappings, mapping_location, file_mappings_remote):
-    for file_entry in file_mappings_remote[0][0]['entries']:
+def add_mappings(custom_mappings, mapping_location, file_mappings):
+    # handles missing and empty 'entries'
+    entries = file_mappings[0][0].get('entries', []) or []
+    for file_entry in entries:
         series_title = str(file_entry['title'])
         synonyms: List[str] = file_entry.get('synonyms', [])
         series_mappings: List[AnilistCustomMapping] = []
@@ -91,7 +93,8 @@ def add_mappings(custom_mappings, mapping_location, file_mappings_remote):
 # Get the custom mappings from the web.
 def get_custom_mapping_remote(file_mappings) -> List[tuple[str, str]]:
     custom_mappings_remote: List[tuple[str, str]] = []
-    remote_mappings_urls: List[str] = file_mappings[0][0].get('remote-urls', [])
+    # handles missing and empty 'remote-urls'
+    remote_mappings_urls: List[str] = file_mappings[0][0].get('remote-urls', []) or []
 
     # Get url and read the data
     for url in remote_mappings_urls:
