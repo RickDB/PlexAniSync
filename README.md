@@ -183,7 +183,9 @@ https://anilist.co/anime/99263/Tate-no-Yuusha-no-Nariagari
 
 #### Community mappings
 
-There are some mappings provided by the Github community at https://github.com/RickDB/PlexAniSync-Custom-Mappings/. For now you can use the mapping files by copying parts into your own mapping file.
+There are some mappings provided by the Github community at https://github.com/RickDB/PlexAniSync-Custom-Mappings/. You can use them by specifying `remote-urls` like in the example mapping file.
+
+If the local mapping file contains mappings for the same show as the community mapping, the local one will take precedence.
 
 The feature of synonyms was introduced for the community mappings where you can specify that a show can have one of multiple titles but should be mapped the same way. See Shaman King (2021) in the example mapping file.
 
