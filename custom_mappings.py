@@ -32,7 +32,8 @@ def read_custom_mappings() -> Dict[str, List[AnilistCustomMapping]]:
     schema = yamale.make_schema('./custom_mappings_schema.yaml', parser='ruamel')
 
     # Create a Data object
-    file_mappings_local = yamale.make_data(MAPPING_FILE, parser='ruamel')
+    with open(MAPPING_FILE, 'r', encoding='utf-8') as f:
+        file_mappings_local = yamale.make_data(content=f.read(), parser='ruamel')
     try:
         # Validate data against the schema same as before.
         yamale.validate(schema, file_mappings_local)
