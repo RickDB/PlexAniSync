@@ -4,6 +4,7 @@
   ],
   "timezone": "Europe/Berlin",
   "automerge": true,
+  "rebaseWhen": "conflicted",
   "pip_requirements": {
     "extends": ["schedule:monthly"]
   },
