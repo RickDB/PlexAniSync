@@ -11,4 +11,4 @@ requests==2.27.1
 ruamel.yaml==0.17.20
 ruamel.yaml.clib==0.2.6
 urllib3==1.26.8
-yamale==4.0.2
+yamale==4.0.3
