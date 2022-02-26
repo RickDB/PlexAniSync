@@ -1,0 +1,18 @@
+{
+  "extends": [
+    "config:base"
+  ],
+  "timezone": "Europe/Berlin",
+  "automerge": true,
+  "pip_requirements": {
+    "extends": ["schedule:monthly"]
+  },
+  "dockerfile": {
+    "extends": ["schedule:monthly"]
+  },
+  "github-actions": {
+    "extends": ["group:all"],
+    "branchTopic": "github-actions",
+    "commitMessageTopic": "github-actions"
+  }
+}
