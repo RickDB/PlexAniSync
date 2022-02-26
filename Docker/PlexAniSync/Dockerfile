@@ -1,4 +1,4 @@
-FROM python:3.9 AS builder
+FROM python:3.10 AS builder
 
 RUN apt-get update && \
     apt-get install -y \
@@ -9,7 +9,7 @@ COPY requirements.txt .
 # install dependencies to the local user directory (eg. /root/.local)
 RUN pip install --user --no-warn-script-location -r requirements.txt
 
-FROM python:3.9-slim
+FROM python:3.10-slim
 
 WORKDIR /plexanisync
 
@@ -18,7 +18,7 @@ COPY --from=builder /root/.local /root/.local
 RUN chmod -R a+rX /root
 # update PATH environment variable
 ENV PATH=/root/.local:$PATH
-ENV PYTHONPATH=/root/.local/lib/python3.9/site-packages
+ENV PYTHONPATH=/root/.local/lib/python3.10/site-packages
 
 ENV PLEX_SECTION=Anime \
     PLEX_URL=http://127.0.0.1:32400 \
