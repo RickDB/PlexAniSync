@@ -4,7 +4,7 @@ coloredlogs==15.0.1
 humanfriendly==10.0
 idna==3.3
 inflect==5.4.0
-PlexAPI==4.10.0
+PlexAPI==4.10.1
 pyreadline3==3.4.1
 PyYAML==6.0
 requests==2.27.1
