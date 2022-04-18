@@ -15,7 +15,29 @@ docker run -d \
   -e ANI_TOKEN=SomeToken \
   -e INTERVAL=3600 \
   -v /etc/localtime:/etc/localtime:ro \
+  -v /path/to/your/custom_mappings.yaml:/plexanisync/custom_mappings.yaml \
   ghcr.io/rickdb/plexanisync:latest
+```
+
+### Docker Compose
+
+```yaml
+version: '3.7'
+services:
+  plexanisync:
+    container_name: plexanisync
+    image: 'ghcr.io/rickdb/plexanisync:latest'
+    restart: unless-stopped
+    environment:
+      - PLEX_SECTION=Anime
+      - 'PLEX_URL=http://127.0.0.1:32400'
+      - PLEX_TOKEN=SomePlexToken
+      - ANI_USERNAME=SomeUser
+      - ANI_TOKEN=SomeToken
+      - INTERVAL=3600
+    volumes:
+      - '/etc/localtime:/etc/localtime:ro'
+      - '/path/to/your/custom_mappings.yaml:/plexanisync/custom_mappings.yaml'
 ```
 
 ### Environment Variables

@@ -22,6 +22,30 @@ docker run -d \
   ghcr.io/rickdb/tautulli-plexanisync
 ```
 
+### Docker Compose
+
+```yaml
+version: '3.7'
+services:
+  plexanisync:
+    container_name: tautulli-plexanisync
+    image: 'ghcr.io/rickdb/tautulli-plexanisync:latest'
+    restart: unless-stopped
+    environment:
+      - TZ=<timezone>
+      - PLEX_SECTION=Anime
+      - 'PLEX_URL=http://127.0.0.1:32400'
+      - PLEX_TOKEN=SomePlexToken
+      - ANI_USERNAME=SomeUser
+      - ANI_TOKEN=SomeToken
+    volumes:
+      - '/path/to/tautulli-data-directory:/config'
+      - '/path/to/your/custom_mappings.yaml:/plexanisync/custom_mappings.yaml'
+
+    ports:
+      - '8181:8181'
+```
+
 ### Environment Variables
 
 Since this is a combination of docker images, environment variables of both images have to be configured.
