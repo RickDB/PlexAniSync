@@ -3,7 +3,7 @@ import logging
 import os
 import sys
 from dataclasses import dataclass
-from typing import Dict, List
+from typing import Dict, List, Tuple
 
 import requests
 import yamale
@@ -92,8 +92,8 @@ def add_mappings(custom_mappings, mapping_location, file_mappings):
 
 
 # Get the custom mappings from the web.
-def get_custom_mapping_remote(file_mappings) -> List[tuple[str, str]]:
-    custom_mappings_remote: List[tuple[str, str]] = []
+def get_custom_mapping_remote(file_mappings) -> List[Tuple[str, str]]:
+    custom_mappings_remote: List[Tuple[str, str]] = []
     # handles missing and empty 'remote-urls'
     remote_mappings_urls: List[str] = file_mappings[0][0].get('remote-urls', []) or []
 
