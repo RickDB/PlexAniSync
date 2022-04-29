@@ -24,6 +24,8 @@ jobs:
         python -m pip install --upgrade pip
         pip install flake8 pylint pylint-exit
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+    - name: Setup flake8 annotations
+      uses: rbialon/flake8-annotations@v1
     - name: Lint with flake8 and pylint
       run: |
         flake8 .
