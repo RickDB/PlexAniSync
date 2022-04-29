@@ -269,9 +269,10 @@ def get_watched_episodes_for_show_season(season: Season) -> int:
     logger.info(f'[PLEX] {episodes_watched} episodes watched for {season.parentTitle} season {season.seasonNumber}')
     return episodes_watched
 
+
 def get_first_episode_for_show_season(season: Season) -> int:
     return season.episodes()[0].index
 
+
 def get_last_episode_for_show_season(season: Season) -> int:
     return season.episodes()[-1].index
-    
