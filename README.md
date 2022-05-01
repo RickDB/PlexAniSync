@@ -1,5 +1,5 @@
 # Plex to AniList Sync
-[![Build Status](https://travis-ci.com/RickDB/PlexAniSync.svg?branch=master)](https://travis-ci.com/RickDB/PlexAniSync)![Docker](https://github.com/rickdb/Docker-PlexAniSync/actions/workflows/docker-publish.yml/badge.svg)
+[![Build Status](https://travis-ci.com/RickDB/PlexAniSync.svg?branch=master)](https://travis-ci.com/RickDB/PlexAniSync) ![Docker](https://github.com/rickdb/Docker-PlexAniSync/actions/workflows/docker-publish.yml/badge.svg) [![Discord Shield](https://discordapp.com/api/guilds/903407293541023754/widget.png?style=shield)](https://discord.gg/a9cu5t5fKc)
 
 
 ![Logo](logo.png)
@@ -236,13 +236,13 @@ Another docker container for Tautulli with built-in PlexAniSync can be found her
 
 ## Support
 
-Support thread is located on AniList:
+**AniList**
 
 https://anilist.co/forum/thread/6443
 
-Optionally also on Plex forums but less active there:
+**Discord**
 
-https://forums.plex.tv/t/plexanisync-sync-your-plex-library-to-anilist/365826
+https://discord.gg/a9cu5t5fKc
 
 ## Planned
 
