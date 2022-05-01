@@ -1,8 +1,10 @@
 # Plex to AniList Sync
-[![Build Status](https://travis-ci.com/RickDB/PlexAniSync.svg?branch=master)](https://travis-ci.com/RickDB/PlexAniSync) ![Docker](https://github.com/rickdb/Docker-PlexAniSync/actions/workflows/docker-publish.yml/badge.svg) [![Discord Shield](https://discordapp.com/api/guilds/903407293541023754/widget.png?style=shield)](https://discord.gg/a9cu5t5fKc)
+[![Build Status](https://travis-ci.com/RickDB/PlexAniSync.svg?branch=master)](https://travis-ci.com/RickDB/PlexAniSync) ![Docker](https://github.com/rickdb/Docker-PlexAniSync/actions/workflows/docker-publish.yml/badge.svg)
 
+[![Discord Shield](https://discordapp.com/api/guilds/903407293541023754/widget.png?style=banner2)](https://discord.gg/a9cu5t5fKc)
 
 ![Logo](logo.png)
+
 
 If you manage your Anime with Plex this will allow you to sync your libraries to [AniList](https://anilist.co)  , recommend using Plex with the [HAMA agent](https://github.com/ZeroQI/Hama.bundle) for best Anime name matches.
 
