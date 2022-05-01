@@ -20,6 +20,8 @@ plex_settings = dict()
 class PlexSeason:
     season_number: int
     watched_episodes: int
+    first_episode: int
+    last_episode: int
 
 
 @dataclass
@@ -173,7 +175,9 @@ def get_watched_shows(shows: List[Show]) -> Optional[List[PlexWatchedSeries]]:
                 seasons = []
                 for season in show_seasons:
                     season_watchcount = get_watched_episodes_for_show_season(season)
-                    seasons.append(PlexSeason(season.seasonNumber, season_watchcount))
+                    season_firstepisode = get_first_episode_for_show_season(season)
+                    season_lastepisode = get_last_episode_for_show_season(season)
+                    seasons.append(PlexSeason(season.seasonNumber, season_watchcount, season_firstepisode, season_lastepisode))
 
                 if seasons:
                     # Add year if we have one otherwise fallback
@@ -235,7 +239,7 @@ def get_watched_shows(shows: List[Show]) -> Optional[List[PlexWatchedSeries]]:
                         show.titleSort.strip(),
                         show.originalTitle.strip(),
                         year,
-                        [PlexSeason(1, 1)],
+                        [PlexSeason(1, 1, 1, 1)],
                         anilist_id
                     )
                     watched_series.append(watched_show)
@@ -264,3 +268,11 @@ def get_watched_episodes_for_show_season(season: Season) -> int:
 
     logger.info(f'[PLEX] {episodes_watched} episodes watched for {season.parentTitle} season {season.seasonNumber}')
     return episodes_watched
+
+
+def get_first_episode_for_show_season(season: Season) -> int:
+    return season.episodes()[0].index
+
+
+def get_last_episode_for_show_season(season: Season) -> int:
+    return season.episodes()[-1].index
