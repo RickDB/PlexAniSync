@@ -195,7 +195,7 @@ def match_to_plex(anilist_series: List[AnilistSeries], plex_series_watched: List
                         custom_mapping_seasons_anilist_id = matched_id
 
                         # Check if season should be added together
-                        if (index > 0 or plex_season.first_episode > plex_seasons[index - 1].last_episode):
+                        if (index != 0 and plex_season.first_episode > plex_seasons[index - 1].last_episode):
                             plex_watched_episode_count_custom_mapping = plex_season.watched_episodes
                         else:
                             plex_watched_episode_count_custom_mapping += plex_season.watched_episodes
