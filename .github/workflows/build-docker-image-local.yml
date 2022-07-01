@@ -37,7 +37,7 @@ jobs:
           file: ${{ inputs.dockerfile }}
           platforms: ${{ inputs.platforms }}
           tags: ${{ env.IMAGE_NAME }}
-          outputs: type=docker,dest=/tmp/image.tar
+          outputs: type=tar,dest=/tmp/image.tar
           pull: true
           cache-from: type=gha
           cache-to: type=gha,mode=max
