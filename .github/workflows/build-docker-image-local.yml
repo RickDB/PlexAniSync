@@ -43,7 +43,7 @@ jobs:
           cache-to: type=gha,mode=max
       - name: List files
         run: |
-          tree /tmp/images
+          tree /tmp
       - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
