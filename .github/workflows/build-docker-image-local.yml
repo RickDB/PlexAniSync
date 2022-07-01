@@ -37,10 +37,13 @@ jobs:
           file: ${{ inputs.dockerfile }}
           platforms: ${{ inputs.platforms }}
           tags: ${{ env.IMAGE_NAME }}
-          outputs: type=tar,dest=/tmp/image.tar
+          outputs: type=tar,dest=/tmp/images
           pull: true
           cache-from: type=gha
           cache-to: type=gha,mode=max
+      - name: List files
+        run: |
+          tree /tmp/images
       - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
