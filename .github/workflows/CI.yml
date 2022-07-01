@@ -32,7 +32,7 @@ jobs:
         pylint PlexAniSync.py TautulliSyncHelper.py plexmodule.py anilist.py custom_mappings.py || pylint-exit --error-fail --warn-fail $?
   build-docker-builder:
     needs: lint
-    uses: rickdb/plexanisync/.github/workflows/build-docker-image-local.yml@master
+    uses: rickdb/plexanisync/.github/workflows/build-docker-image-local.yml@test-faster-builds
     with:
       dockerfile: ./Docker/Builder/Dockerfile
       imagename: builder
@@ -40,7 +40,7 @@ jobs:
   
   build-docker-plexanisync:
     needs: build-docker-builder
-    uses: rickdb/plexanisync/.github/workflows/build-docker-image.yml@master
+    uses: rickdb/plexanisync/.github/workflows/build-docker-image.yml@test-faster-builds
     with:
       dockerfile: ./Docker/PlexAniSync/Dockerfile
       imagename: ${{ github.repository_owner }}/plexanisync
@@ -50,7 +50,7 @@ jobs:
           
   build-docker-tautulli:
     needs: build-docker-builder
-    uses: rickdb/plexanisync/.github/workflows/build-docker-image.yml@master
+    uses: rickdb/plexanisync/.github/workflows/build-docker-image.yml@test-faster-builds
     with:
       dockerfile: ./Docker/Tautulli/Dockerfile
       imagename: ${{ github.repository_owner }}/tautulli-plexanisync
