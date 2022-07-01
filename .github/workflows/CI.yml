@@ -30,6 +30,14 @@ jobs:
       run: |
         flake8 .
         pylint PlexAniSync.py TautulliSyncHelper.py plexmodule.py anilist.py custom_mappings.py || pylint-exit --error-fail --warn-fail $?
+  build-docker-builder:
+    needs: lint
+    uses: rickdb/plexanisync/.github/workflows/build-docker-image.yml@master
+    with:
+      dockerfile: ./Docker/Builder/Dockerfile
+      imagename: ${{ github.repository_owner }}/builder
+      platforms: linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64
+  
   build-docker-plexanisync:
     needs: lint
     uses: rickdb/plexanisync/.github/workflows/build-docker-image.yml@master
