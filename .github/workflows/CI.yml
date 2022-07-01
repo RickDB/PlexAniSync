@@ -36,6 +36,7 @@ jobs:
     with:
       dockerfile: ./Docker/Builder/Dockerfile
       imagename: ${{ github.repository_owner }}/builder
+      push: ${{ github.event_name != 'pull_request' }}
       platforms: linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64
   
   build-docker-plexanisync:
