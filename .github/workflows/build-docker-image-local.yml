@@ -30,20 +30,13 @@ jobs:
         uses: docker/setup-qemu-action@v2
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
-      # Add tags to metadata
-      - name: Docker meta
-        id: meta
-        uses: docker/metadata-action@v4
-        with:
-          images: ${{ env.IMAGE_NAME }}
       - name: Build Docker image
         uses: docker/build-push-action@v3
         with:
           context: .
           file: ${{ inputs.dockerfile }}
           platforms: ${{ inputs.platforms }}
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: ${{ env.IMAGE_NAME }}
           outputs: type=docker,dest=/tmp/image.tar
           pull: true
           cache-from: type=gha
