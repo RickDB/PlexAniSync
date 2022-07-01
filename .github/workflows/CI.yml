@@ -39,7 +39,7 @@ jobs:
       platforms: linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64
   
   build-docker-plexanisync:
-    needs: lint
+    needs: build-docker-builder
     uses: rickdb/plexanisync/.github/workflows/build-docker-image.yml@master
     with:
       dockerfile: ./Docker/PlexAniSync/Dockerfile
@@ -48,7 +48,7 @@ jobs:
       platforms: linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64
           
   build-docker-tautulli:
-    needs: lint
+    needs: build-docker-builder
     uses: rickdb/plexanisync/.github/workflows/build-docker-image.yml@master
     with:
       dockerfile: ./Docker/Tautulli/Dockerfile
