@@ -1,4 +1,5 @@
 # coding=utf-8
+import json
 import logging
 import os
 import sys
@@ -6,8 +7,9 @@ from dataclasses import dataclass
 from typing import Dict, List, Tuple
 
 import requests
-import yamale
-from yamale.yamale_error import YamaleError
+from jsonschema import validate
+from jsonschema.exceptions import ValidationError
+from ruamel.yaml import YAML
 
 logger = logging.getLogger("PlexAniSync")
 MAPPING_FILE = "custom_mappings.yaml"
@@ -29,19 +31,19 @@ def read_custom_mappings() -> Dict[str, List[AnilistCustomMapping]]:
 
     logger.info(f"[MAPPING] Custom mapping found locally, using: {MAPPING_FILE}")
 
-    schema = yamale.make_schema('./custom_mappings_schema.yaml', parser='ruamel')
+    yaml = YAML(typ='safe')
+    with open('./custom_mappings_schema.json', 'r', encoding='utf-8') as f:
+        schema = json.load(f)
 
     # Create a Data object
     with open(MAPPING_FILE, 'r', encoding='utf-8') as f:
-        file_mappings_local = yamale.make_data(content=f.read(), parser='ruamel')
+        file_mappings_local = yaml.load(f)
     try:
         # Validate data against the schema same as before.
-        yamale.validate(schema, file_mappings_local)
-    except YamaleError as e:
+        validate(file_mappings_local, schema)
+    except ValidationError as e:
         logger.error('[MAPPING] Custom Mappings validation failed!\n')
-        for result in e.results:
-            for error in result.errors:
-                logger.error(f"{error}\n")
+        logger.error(f"{e.message} at entry {e.instance}")
         sys.exit(1)
 
     remote_custom_mapping = get_custom_mapping_remote(file_mappings_local)
@@ -51,13 +53,11 @@ def read_custom_mappings() -> Dict[str, List[AnilistCustomMapping]]:
         mapping_location = value[0]
         yaml_content = value[1]
         try:
-            file_mappings_remote = yamale.make_data(content=yaml_content, parser='ruamel')
-            yamale.validate(schema, file_mappings_remote)
-        except YamaleError as e:
+            file_mappings_remote = yaml.load(yaml_content)
+            validate(file_mappings_local, schema)
+        except ValidationError as e:
             logger.error(f'[MAPPING] Custom Mappings {mapping_location} validation failed!\n')
-            for result in e.results:
-                for error in result.errors:
-                    logger.error(f"{error}\n")
+            logger.error(f"{e.message} at entry {e.instance}")
             sys.exit(1)
         add_mappings(custom_mappings, mapping_location, file_mappings_remote)
 
@@ -68,7 +68,7 @@ def read_custom_mappings() -> Dict[str, List[AnilistCustomMapping]]:
 
 def add_mappings(custom_mappings, mapping_location, file_mappings):
     # handles missing and empty 'entries'
-    entries = file_mappings[0][0].get('entries', []) or []
+    entries = file_mappings.get('entries', []) or []
     for file_entry in entries:
         series_title = str(file_entry['title'])
         synonyms: List[str] = file_entry.get('synonyms', [])
@@ -95,7 +95,7 @@ def add_mappings(custom_mappings, mapping_location, file_mappings):
 def get_custom_mapping_remote(file_mappings) -> List[Tuple[str, str]]:
     custom_mappings_remote: List[Tuple[str, str]] = []
     # handles missing and empty 'remote-urls'
-    remote_mappings_urls: List[str] = file_mappings[0][0].get('remote-urls', []) or []
+    remote_mappings_urls: List[str] = file_mappings.get('remote-urls', []) or []
 
     # Get url and read the data
     for url in remote_mappings_urls:

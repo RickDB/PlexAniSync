@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "$id": "http://plexanisync.github.com/mapping.json",
+  "type": "object",
+  "title": "PlexAniSync Mapping Schema",
+  "properties": {
+    "remote-urls": {
+      "type": "array",
+      "default": [],
+      "items": {
+        "type": "string"
+      }
+    },
+    "entries": {
+      "type": "array",
+      "default": [],
+      "items": {
+        "type": "object",
+        "required": [
+          "title",
+          "seasons"
+        ],
+        "properties": {
+          "title": {
+            "type": "string",
+            "examples": [
+              "The Rising of the Shield Hero",
+              "Re:ZERO -Starting Life in Another World-",
+              "Code Geass: Lelouch of the Rebellion",
+              "Gintama",
+              "Shaman King (2021)"
+            ]
+          },
+          "seasons": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": [
+                "season",
+                "anilist-id"
+              ],
+              "properties": {
+                "season": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "anilist-id": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "start": {
+                  "type": "integer"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "synonyms": {
+            "type": "array",
+            "default": [],
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}
