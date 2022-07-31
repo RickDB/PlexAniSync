@@ -4,7 +4,7 @@ coloredlogs==15.0.1
 humanfriendly==10.0
 idna==3.3
 jsonschema==4.6.1
-inflect==5.6.0
+inflect==5.6.2
 PlexAPI==4.11.2
 pyreadline3==3.4.1
 requests==2.28.1
