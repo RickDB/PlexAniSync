@@ -2,7 +2,6 @@ name: CI
 
 on:
   push:
-    branches: [ '*' ]
     # Publish semver tags as releases.
     tags: [ 'v*.*.*' ]
   pull_request:
