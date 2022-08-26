@@ -102,7 +102,7 @@ def get_custom_mapping_remote(file_mappings) -> List[Tuple[str, str]]:
         file_name = url.split('/')[-1]
         logger.info(f"[MAPPING] Adding remote mapping url: {url}")
 
-        response = requests.get(url)
+        response = requests.get(url, timeout=10)  # 10 second timeout
         if response.status_code == 200:
             custom_mappings_remote.append((file_name, response.text))
         else:
