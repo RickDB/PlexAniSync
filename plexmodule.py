@@ -69,6 +69,7 @@ def authenticate() -> PlexServer:
             plex_server = plex_settings["server"]
             plex_user = plex_settings["myplex_user"]
             plex_password = plex_settings["myplex_password"]
+            plex_token = plex_settings["myplex_token"]
 
             if home_user_sync == "true":
                 if home_username == "":
@@ -80,7 +81,7 @@ def authenticate() -> PlexServer:
                 logger.warning(
                     f"Authenticating as admin for MyPlex home user: {home_username}"
                 )
-                plex_account = MyPlexAccount(plex_user, plex_password)
+                plex_account = MyPlexAccount(plex_user, plex_password, plex_token)
                 plex_server_home = PlexServer(
                     home_server_base_url, plex_account.authenticationToken, session
                 )
