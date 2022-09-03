@@ -68,8 +68,11 @@ def authenticate() -> PlexServer:
         elif method == "myplex":
             plex_server = plex_settings["server"]
             plex_user = plex_settings["myplex_user"]
-            plex_password = plex_settings["myplex_password"]
-            plex_token = plex_settings["myplex_token"]
+            plex_password = plex_settings.get("myplex_password")
+            plex_token = plex_settings.get("myplex_token")
+            if not plex_password and not plex_token:
+                logger.error("Either myplex_password or myplex_token has to be set")
+                sys.exit(1)
 
             if home_user_sync == "true":
                 if home_username == "":
@@ -98,7 +101,7 @@ def authenticate() -> PlexServer:
                 plex = PlexServer(home_server_base_url, plex_user_token, session)
                 logger.warning("Successfully authenticated for MyPlex home user")
             else:
-                account = MyPlexAccount(plex_user, plex_password, session=session)
+                account = MyPlexAccount(plex_user, plex_password, plex_token, session=session)
                 plex = account.resource(plex_server).connect()
         else:
             logger.critical(
