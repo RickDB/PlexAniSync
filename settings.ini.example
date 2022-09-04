@@ -11,7 +11,7 @@ token = abcdef123456789
 # MyPlex
 server = Sadala
 myplex_user = John
-myplex_password = Doe
+myplex_token = abcdef123456789
 
 # if you enable home_user_sync it will only sync against that specific Plex home user, it requires the full url of your Plex server just like with the Direct IP method
 # home_username is the actual Plex home username and not their e-mail address, this is also case sensitive

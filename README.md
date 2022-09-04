@@ -43,7 +43,11 @@ Only choose one of the authentication methods, MyPlex is the easiest.
 
 ##### MyPlex authentication (prefered)
 
-For MyPlex authentication you will need your Plex server name and Plex account login information, for example:
+For MyPlex authentication you will need your Plex server name, user name and a Plex token.
+
+The method for obtaining a Plex token is described here: https://support.plex.tv/articles/204059436-finding-an-authentication-token-x-plex-token/
+
+Here is an example for synchronizing the admin account:
 
 ```
 [PLEX]
@@ -52,7 +56,7 @@ authentication_method = myplex
 
 server = Sadala
 myplex_user = Goku
-myplex_password = kamehameha
+myplex_token = abcdef123456789
 ```
 
 This completes the MyPlex authentication and **only** if you want to sync against a specific Plex Home user which isn't the admin user follow the below instructions:
@@ -67,7 +71,7 @@ authentication_method = myplex
 # MyPlex
 server = Sadala
 myplex_user = John # has to be the Plex admin user acount
-myplex_password = Doe
+myplex_token = abcdef123456789
 
 # if you enable home_user_sync it will only sync against that specific Plex home user, it requires the full url of your Plex server just like with the Direct IP method
 # home_username is the actual Plex home username and not their e-mail address, this is also case sensitive
