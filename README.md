@@ -231,10 +231,14 @@ https://github.com/RickDB/PlexAniSync/wiki/Tautulli-sync-script
 
 ## Docker
 
-Docker version is located here: [PlexAniSync](https://github.com/RickDB/PlexAniSync/pkgs/container/plexanisync)
+PlexAniSync is available as Docker image.
 
-Another docker container for Tautulli with built-in PlexAniSync can be found here: [Tautulli-PlexAniSync](https://github.com/RickDB/PlexAniSync/pkgs/container/tautulli-plexanisync)
+[PlexAniSync](https://github.com/RickDB/PlexAniSync/pkgs/container/plexanisync)<br/>
+[Documentation](Docker/PlexAniSync/README.md)
 
+Another docker container for Tautulli with built-in PlexAniSync can be found here:<br/>
+[Tautulli-PlexAniSync](https://github.com/RickDB/PlexAniSync/pkgs/container/tautulli-plexanisync)<br/> 
+[Documentation](Docker/Tautulli/README.md)
 
 ## Requirements
 
