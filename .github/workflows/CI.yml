@@ -5,6 +5,13 @@ on:
     branches: [ '*' ]
     # Publish semver tags as releases.
     tags: [ 'v*.*.*' ]
+    paths-ignore:
+      - '.github/**'
+      - '.gitattributes'
+      - '.gitignore'
+      - '**/*.md'
+      - 'LICENSE'
+      - 'renovate.json'
   pull_request:
     branches: [ master ]
   workflow_dispatch:
