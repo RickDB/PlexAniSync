@@ -2,6 +2,7 @@
 __pycache__/
 *.pyc
 *.log
+venv
 ApplyPEP8\.bat
 custom_mappings.yaml
 failed_matches\.txt
