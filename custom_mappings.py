@@ -9,7 +9,7 @@ from typing import Dict, List, Tuple
 import requests
 from jsonschema import validate
 from jsonschema.exceptions import ValidationError
-from ruamel.yaml import YAML
+from ruyaml import YAML
 
 logger = logging.getLogger("PlexAniSync")
 MAPPING_FILE = "custom_mappings.yaml"
