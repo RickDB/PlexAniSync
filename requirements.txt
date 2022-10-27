@@ -5,13 +5,11 @@ coloredlogs==15.0.1
 distro==1.8.0
 humanfriendly==10.0
 idna==3.4
-inflect==6.0.2
+inflect==5.6.2
 jsonschema==4.16.0
 PlexAPI==4.13.0
-pydantic==1.10.2
 pyreadline3==3.4.1
 pyrsistent==0.18.1
 requests==2.28.1
 ruyaml==0.91.0
-typing_extensions==4.4.0
 urllib3==1.26.12
