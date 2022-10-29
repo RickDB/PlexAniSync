@@ -20,8 +20,6 @@ ANILIST_LOG_FAILED_MATCHES = False
 
 
 def int_to_roman_numeral(decimal: int) -> str:
-    if not isinstance(decimal, type(1)):
-        return decimal
     if not 0 < decimal < 4000:
         return str(decimal)
     ints = (1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1)

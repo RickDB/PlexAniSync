@@ -6,7 +6,8 @@
   "automerge": true,
   "rebaseWhen": "conflicted",
   "pip_requirements": {
-    "extends": ["schedule:monthly"]
+    "extends": ["schedule:monthly"],
+    "ignoreDeps": ["inflect"]
   },
   "dockerfile": {
     "extends": ["schedule:monthly"]
