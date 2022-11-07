@@ -1,3 +1,4 @@
+# pylint: disable=attribute-defined-outside-init
 # coding=utf-8
 import json
 import logging
@@ -10,6 +11,7 @@ import requests
 from jsonschema import validate
 from jsonschema.exceptions import ValidationError
 from ruyaml import YAML
+import ruyaml
 
 logger = logging.getLogger("PlexAniSync")
 MAPPING_FILE = "custom_mappings.yaml"
@@ -22,6 +24,55 @@ class AnilistCustomMapping:
     anime_id: int
     start: int
 
+# Some classes for parsing YAML with line numbers
+
+
+class Str(ruyaml.scalarstring.ScalarString):
+    __slots__ = ("lc", )
+
+    style = ""
+
+    # pylint: disable-next=arguments-differ
+    def __new__(cls, value):
+        return ruyaml.scalarstring.ScalarString.__new__(cls, value)
+
+
+class MyPreservedScalarString(ruyaml.scalarstring.PreservedScalarString):
+    __slots__ = ("lc", )
+
+
+class MyDoubleQuotedScalarString(ruyaml.scalarstring.DoubleQuotedScalarString):
+    __slots__ = ("lc", )
+
+
+class MySingleQuotedScalarString(ruyaml.scalarstring.SingleQuotedScalarString):
+    __slots__ = ("lc", )
+
+
+class MyConstructor(ruyaml.constructor.RoundTripConstructor):
+    def construct_scalar(self, node):
+        if not isinstance(node, ruyaml.nodes.ScalarNode):
+            raise ruyaml.constructor.ConstructorError(
+                None, None,
+                f"expected a scalar node, but found {node.id}",
+                node.start_mark)
+
+        if node.style == '|' and isinstance(node.value, str):
+            ret_val = MyPreservedScalarString(node.value)
+        elif bool(self._preserve_quotes) and isinstance(node.value, str):
+            if node.style == "'":
+                ret_val = MySingleQuotedScalarString(node.value)
+            elif node.style == '"':
+                ret_val = MyDoubleQuotedScalarString(node.value)
+            else:
+                ret_val = Str(node.value)
+        else:
+            ret_val = Str(node.value)
+        ret_val.lc = ruyaml.comments.LineCol()
+        ret_val.lc.line = node.start_mark.line + 1
+        ret_val.lc.col = node.start_mark.column
+        return ret_val
+
 
 def read_custom_mappings() -> Dict[str, List[AnilistCustomMapping]]:
     custom_mappings: Dict[str, List[AnilistCustomMapping]] = {}
@@ -32,6 +83,7 @@ def read_custom_mappings() -> Dict[str, List[AnilistCustomMapping]]:
     logger.info(f"[MAPPING] Custom mapping found locally, using: {MAPPING_FILE}")
 
     yaml = YAML(typ='safe')
+    yaml.Constructor = MyConstructor
     with open('./custom_mappings_schema.json', 'r', encoding='utf-8') as f:
         schema = json.load(f)
 
@@ -42,9 +94,9 @@ def read_custom_mappings() -> Dict[str, List[AnilistCustomMapping]]:
         # Validate data against the schema same as before.
         validate(file_mappings_local, schema)
     except ValidationError as e:
-        logger.error('[MAPPING] Custom Mappings validation failed!\n')
-        logger.error(f"{e.message} at entry {e.instance}")
-        sys.exit(1)
+        logger.error('[MAPPING] Custom Mappings validation failed!')
+
+        handle_yaml_error(file_mappings_local, e)
 
     remote_custom_mapping = get_custom_mapping_remote(file_mappings_local)
 
@@ -52,18 +104,36 @@ def read_custom_mappings() -> Dict[str, List[AnilistCustomMapping]]:
     for value in remote_custom_mapping:
         mapping_location = value[0]
         yaml_content = value[1]
+        file_mappings_remote = yaml.load(yaml_content)
         try:
-            file_mappings_remote = yaml.load(yaml_content)
             validate(file_mappings_local, schema)
         except ValidationError as e:
-            logger.error(f'[MAPPING] Custom Mappings {mapping_location} validation failed!\n')
-            logger.error(f"{e.message} at entry {e.instance}")
-            sys.exit(1)
+            logger.error(f'[MAPPING] Custom Mappings {mapping_location} validation failed!')
+            handle_yaml_error(file_mappings_remote, e)
+
         add_mappings(custom_mappings, mapping_location, file_mappings_remote)
 
     add_mappings(custom_mappings, MAPPING_FILE, file_mappings_local)
 
     return custom_mappings
+
+
+def handle_yaml_error(file_mappings_local, error):
+    value = file_mappings_local
+    key = None
+    line = 0
+    while len(error.path) > 0:
+        key = error.path.popleft()
+        # only objects and strings have line numbers
+        if hasattr(value[key], 'lc'):
+            line = value.lc.line
+        value = value[key]
+
+    if hasattr(value, 'lc'):
+        logger.error(f"Line {line}: {error.message}")
+    else:
+        logger.error(f"Line {line}, Attribute '{key}': {error.message}")
+    sys.exit(1)
 
 
 def add_mappings(custom_mappings, mapping_location, file_mappings):
