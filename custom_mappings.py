@@ -32,6 +32,7 @@ class Str(ruyaml.scalarstring.ScalarString):
 
     style = ""
 
+    # pylint: disable-next arguments-differ
     def __new__(cls, value):
         return ruyaml.scalarstring.ScalarString.__new__(cls, value)
 
@@ -50,6 +51,7 @@ class MySingleQuotedScalarString(ruyaml.scalarstring.SingleQuotedScalarString):
 
 class MyConstructor(ruyaml.constructor.RoundTripConstructor):
     def construct_scalar(self, node):
+        Str("a", "b")
         if not isinstance(node, ruyaml.nodes.ScalarNode):
             raise ruyaml.constructor.ConstructorError(
                 None, None,
