@@ -1,3 +1,4 @@
+# pylint: disable=attribute-defined-outside-init
 # coding=utf-8
 import json
 import logging
@@ -27,7 +28,7 @@ class AnilistCustomMapping:
 
 
 class Str(ruyaml.scalarstring.ScalarString):
-    __slots__ = "lc"
+    __slots__ = ("lc", )
 
     style = ""
 
@@ -36,15 +37,15 @@ class Str(ruyaml.scalarstring.ScalarString):
 
 
 class MyPreservedScalarString(ruyaml.scalarstring.PreservedScalarString):
-    __slots__ = "lc"
+    __slots__ = ("lc", )
 
 
 class MyDoubleQuotedScalarString(ruyaml.scalarstring.DoubleQuotedScalarString):
-    __slots__ = "lc"
+    __slots__ = ("lc", )
 
 
 class MySingleQuotedScalarString(ruyaml.scalarstring.SingleQuotedScalarString):
-    __slots__ = "lc"
+    __slots__ = ("lc", )
 
 
 class MyConstructor(ruyaml.constructor.RoundTripConstructor):
