@@ -32,7 +32,7 @@ class Str(ruyaml.scalarstring.ScalarString):
 
     style = ""
 
-    # pylint: disable-next arguments-differ
+    # pylint: disable-next=arguments-differ
     def __new__(cls, value):
         return ruyaml.scalarstring.ScalarString.__new__(cls, value)
 
@@ -51,7 +51,6 @@ class MySingleQuotedScalarString(ruyaml.scalarstring.SingleQuotedScalarString):
 
 class MyConstructor(ruyaml.constructor.RoundTripConstructor):
     def construct_scalar(self, node):
-        Str("a", "b")
         if not isinstance(node, ruyaml.nodes.ScalarNode):
             raise ruyaml.constructor.ConstructorError(
                 None, None,
@@ -119,21 +118,21 @@ def read_custom_mappings() -> Dict[str, List[AnilistCustomMapping]]:
     return custom_mappings
 
 
-def handle_yaml_error(file_mappings_local, e):
+def handle_yaml_error(file_mappings_local, error):
     value = file_mappings_local
     key = None
     line = 0
-    while len(e.path) > 0:
-        key = e.path.popleft()
+    while len(error.path) > 0:
+        key = error.path.popleft()
         # only objects and strings have line numbers
         if hasattr(value[key], 'lc'):
             line = value.lc.line
         value = value[key]
 
     if hasattr(value, 'lc'):
-        logger.error(f"Line {line}: {e.message}")
+        logger.error(f"Line {line}: {error.message}")
     else:
-        logger.error(f"Line {line}, Attribute '{key}': {e.message}")
+        logger.error(f"Line {line}, Attribute '{key}': {error.message}")
     sys.exit(1)
 
 
