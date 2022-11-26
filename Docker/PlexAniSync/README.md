@@ -8,7 +8,7 @@
 docker run -d \
   --name=plexanisync \
   --restart unless-stopped \
-  -e PLEX_SECTION=Anime \
+  -e PLEX_SECTION=Anime|Anime Movies \
   -e PLEX_URL=http://127.0.0.1:32400 \
   -e PLEX_TOKEN=SomePlexToken \
   -e ANI_USERNAME=SomeUser \
@@ -29,7 +29,7 @@ services:
     image: 'ghcr.io/rickdb/plexanisync:latest'
     restart: unless-stopped
     environment:
-      - PLEX_SECTION=Anime
+      - PLEX_SECTION=Anime|Anime Movies
       - 'PLEX_URL=http://127.0.0.1:32400'
       - PLEX_TOKEN=SomePlexToken
       - ANI_USERNAME=SomeUser
@@ -44,7 +44,7 @@ services:
 
 | ID                          | Default                | Required  | Note                                                                                                                                                     |
 | --------------------------- | ---------------------- | :-------: | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| PLEX_SECTION                | Anime                  | &#10003;* | The library where your anime resides.<br /><br />You can specify multiple values by seperating the library names with `|`.                               |
+| PLEX_SECTION                | Anime                  | &#10003;* | The library where your anime resides.<br /><br />You can specify multiple values by seperating the library names with &#124; .                           | 
 | PLEX_URL                    | http://127.0.0.1:32400 | &#10003;* | The address to your Plex Media Server, for example: http://127.0.0.1:32400                                                                               |
 | PLEX_TOKEN                  | -                      | &#10003;* | Follow [this guide](https://support.plex.tv/articles/204059436-finding-an-authentication-token-x-plex-token/)                                            |
 | ANI_USERNAME                | -                      | &#10003;* | Your [AniList.co](http://www.anilist.co) username                                                                                                        |
