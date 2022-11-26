@@ -44,7 +44,7 @@ services:
 
 | ID                          | Default                | Required  | Note                                                                                                                                                     |
 | --------------------------- | ---------------------- | :-------: | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| PLEX_SECTION                | Anime                  | &#10003;* | The library where your anime resides.<br /><br />You can specify multiple values by seperating the library names with &#124; .
+| PLEX_SECTION                | Anime                  | &#10003;* | The library where your anime resides.<br /><br />You can specify multiple values by seperating the library names with &#124; . |
 | PLEX_URL                    | http://127.0.0.1:32400 | &#10003;* | The address to your Plex Media Server, for example: http://127.0.0.1:32400                                                                               |
 | PLEX_TOKEN                  | -                      | &#10003;* | Follow [this guide](https://support.plex.tv/articles/204059436-finding-an-authentication-token-x-plex-token/)                                            |
 | ANI_USERNAME                | -                      | &#10003;* | Your [AniList.co](http://www.anilist.co) username                                                                                                        |
@@ -53,7 +53,7 @@ services:
 | SKIP_LIST_UPDATE            | -                      | &#10005;  | If set to True, it will NOT update your AniList which is useful if you want to do a test run to check if everything lines up properly. (default = False) |
 | LOG_FAILED_MATCHES          | -                      | &#10005;  | If set to True, failed matches will be written to /plexanisync/failed_matches.txt (default = False)                                                      |
 | SETTINGS_FILE               | -                      | &#10005;  | Location of a custom settings.ini for more advanced configuration. Makes all settings above obsolete. See section below for usage.                       |
-| INTERVAL                    | 3600                   | &#10005;  | The time in between syncs in seconds                                                               
+| INTERVAL                    | 3600                   | &#10005;  | The time in between syncs in seconds |                                                          
 
 ### Custom mappings
 
