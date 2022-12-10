@@ -8,7 +8,7 @@
 docker run -d \
   --name=plexanisync \
   --restart unless-stopped \
-  -e PLEX_SECTION=Anime|Anime Movies \
+  -e PLEX_SECTION="Anime|Anime Movies" \
   -e PLEX_URL=http://127.0.0.1:32400 \
   -e PLEX_TOKEN=SomePlexToken \
   -e ANI_USERNAME=SomeUser \
