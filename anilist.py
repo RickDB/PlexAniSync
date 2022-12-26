@@ -194,35 +194,30 @@ def match_to_plex(anilist_series: List[AnilistSeries], plex_series_watched: List
                     )
 
                     if not match:
+                        # Create first match dict for this anilist id
                         anilist_matches.append({
                             "anilist_id": matched_id,
                             "watched_episodes": plex_season.watched_episodes,
                             "total_episodes": plex_season.last_episode,
                             "mapped_seasons": [plex_season.season_number],
-                            "duplicate_mappings": 0,
                         })
                         continue
                     # For multiple seasons with the same anilist id check how they should be added together
                     elif index > 0 and plex_season.first_episode > plex_seasons[index - 1].last_episode:
                         match["watched_episodes"] = plex_season.watched_episodes
+                        match["total_episodes"] = plex_seasons[index - 1].last_episode + plex_season.last_episode
                     else:
                         match["watched_episodes"] += plex_season.watched_episodes
+                        match["total_episodes"] += plex_season.last_episode
 
-                    match["total_episodes"] = + plex_season.last_episode
                     match["mapped_seasons"].append(plex_season.season_number)
-                    match["duplicate_mappings"] += 1
 
             for match in anilist_matches:
                 logger.info(
                     "[MAPPING] Custom Mapping of Title found | "
                     f"title: {plex_title} | anilist id: {match['anilist_id']} | "
                     f"total watched episodes: {match['watched_episodes']} | "
-                    f"seasons mapped: {match['mapped_seasons']} | "
                 )
-                # If we had custom mappings for multiple seasons with the same ID use
-                # cumulative episode count and skip per season processing
-                if match["duplicate_mappings"] == 0:
-                    continue
 
                 add_or_update_show_by_id(
                     anilist_series, plex_title,
