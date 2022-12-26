@@ -198,17 +198,14 @@ def match_to_plex(anilist_series: List[AnilistSeries], plex_series_watched: List
                         anilist_matches.append({
                             "anilist_id": matched_id,
                             "watched_episodes": plex_season.watched_episodes,
-                            "total_episodes": plex_season.last_episode,
                             "mapped_seasons": [plex_season.season_number],
                         })
                         continue
                     # For multiple seasons with the same anilist id check how they should be added together
                     elif index > 0 and plex_season.first_episode > plex_seasons[index - 1].last_episode:
                         match["watched_episodes"] = plex_season.watched_episodes
-                        match["total_episodes"] = plex_seasons[index - 1].last_episode + plex_season.last_episode
                     else:
                         match["watched_episodes"] += plex_season.watched_episodes
-                        match["total_episodes"] += plex_season.last_episode
 
                     match["mapped_seasons"].append(plex_season.season_number)
 
