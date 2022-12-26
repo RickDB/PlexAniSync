@@ -186,6 +186,7 @@ def match_to_plex(anilist_series: List[AnilistSeries], plex_series_watched: List
                 )
                 if season_mappings:
                     matched_id = season_mappings[0].anime_id
+                    mapped_start = season_mappings[0].start
 
                     custom_mapped_seasons.append(plex_season.season_number)
                     match = next(
@@ -197,16 +198,18 @@ def match_to_plex(anilist_series: List[AnilistSeries], plex_series_watched: List
                         # Create first match dict for this anilist id
                         anilist_matches.append({
                             "anilist_id": matched_id,
-                            "watched_episodes": plex_season.watched_episodes,
+                            "watched_episodes": mapped_start + plex_season.watched_episodes,
                             "mapped_seasons": [plex_season.season_number],
                         })
                         continue
-                    # For multiple seasons with the same anilist id check how they should be added together
-                    elif index > 0 and plex_season.first_episode > plex_seasons[index - 1].last_episode:
-                        match["watched_episodes"] = plex_season.watched_episodes
+                    # For multiple seasons with the same id
+                    # If the start of this season has been mapped use that
+                    if mapped_start:
+                        match["watched_episodes"] = mapped_start + plex_season.watched_episodes
                     else:
                         match["watched_episodes"] += plex_season.watched_episodes
 
+                    # TODO support using number of last episode of the last season as a start
                     match["mapped_seasons"].append(plex_season.season_number)
 
             for match in anilist_matches:
@@ -816,7 +819,7 @@ def map_watchcount_to_seasons(title: str, season_mappings: List[AnilistCustomMap
 
     for mapping in season_mappings:
         if watched_episodes >= mapping.start:
-            episodes_in_season = (watched_episodes - mapping.start + 1)
+            episodes_in_season = (watched_episodes - mapping.start)
             total_mapped_episodes += episodes_in_season
             episodes_in_anilist_entry[mapping.anime_id] = episodes_in_season
 
