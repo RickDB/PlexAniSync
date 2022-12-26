@@ -208,14 +208,6 @@ def match_to_plex(anilist_series: List[AnilistSeries], plex_series_watched: List
                     else:
                         match["watched_episodes"] += plex_season.watched_episodes
 
-                        logger.warning(f"[MAPPING] Duplicate anilist-id found for custom mapping | "
-                                       f"title: {plex_title} | "
-                                       f"anilist id: {matched_id} | "
-                                       f"total watched episodes: {match['watched_episodes']} | "
-                                       f"previous season matches: {match['mapped_seasons']} | "
-                                       f"current season: {plex_season.season_number} |"
-                                       )
-
                     match["total_episodes"] = + plex_season.last_episode
                     match["mapped_seasons"].append(plex_season.season_number)
                     match["duplicate_mappings"] += 1
