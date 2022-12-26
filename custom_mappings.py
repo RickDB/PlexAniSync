@@ -146,7 +146,7 @@ def add_mappings(custom_mappings, mapping_location, file_mappings):
         for file_season in file_entry['seasons']:
             season = file_season['season']
             anilist_id = file_season['anilist-id']
-            start = file_season.get('start', 1)
+            start = file_season.get('start', 0)
             logger.info(
                 f"[MAPPING] Adding custom mapping from {mapping_location} "
                 f"| title: {series_title} | season: {season} | anilist id: {anilist_id}"
