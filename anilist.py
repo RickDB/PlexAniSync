@@ -179,9 +179,9 @@ def match_to_plex(anilist_series: List[AnilistSeries], plex_series_watched: List
         # Check if we have custom mappings for all seasons (One Piece for example)
         if len(plex_seasons) > 1:
             anilist_matches = []
-            for index, plex_season in enumerate(plex_seasons):
+            for plex_season in plex_seasons:
 
-                season_mappings = retrieve_season_mappings(
+                season_mappings: List[AnilistCustomMapping] = retrieve_season_mappings(
                     plex_title, plex_season.season_number
                 )
                 if season_mappings:
@@ -199,13 +199,14 @@ def match_to_plex(anilist_series: List[AnilistSeries], plex_series_watched: List
                         anilist_matches.append({
                             "anilist_id": matched_id,
                             "watched_episodes": mapped_start + plex_season.watched_episodes,
+                            "total_episodes": plex_season.last_episode,
                             "mapped_seasons": [plex_season.season_number],
                         })
                         continue
                     # For multiple seasons with the same id
-                    # If the start of this season has been mapped use that
-                    if mapped_start:
-                        match["watched_episodes"] = mapped_start + plex_season.watched_episodes
+                    # If the start of this season has been mapped use that.
+                    if mapped_start > 1:
+                        match["watched_episodes"] = (plex_season.watched_episodes - mapped_start + 1)
                     else:
                         match["watched_episodes"] += plex_season.watched_episodes
 
@@ -217,6 +218,7 @@ def match_to_plex(anilist_series: List[AnilistSeries], plex_series_watched: List
                     "[MAPPING] Custom Mapping of Title found | "
                     f"title: {plex_title} | anilist id: {match['anilist_id']} | "
                     f"total watched episodes: {match['watched_episodes']} | "
+                    f"seasons with the same anilist id: {match['mapped_seasons']}"
                 )
 
                 add_or_update_show_by_id(
@@ -819,7 +821,7 @@ def map_watchcount_to_seasons(title: str, season_mappings: List[AnilistCustomMap
 
     for mapping in season_mappings:
         if watched_episodes >= mapping.start:
-            episodes_in_season = (watched_episodes - mapping.start)
+            episodes_in_season = (watched_episodes - mapping.start + 1)
             total_mapped_episodes += episodes_in_season
             episodes_in_anilist_entry[mapping.anime_id] = episodes_in_season
 
