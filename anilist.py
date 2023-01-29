@@ -205,7 +205,7 @@ def match_to_plex(anilist_series: List[AnilistSeries], plex_series_watched: List
                         continue
                     # For multiple seasons with the same id
                     # If the start of this season has been mapped use that.
-                    if mapped_start > 1:
+                    if mapped_start != 1:
                         match["watched_episodes"] = (plex_season.watched_episodes - mapped_start + 1)
                     else:
                         match["watched_episodes"] += plex_season.watched_episodes
