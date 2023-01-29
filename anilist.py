@@ -198,7 +198,7 @@ def match_to_plex(anilist_series: List[AnilistSeries], plex_series_watched: List
                         # Create first match dict for this anilist id
                         anilist_matches.append({
                             "anilist_id": matched_id,
-                            "watched_episodes": mapped_start + plex_season.watched_episodes,
+                            "watched_episodes": plex_season.watched_episodes - mapped_start + 1,
                             "total_episodes": plex_season.last_episode,
                             "mapped_seasons": [plex_season.season_number],
                         })
