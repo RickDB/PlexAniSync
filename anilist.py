@@ -172,54 +172,67 @@ def match_to_plex(anilist_series: List[AnilistSeries], plex_series_watched: List
         plex_seasons = plex_series.seasons
         plex_anilist_id = plex_series.anilist_id
 
-        custom_mapping_seasons_anilist_id = 0
-        mapped_season_count = 0
-        plex_watched_episode_count_custom_mapping = 0
+        custom_mapped_seasons = []
 
         logger.info("--------------------------------------------------")
 
         # Check if we have custom mappings for all seasons (One Piece for example)
         if len(plex_seasons) > 1:
-            custom_mapping_season_count = 0
-            for index, plex_season in enumerate(plex_seasons):
-                season_mappings = retrieve_season_mappings(
+            anilist_matches = []
+            for plex_season in plex_seasons:
+
+                season_mappings: List[AnilistCustomMapping] = retrieve_season_mappings(
                     plex_title, plex_season.season_number
                 )
-                matched_id = 0
                 if season_mappings:
                     matched_id = season_mappings[0].anime_id
-                    if custom_mapping_seasons_anilist_id in (0, matched_id):
-                        custom_mapping_season_count += 1
-                        custom_mapping_seasons_anilist_id = matched_id
+                    mapped_start = season_mappings[0].start
 
-                        # Check if season should be added together
-                        if (index != 0 and plex_season.first_episode > plex_seasons[index - 1].last_episode):
-                            plex_watched_episode_count_custom_mapping = plex_season.watched_episodes
-                        else:
-                            plex_watched_episode_count_custom_mapping += plex_season.watched_episodes
+                    custom_mapped_seasons.append(plex_season.season_number)
+                    match = next(
+                        (item for item in anilist_matches if item['anilist_id'] == matched_id),
+                        None,
+                    )
 
-            # If we had custom mappings for multiple seasons with the same ID use
-            # cumulative episode count and skip per season processing
-            if custom_mapping_season_count > 1:
-                logger.warning(
-                    "[ANILIST] Found same custom mapping id for multiple seasons "
-                    "so not using per season processing but updating as one | "
-                    f"title: {plex_title} | anilist id: {custom_mapping_seasons_anilist_id} | "
-                    f"total watched episodes: {plex_watched_episode_count_custom_mapping}"
+                    if not match:
+                        # Create first match dict for this anilist id
+                        anilist_matches.append({
+                            "anilist_id": matched_id,
+                            "watched_episodes": plex_season.watched_episodes - mapped_start + 1,
+                            "total_episodes": plex_season.last_episode,
+                            "mapped_seasons": [plex_season.season_number],
+                        })
+                        continue
+                    # For multiple seasons with the same id
+                    # If the start of this season has been mapped use that.
+                    if mapped_start != 1:
+                        match["watched_episodes"] = (plex_season.watched_episodes - mapped_start + 1)
+                    else:
+                        match["watched_episodes"] += plex_season.watched_episodes
+
+                    # TODO support using number of last episode of the last season as a start
+                    match["mapped_seasons"].append(plex_season.season_number)
+
+            for match in anilist_matches:
+                logger.info(
+                    "[MAPPING] Custom Mapping of Title found | "
+                    f"title: {plex_title} | anilist id: {match['anilist_id']} | "
+                    f"total watched episodes: {match['watched_episodes']} | "
+                    f"seasons with the same anilist id: {match['mapped_seasons']}"
                 )
 
                 add_or_update_show_by_id(
-                    anilist_series, plex_title, plex_year, True, plex_watched_episode_count_custom_mapping,
-                    custom_mapping_seasons_anilist_id
+                    anilist_series, plex_title,
+                    plex_year,
+                    True, match['watched_episodes'],
+                    match['anilist_id']
                 )
-                mapped_season_count = custom_mapping_season_count
-
-                if custom_mapping_season_count == len(plex_seasons):
-                    continue
 
         # Start processing of any remaining seasons
-        for plex_season in plex_seasons[mapped_season_count:]:
+        for plex_season in plex_seasons:
             season_number = plex_season.season_number
+            if season_number in custom_mapped_seasons:
+                continue
 
             plex_watched_episode_count = plex_season.watched_episodes
             if plex_watched_episode_count == 0:
