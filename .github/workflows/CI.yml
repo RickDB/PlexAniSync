@@ -34,7 +34,7 @@ jobs:
     - name: Setup flake8 annotations
       uses: rbialon/flake8-annotations@v1
     - name: Add pylint annotator
-      uses: jpy-git/pylint-pr-annotator@v0.0.1
+      uses: pr-annotators/pylint-pr-annotator@v0.0.1
     - name: Lint with flake8 and pylint
       run: |
         flake8 .
