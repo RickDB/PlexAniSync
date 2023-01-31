@@ -10,6 +10,6 @@ jsonschema==4.16.0
 PlexAPI==4.13.2
 pyreadline3==3.4.1
 pyrsistent==0.19.3
-requests==2.28.1
+requests==2.28.2
 ruyaml==0.91.0
 urllib3==1.26.12
