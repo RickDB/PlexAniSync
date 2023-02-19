@@ -31,6 +31,7 @@ class PlexWatchedSeries:
     title_original: str
     year: int
     seasons: List[PlexSeason]
+    rating: int
     anilist_id: Optional[int]
 
 
@@ -177,10 +178,12 @@ def get_watched_shows(shows: List[Show]) -> Optional[List[PlexWatchedSeries]]:
                                       show_seasons)
 
                 seasons = []
+                seasons_average_rating = 0
                 for season in show_seasons:
                     season_watchcount = get_watched_episodes_for_show_season(season)
                     season_firstepisode = get_first_episode_for_show_season(season)
                     season_lastepisode = get_last_episode_for_show_season(season)
+                    seasons_average_rating += get_season_rating_for_show_season(season)
                     seasons.append(PlexSeason(season.seasonNumber, season_watchcount, season_firstepisode, season_lastepisode))
 
                 if seasons:
@@ -188,6 +191,11 @@ def get_watched_shows(shows: List[Show]) -> Optional[List[PlexWatchedSeries]]:
                     year = 1900
                     if show.year:
                         year = int(show.year)
+
+                    seasons_average_rating = int(seasons_average_rating / len(seasons))
+                    series_rating = 0
+                    if show.userRating:
+                        series_rating = int(show.userRating * 10)
 
                     if not hasattr(show, "titleSort"):
                         show.titleSort = show.title
@@ -208,6 +216,7 @@ def get_watched_shows(shows: List[Show]) -> Optional[List[PlexWatchedSeries]]:
                         show.originalTitle.strip(),
                         year,
                         seasons,
+                        (lambda: series_rating, lambda: seasons_average_rating)[seasons_average_rating > 0](),
                         anilist_id
                     )
                     watched_series.append(watched_show)
@@ -222,8 +231,13 @@ def get_watched_shows(shows: List[Show]) -> Optional[List[PlexWatchedSeries]]:
 
                 if hasattr(show, "isWatched") and show.isWatched:
                     year = 1900
+                    series_rating = 0
+
                     if show.year:
                         year = int(show.year)
+
+                    if show.userRating:
+                        series_rating = int(show.userRating * 10)
 
                     if not hasattr(show, "titleSort"):
                         show.titleSort = show.title
@@ -244,6 +258,7 @@ def get_watched_shows(shows: List[Show]) -> Optional[List[PlexWatchedSeries]]:
                         show.originalTitle.strip(),
                         year,
                         [PlexSeason(1, 1, 1, 1)],
+                        series_rating,
                         anilist_id
                     )
                     watched_series.append(watched_show)
@@ -280,3 +295,7 @@ def get_first_episode_for_show_season(season: Season) -> int:
 
 def get_last_episode_for_show_season(season: Season) -> int:
     return season.episodes()[-1].index
+
+
+def get_season_rating_for_show_season(season: Season) -> int:
+    return int((season.userRating or 0) * 10)

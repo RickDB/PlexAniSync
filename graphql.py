@@ -99,6 +99,7 @@ def fetch_user_list(username: str):
                         id
                         progress
                         status
+                        score
                         repeat
                         media {
                             id
@@ -133,13 +134,13 @@ def fetch_user_list(username: str):
     return json.loads(response.content, object_hook=to_object)
 
 
-def update_series(media_id: int, progress: int, status: str):
+def update_series(media_id: int, progress: int, status: str, scoreRaw: int):
     if ANILIST_SKIP_UPDATE:
         logger.warning("[ANILIST] Skip update is enabled in settings so not updating this item")
         return
     query = """
-        mutation ($mediaId: Int, $status: MediaListStatus, $progress: Int) {
-            SaveMediaListEntry (mediaId: $mediaId, status: $status, progress: $progress) {
+        mutation ($mediaId: Int, $status: MediaListStatus, $progress: Int, $scoreRaw: Int) {
+            SaveMediaListEntry (mediaId: $mediaId, status: $status, progress: $progress, scoreRaw: $scoreRaw) {
                 id
                 status,
                 progress
@@ -147,7 +148,7 @@ def update_series(media_id: int, progress: int, status: str):
         }
         """
 
-    variables = {"mediaId": media_id, "status": status, "progress": int(progress)}
+    variables = {"mediaId": media_id, "status": status, "progress": int(progress), "scoreRaw": scoreRaw}
 
     send_graphql_request(query, variables)
 
