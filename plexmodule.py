@@ -19,6 +19,7 @@ plex_settings = dict()
 @dataclass
 class PlexSeason:
     season_number: int
+    season_rating: int
     watched_episodes: int
     first_episode: int
     last_episode: int
@@ -31,7 +32,8 @@ class PlexWatchedSeries:
     title_original: str
     year: int
     seasons: List[PlexSeason]
-    rating: int
+    series_rating: int
+    seasons_average_rating: int
     anilist_id: Optional[int]
 
 
@@ -183,8 +185,9 @@ def get_watched_shows(shows: List[Show]) -> Optional[List[PlexWatchedSeries]]:
                     season_watchcount = get_watched_episodes_for_show_season(season)
                     season_firstepisode = get_first_episode_for_show_season(season)
                     season_lastepisode = get_last_episode_for_show_season(season)
+                    season_rating = get_season_rating_for_show_season(season)
                     seasons_average_rating += get_season_rating_for_show_season(season)
-                    seasons.append(PlexSeason(season.seasonNumber, season_watchcount, season_firstepisode, season_lastepisode))
+                    seasons.append(PlexSeason(season.seasonNumber, season_rating, season_watchcount, season_firstepisode, season_lastepisode))
 
                 if seasons:
                     # Add year if we have one otherwise fallback
@@ -216,7 +219,8 @@ def get_watched_shows(shows: List[Show]) -> Optional[List[PlexWatchedSeries]]:
                         show.originalTitle.strip(),
                         year,
                         seasons,
-                        (lambda: series_rating, lambda: seasons_average_rating)[seasons_average_rating > 0](),
+                        series_rating,
+                        seasons_average_rating,
                         anilist_id
                     )
                     watched_series.append(watched_show)
@@ -259,6 +263,7 @@ def get_watched_shows(shows: List[Show]) -> Optional[List[PlexWatchedSeries]]:
                         year,
                         [PlexSeason(1, 1, 1, 1)],
                         series_rating,
+                        0,
                         anilist_id
                     )
                     watched_series.append(watched_show)

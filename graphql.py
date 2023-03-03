@@ -99,7 +99,7 @@ def fetch_user_list(username: str):
                         id
                         progress
                         status
-                        score
+                        score(format:POINT_100)
                         repeat
                         media {
                             id
@@ -148,7 +148,9 @@ def update_series(media_id: int, progress: int, status: str, scoreRaw: int):
         }
         """
 
-    variables = {"mediaId": media_id, "status": status, "progress": int(progress), "scoreRaw": scoreRaw}
+    variables = {"mediaId": media_id, "status": status, "progress": int(progress)}
+    if (scoreRaw > 0):
+        variables['scoreRaw'] = scoreRaw
 
     send_graphql_request(query, variables)
 

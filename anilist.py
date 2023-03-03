@@ -174,7 +174,7 @@ def match_to_plex(anilist_series: List[AnilistSeries], plex_series_watched: List
         plex_title_original = plex_series.title_original
         plex_year = plex_series.year
         plex_seasons = plex_series.seasons
-        plex_rating = plex_series.rating
+        plex_rating = plex_series.seasons_average_rating or plex_series.series_rating
         plex_anilist_id = plex_series.anilist_id
 
         custom_mapped_seasons = []
