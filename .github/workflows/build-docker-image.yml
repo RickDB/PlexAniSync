@@ -1,4 +1,4 @@
-name: Build and Push Docker Image to ghcr.io
+name: Build and Push Docker Image to docker.com and ghcr.io
 
 on: 
   workflow_call:
@@ -15,10 +15,6 @@ on:
       push:
         required: true
         type: boolean
-
-env:
-  # Use docker.io for Docker Hub if empty
-  REGISTRY: ghcr.io
 
 jobs:
   build:
@@ -43,16 +39,24 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          # Push to both docker.com and ghcr.io
+          images: |
+            ${{ env.IMAGE_NAME }}
+            ghcr.io/${{ env.IMAGE_NAME }}
           tags: |
             type=ref,event=branch
             type=ref,event=pr
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
-      - name: Log into registry ${{ env.REGISTRY }}
+      - name: Log into docker.com registry
         uses: docker/login-action@v2
         with:
-          registry: ${{ env.REGISTRY }}
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Log into ghcr.io registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Build Docker image
