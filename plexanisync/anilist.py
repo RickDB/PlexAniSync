@@ -34,15 +34,15 @@ def int_to_roman_numeral(decimal: int) -> str:
 
 
 def log_to_file(message: str):
-    file = open("failed_matches.txt", "a+", encoding="utf-8")
-    file.write(f"{message}\n")
-    file.close()
+    with open("failed_matches.txt", "a+", encoding="utf-8") as file:
+        file.write(f"{message}\n")
 
 
 def clean_failed_matches_file():
     try:
         # create or overwrite the file with empty content
-        open("failed_matches.txt", 'w', encoding="utf-8").close()
+        with open("failed_matches.txt", 'w', encoding="utf-8"):
+            pass
     except BaseException:
         pass
 
