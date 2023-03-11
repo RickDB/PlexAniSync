@@ -16,6 +16,7 @@ ANILIST_SKIP_UPDATE = False
 
 endpoint = None
 
+
 def search_by_id(anilist_id: int):
     op = Operation(schema.Query)
     media = op.media(id=anilist_id, type="ANIME")

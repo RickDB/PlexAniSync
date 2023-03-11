@@ -78,8 +78,6 @@ def process_user_list(username: str) -> Optional[List[AnilistSeries]]:
                 if hasattr(media_collection, "entries"):
                     for list_entry in media_collection.entries:
                         if (hasattr(list_entry, "status")
-                                and list_entry.status in ["CURRENT", "PLANNING", "COMPLETED", "DROPPED", "PAUSED",
-                                                            "REPEATING"]
                                 and list_entry.media):
                             series_obj = mediaitem_to_object(list_entry)
                             anilist_series.append(series_obj)
