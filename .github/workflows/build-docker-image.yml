@@ -15,12 +15,6 @@ on:
       push:
         required: true
         type: boolean
-    secrets:
-      DOCKERHUB_USERNAME:
-        required: false
-      DOCKERHUB_PASSWORD:
-        required: false
-      
 
 jobs:
   build:
