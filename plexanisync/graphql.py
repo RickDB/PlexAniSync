@@ -28,6 +28,8 @@ class GraphQL:
             session=requests.Session()
         )
         self.endpoint.logger = logger
+        self.skip_list_update = self.anilist_settings.getboolean("skip_list_update", False)
+        self.sync_scores = self.anilist_settings.getboolean("sync_scores", True)
 
     def search_by_id(self, anilist_id: int):
         operation = Operation(schema.Query)
@@ -79,6 +81,7 @@ class GraphQL:
         lists = operation.media_list_collection(user_name=username, type="ANIME").lists
         lists.__fields__('name', 'status', 'is_custom_list')
         lists.entries.__fields__('id', 'progress', 'status', 'repeat')
+        lists.entries.score(format="POINT_100")
         lists.entries.media.__fields__(
             'id',
             'type',
@@ -96,16 +99,36 @@ class GraphQL:
         data = self.__send_graphql_request(operation)
         return (operation + data).media_list_collection
 
-    def update_series(self, media_id: int, progress: int, status: str):
-        if self.anilist_settings.getboolean("skip_list_update", False):
+    def update_series(self, media_id: int, progress: int, status: str, score_raw: int):
+        if self.skip_list_update:
+            logger.warning("Skip update is enabled in settings so not updating this item")
+            return
+
+        op = Operation(schema.Mutation)
+        if score_raw and self.sync_scores:
+            op.save_media_list_entry(
+                media_id=media_id,
+                status=status,
+                progress=progress,
+                score_raw=score_raw
+            )
+        else:
+            op.save_media_list_entry(
+                media_id=media_id,
+                status=status,
+                progress=progress
+            )
+        self.__send_graphql_request(op)
+
+    def update_score(self, media_id, score_raw: int):
+        if self.skip_list_update:
             logger.warning("Skip update is enabled in settings so not updating this item")
             return
 
         op = Operation(schema.Mutation)
         op.save_media_list_entry(
             media_id=media_id,
-            status=status,
-            progress=progress
+            score_raw=score_raw
         )
         self.__send_graphql_request(op)
 
