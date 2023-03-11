@@ -45,7 +45,7 @@ jobs:
         with:
           # Push to both docker.com and ghcr.io
           images: |
-            ${{ env.IMAGE_NAME }},enable=false
+            ${{ env.IMAGE_NAME }}
             ghcr.io/${{ env.IMAGE_NAME }}
           tags: |
             type=ref,event=branch
