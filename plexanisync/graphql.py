@@ -14,12 +14,12 @@ logger = PrefixLoggerAdapter(logging.getLogger("PlexAniSync"), dict(prefix='GRAP
 ANILIST_ACCESS_TOKEN = ""
 ANILIST_SKIP_UPDATE = False
 
-endpoint = None
+endpoint = None  # pylint: disable=invalid-name
 
 
 def search_by_id(anilist_id: int):
-    op = Operation(schema.Query)
-    media = op.media(id=anilist_id, type="ANIME")
+    operation = Operation(schema.Query)
+    media = operation.media(id=anilist_id, type="ANIME")
     media.__fields__(
         'id',
         'type',
@@ -34,15 +34,15 @@ def search_by_id(anilist_id: int):
     media.start_date.year()
     media.end_date.year()
 
-    data = send_graphql_request(op)
+    data = send_graphql_request(operation)
 
-    media = (op + data).media
+    media = (operation + data).media
     return media
 
 
 def search_by_name(anilist_show_name: str):
-    op = Operation(schema.Query)
-    page = op.page(page=1, per_page=50)
+    operation = Operation(schema.Query)
+    page = operation.page(page=1, per_page=50)
     media = page.media(search=anilist_show_name, type="ANIME")
     media.__fields__(
         'id',
@@ -58,15 +58,15 @@ def search_by_name(anilist_show_name: str):
     media.start_date.year()
     media.end_date.year()
 
-    data = send_graphql_request(op)
+    data = send_graphql_request(operation)
 
-    media = (op + data).page.media
+    media = (operation + data).page.media
     return media
 
 
 def fetch_user_list(username: str):
-    op = Operation(schema.Query)
-    lists = op.media_list_collection(user_name=username, type="ANIME").lists
+    operation = Operation(schema.Query)
+    lists = operation.media_list_collection(user_name=username, type="ANIME").lists
     lists.__fields__('name', 'status', 'is_custom_list')
     lists.entries.__fields__('id', 'progress', 'status', 'repeat')
     lists.entries.media.__fields__(
@@ -83,8 +83,8 @@ def fetch_user_list(username: str):
     lists.entries.media.end_date.year()
     lists.entries.media.title.__fields__('romaji', 'english', 'native')
 
-    data = send_graphql_request(op)
-    return (op + data).media_list_collection
+    data = send_graphql_request(operation)
+    return (operation + data).media_list_collection
 
 
 def update_series(media_id: int, progress: int, status: str):
@@ -101,8 +101,8 @@ def update_series(media_id: int, progress: int, status: str):
     send_graphql_request(op)
 
 
-def send_graphql_request(op):
-    global endpoint
+def send_graphql_request(operation):
+    global endpoint  # pylint: disable=global-statement,invalid-name
     if not endpoint:
         endpoint = RequestsEndpoint(
             url="https://graphql.anilist.co",
@@ -117,7 +117,7 @@ def send_graphql_request(op):
         endpoint.logger = logger
 
     while True:
-        data = endpoint(op)
+        data = endpoint(operation)
         if hasattr(data, 'errors'):
             error = data["errors"][0]
             status = error.status
