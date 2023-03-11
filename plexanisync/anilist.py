@@ -63,7 +63,7 @@ class Anilist:
 
         logger.info(f"Found {len(anilist_series)} anime series on list")
         return anilist_series
-    
+
     def match_to_plex(self, anilist_series: List[AnilistSeries], plex_series_watched: List[PlexWatchedSeries]):
         logger.info("Matching Plex series to Anilist")
         for plex_series in plex_series_watched:
