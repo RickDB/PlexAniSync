@@ -51,6 +51,7 @@ jobs:
       imagename: ${{ github.repository_owner }}/plexanisync
       push: ${{ github.event_name != 'pull_request' }}
       platforms: linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64
+    secrets: inherit
           
   build-docker-tautulli:
     needs: build-docker-plexanisync
@@ -60,3 +61,4 @@ jobs:
       imagename: ${{ github.repository_owner }}/tautulli-plexanisync
       push: ${{ github.event_name != 'pull_request' }}
       platforms: linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64
+    secrets: inherit
