@@ -7,11 +7,9 @@ import sys
 
 import coloredlogs
 
-import anilist
-import graphql
-import plexmodule
-from _version import __version__
-from custom_mappings import read_custom_mappings
+from plexanisync import anilist, graphql, plexmodule
+from plexanisync._version import __version__
+from plexanisync.custom_mappings import read_custom_mappings
 
 # Logger settings
 LOG_FILENAME = "PlexAniSync.log"
@@ -27,7 +25,7 @@ logger.addHandler(handler)
 # Debug log
 logging.basicConfig(
     level=logging.DEBUG,
-    format="%(asctime)s %(levelname)s %(message)s",
+    format="%(asctime)s %(levelname)s %(name)s %(message)s",
     handlers=[logging.FileHandler("PlexAniSync-DEBUG.log", "w", "utf-8")],
 )
 

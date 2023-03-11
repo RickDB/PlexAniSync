@@ -12,8 +12,11 @@ from requests import Session
 from requests.adapters import HTTPAdapter
 from urllib3.poolmanager import PoolManager
 
-logger = logging.getLogger("PlexAniSync")
-plex_settings = dict()
+from plexanisync.logger_adapter import PrefixLoggerAdapter
+
+logger = PrefixLoggerAdapter(logging.getLogger("PlexAniSync"), {"prefix": "PLEX"})
+
+plex_settings = {}
 
 
 @dataclass
@@ -105,7 +108,7 @@ def authenticate() -> PlexServer:
                 plex = account.resource(plex_server).connect()
         else:
             logger.critical(
-                "[PLEX] Failed to authenticate due to invalid settings or authentication info, exiting..."
+                "Failed to authenticate due to invalid settings or authentication info, exiting..."
             )
             sys.exit(1)
         return plex
@@ -121,11 +124,11 @@ def get_anime_shows() -> List[Show]:
     shows: List[Show] = []
     for section in sections:
         try:
-            logger.info(f"[PLEX] Retrieving anime series from section: {section}")
+            logger.info(f"Retrieving anime series from section: {section}")
             shows_search = plex.library.section(section.strip()).search()
             shows += shows_search
             logger.info(
-                f"[PLEX] Found {len(shows_search)} anime series in section: {section}"
+                f"Found {len(shows_search)} anime series in section: {section}"
             )
         except BaseException:
             logger.error(
@@ -152,14 +155,14 @@ def get_anime_shows_filter(show_name):
             shows_filtered.append(show)
 
     if shows_filtered:
-        logger.info("[PLEX] Found matching anime series")
+        logger.info("Found matching anime series")
     else:
-        logger.info(f"[PLEX] Did not find {show_name} in anime series")
+        logger.info(f"Did not find {show_name} in anime series")
     return shows_filtered
 
 
 def get_watched_shows(shows: List[Show]) -> Optional[List[PlexWatchedSeries]]:
-    logger.info("[PLEX] Retrieving watch count for series")
+    logger.info("Retrieving watch count for series")
     watched_series: List[PlexWatchedSeries] = []
     ovas_found = 0
 
@@ -222,6 +225,7 @@ def get_watched_shows(shows: List[Show]) -> Optional[List[PlexWatchedSeries]]:
 
                 if hasattr(show, "isWatched") and show.isWatched:
                     year = 1900
+
                     if show.year:
                         year = int(show.year)
 
@@ -249,13 +253,13 @@ def get_watched_shows(shows: List[Show]) -> Optional[List[PlexWatchedSeries]]:
                     watched_series.append(watched_show)
                     ovas_found += 1
         except Exception:
-            logger.exception(f"[PLEX] Error occured during episode processing of show {show}")
+            logger.exception(f"Error occured during episode processing of show {show}")
 
-    logger.info(f"[PLEX] Found {len(watched_series)} watched series")
+    logger.info(f"Found {len(watched_series)} watched series")
 
     if ovas_found > 0:
         logger.info(
-            f"[PLEX] Watched series also contained {ovas_found} releases with no episode attribute (probably movie / OVA), "
+            f"Watched series also contained {ovas_found} releases with no episode attribute (probably movie / OVA), "
             "support for this is still experimental"
         )
 
@@ -270,7 +274,7 @@ def get_watched_episodes_for_show_season(season: Season) -> int:
     # len(watched_episodes_of_season) only works when the user didn't skip any episodes
     episodes_watched = max(map(lambda e: int(e.index), watched_episodes_of_season), default=0)
 
-    logger.info(f'[PLEX] {episodes_watched} episodes watched for {season.parentTitle} season {season.seasonNumber}')
+    logger.info(f'{episodes_watched} episodes watched for {season.parentTitle} season {season.seasonNumber}')
     return episodes_watched
 
 

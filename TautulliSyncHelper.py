@@ -6,16 +6,13 @@ from time import sleep
 
 import coloredlogs
 
-import anilist
-import graphql
-import plexmodule
-from _version import __version__
-from custom_mappings import read_custom_mappings
+from plexanisync import anilist, graphql, plexmodule
+from plexanisync._version import __version__
+from plexanisync.custom_mappings import read_custom_mappings
 
 # Logger settings
 logger = logging.getLogger("PlexAniSync")
 coloredlogs.install(fmt="%(asctime)s %(message)s", logger=logger)
-
 
 # Enable this if you want to also log all messages coming from imported
 # libraries

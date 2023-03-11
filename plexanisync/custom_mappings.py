@@ -12,8 +12,9 @@ from jsonschema import validate
 from jsonschema.exceptions import ValidationError
 from ruyaml import YAML
 import ruyaml
+from plexanisync.logger_adapter import PrefixLoggerAdapter
 
-logger = logging.getLogger("PlexAniSync")
+logger = PrefixLoggerAdapter(logging.getLogger("PlexAniSync"), {"prefix": "MAPPING"})
 MAPPING_FILE = "custom_mappings.yaml"
 REMOTE_MAPPING_FILE = "remote_mappings.yaml"
 
@@ -77,10 +78,10 @@ class MyConstructor(ruyaml.constructor.RoundTripConstructor):
 def read_custom_mappings() -> Dict[str, List[AnilistCustomMapping]]:
     custom_mappings: Dict[str, List[AnilistCustomMapping]] = {}
     if not os.path.isfile(MAPPING_FILE):
-        logger.info(f"[MAPPING] Custom map file not found: {MAPPING_FILE}")
+        logger.info(f"Custom map file not found: {MAPPING_FILE}")
         return custom_mappings
 
-    logger.info(f"[MAPPING] Custom mapping found locally, using: {MAPPING_FILE}")
+    logger.info(f"Custom mapping found locally, using: {MAPPING_FILE}")
 
     yaml = YAML(typ='safe')
     yaml.Constructor = MyConstructor
@@ -94,7 +95,7 @@ def read_custom_mappings() -> Dict[str, List[AnilistCustomMapping]]:
         # Validate data against the schema same as before.
         validate(file_mappings_local, schema)
     except ValidationError as e:
-        logger.error('[MAPPING] Custom Mappings validation failed!')
+        logger.error('Custom Mappings validation failed!')
 
         handle_yaml_error(file_mappings_local, e)
 
@@ -108,7 +109,7 @@ def read_custom_mappings() -> Dict[str, List[AnilistCustomMapping]]:
         try:
             validate(file_mappings_local, schema)
         except ValidationError as e:
-            logger.error(f'[MAPPING] Custom Mappings {mapping_location} validation failed!')
+            logger.error(f'Custom Mappings {mapping_location} validation failed!')
             handle_yaml_error(file_mappings_remote, e)
 
         add_mappings(custom_mappings, mapping_location, file_mappings_remote)
@@ -148,16 +149,16 @@ def add_mappings(custom_mappings, mapping_location, file_mappings):
             anilist_id = file_season['anilist-id']
             start = file_season.get('start', 1)
             logger.info(
-                f"[MAPPING] Adding custom mapping from {mapping_location} "
+                f"Adding custom mapping from {mapping_location} "
                 f"| title: {series_title} | season: {season} | anilist id: {anilist_id}"
             )
             series_mappings.append(AnilistCustomMapping(season, anilist_id, start))
         if synonyms:
-            logger.info(f"[MAPPING] {series_title} has synonyms: {synonyms}")
+            logger.info(f"{series_title} has synonyms: {synonyms}")
         for title in [series_title] + synonyms:
             title_lower = title.lower()
             if title_lower in custom_mappings:
-                logger.info(f"[MAPPING] Overwriting previous mapping for {title}")
+                logger.info(f"Overwriting previous mapping for {title}")
             custom_mappings[title_lower] = series_mappings
 
 
@@ -170,12 +171,12 @@ def get_custom_mapping_remote(file_mappings) -> List[Tuple[str, str]]:
     # Get url and read the data
     for url in remote_mappings_urls:
         file_name = url.split('/')[-1]
-        logger.info(f"[MAPPING] Adding remote mapping url: {url}")
+        logger.info(f"Adding remote mapping url: {url}")
 
         response = requests.get(url, timeout=10)  # 10 second timeout
         if response.status_code == 200:
             custom_mappings_remote.append((file_name, response.text))
         else:
-            logger.error(f"[MAPPING] Could not download mapping file, received {response.reason}.")
+            logger.error(f"Could not download mapping file, received {response.reason}.")
 
     return custom_mappings_remote
