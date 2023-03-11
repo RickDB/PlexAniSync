@@ -17,7 +17,9 @@ on:
         type: boolean
     secrets:
       DOCKERHUB_USERNAME:
+        required: false
       DOCKERHUB_PASSWORD:
+        required: false
       
 
 jobs:
