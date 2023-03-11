@@ -14,7 +14,7 @@ from ruyaml import YAML
 import ruyaml
 from plexanisync.logger_adapter import PrefixLoggerAdapter
 
-logger = PrefixLoggerAdapter(logging.getLogger("PlexAniSync"), dict(prefix='MAPPING'))
+logger = PrefixLoggerAdapter(logging.getLogger("PlexAniSync"), {"prefix": "MAPPING"})
 MAPPING_FILE = "custom_mappings.yaml"
 REMOTE_MAPPING_FILE = "remote_mappings.yaml"
 

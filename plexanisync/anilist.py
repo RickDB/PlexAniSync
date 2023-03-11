@@ -11,7 +11,7 @@ from plexanisync.graphql import fetch_user_list, search_by_name, search_by_id, u
 from plexanisync.plexmodule import PlexWatchedSeries
 from plexanisync.logger_adapter import PrefixLoggerAdapter
 
-logger = PrefixLoggerAdapter(logging.getLogger("PlexAniSync"), dict(prefix='ANILIST'))
+logger = PrefixLoggerAdapter(logging.getLogger("PlexAniSync"), {"prefix": "ANILIST"})
 CUSTOM_MAPPINGS: Dict[str, List[AnilistCustomMapping]] = {}
 ANILIST_PLEX_EPISODE_COUNT_PRIORITY = False
 

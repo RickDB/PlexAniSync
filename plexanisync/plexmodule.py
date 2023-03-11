@@ -14,7 +14,7 @@ from urllib3.poolmanager import PoolManager
 
 from plexanisync.logger_adapter import PrefixLoggerAdapter
 
-logger = PrefixLoggerAdapter(logging.getLogger("PlexAniSync"), dict(prefix='PLEX'))
+logger = PrefixLoggerAdapter(logging.getLogger("PlexAniSync"), {"prefix": "PLEX"})
 
 plex_settings = {}
 

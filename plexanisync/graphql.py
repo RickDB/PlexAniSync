@@ -9,7 +9,7 @@ from sgqlc.operation import Operation
 from plexanisync.anilist_schema import anilist_schema as schema
 from plexanisync.logger_adapter import PrefixLoggerAdapter
 
-logger = PrefixLoggerAdapter(logging.getLogger("PlexAniSync"), dict(prefix='GRAPHQL'))
+logger = PrefixLoggerAdapter(logging.getLogger("PlexAniSync"), {"prefix": "GRAPHQL"})
 
 ANILIST_ACCESS_TOKEN = ""
 ANILIST_SKIP_UPDATE = False
