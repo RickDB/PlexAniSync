@@ -6,9 +6,10 @@ from time import sleep
 
 import coloredlogs
 
-from plexanisync import anilist, graphql, plexmodule
-from plexanisync._version import __version__
+from plexanisync.anilist import Anilist
 from plexanisync.custom_mappings import read_custom_mappings
+from plexanisync.plexmodule import PlexModule
+from plexanisync._version import __version__
 
 # Logger settings
 logger = logging.getLogger("PlexAniSync")
@@ -48,51 +49,36 @@ settings = read_settings(SETTINGS_FILE)
 anilist_settings = settings["ANILIST"]
 plex_settings = settings["PLEX"]
 
-graphql.ANILIST_ACCESS_TOKEN = anilist_settings["access_token"].strip()
-
-if "skip_list_update" in anilist_settings:
-    graphql.ANILIST_SKIP_UPDATE = anilist_settings["skip_list_update"].lower().strip() == "true"
-
-if "plex_episode_count_priority" in anilist_settings:
-    anilist.ANILIST_PLEX_EPISODE_COUNT_PRIORITY = (
-        anilist_settings["plex_episode_count_priority"].lower().strip() == "true"
-    )
-
-if "log_failed_matches" in anilist_settings:
-    anilist.ANILIST_LOG_FAILED_MATCHES = (
-        anilist_settings["log_failed_matches"].lower().strip() == "true"
-    )
-
 
 ## Startup section ##
 def start():
     logger.info(f"PlexAniSync - version: {__version__}")
     logger.info(f"Updating single show: {show_title}")
 
-    anilist.CUSTOM_MAPPINGS = read_custom_mappings()
+    custom_mappings = read_custom_mappings()
 
-    if graphql.ANILIST_SKIP_UPDATE:
+    if anilist_settings.getboolean("skip_list_update", False):
         logger.warning(
             "AniList skip list update enabled in settings, will match but NOT update your list"
         )
 
-    anilist.clean_failed_matches_file()
+    if anilist_settings.getboolean("plex_episode_count_priority", False):
+        logger.warning(
+            "Plex episode watched count will take priority over AniList, this will always update AniList watched count over Plex data"
+        )
 
-    # Anilist
-    anilist_username = anilist_settings["username"]
-    anilist_series = anilist.process_user_list(anilist_username)
+    anilist = Anilist(anilist_settings, custom_mappings)
+    anilist_series = anilist.process_user_list()
 
     # Plex
     if anilist_series is None:
         logger.error(
             "Unable to retrieve AniList list, check your username and access token"
         )
-    elif not anilist_series:
-        logger.error("No items found on your AniList list to process")
     else:
         # Wait a few a seconds to make sure Plex has processed watched states
         sleep(5.0)
-        plexmodule.plex_settings = plex_settings
+        plexmodule = PlexModule(plex_settings)
         plex_anime_series = plexmodule.get_anime_shows_filter(show_title)
 
         if plex_anime_series is None:
