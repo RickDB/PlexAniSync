@@ -97,9 +97,9 @@ def read_custom_mappings() -> Dict[str, List[AnilistCustomMapping]]:
     except ValidationError as e:
         logger.error('Custom Mappings validation failed!')
 
-        handle_yaml_error(file_mappings_local, e)
+        __handle_yaml_error(file_mappings_local, e)
 
-    remote_custom_mapping = get_custom_mapping_remote(file_mappings_local)
+    remote_custom_mapping = __get_custom_mapping_remote(file_mappings_local)
 
     # loop through list tuple
     for value in remote_custom_mapping:
@@ -110,16 +110,16 @@ def read_custom_mappings() -> Dict[str, List[AnilistCustomMapping]]:
             validate(file_mappings_local, schema)
         except ValidationError as e:
             logger.error(f'Custom Mappings {mapping_location} validation failed!')
-            handle_yaml_error(file_mappings_remote, e)
+            __handle_yaml_error(file_mappings_remote, e)
 
-        add_mappings(custom_mappings, mapping_location, file_mappings_remote)
+        __add_mappings(custom_mappings, mapping_location, file_mappings_remote)
 
-    add_mappings(custom_mappings, MAPPING_FILE, file_mappings_local)
+    __add_mappings(custom_mappings, MAPPING_FILE, file_mappings_local)
 
     return custom_mappings
 
 
-def handle_yaml_error(file_mappings_local, error):
+def __handle_yaml_error(file_mappings_local, error):
     value = file_mappings_local
     key = None
     line = 0
@@ -137,7 +137,7 @@ def handle_yaml_error(file_mappings_local, error):
     sys.exit(1)
 
 
-def add_mappings(custom_mappings, mapping_location, file_mappings):
+def __add_mappings(custom_mappings, mapping_location, file_mappings):
     # handles missing and empty 'entries'
     entries = file_mappings.get('entries', []) or []
     for file_entry in entries:
@@ -163,7 +163,7 @@ def add_mappings(custom_mappings, mapping_location, file_mappings):
 
 
 # Get the custom mappings from the web.
-def get_custom_mapping_remote(file_mappings) -> List[Tuple[str, str]]:
+def __get_custom_mapping_remote(file_mappings) -> List[Tuple[str, str]]:
     custom_mappings_remote: List[Tuple[str, str]] = []
     # handles missing and empty 'remote-urls'
     remote_mappings_urls: List[str] = file_mappings.get('remote-urls', []) or []
