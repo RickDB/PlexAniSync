@@ -38,7 +38,7 @@ jobs:
     - name: Lint with flake8 and pylint
       run: |
         flake8 .
-        pylint PlexAniSync.py TautulliSyncHelper.py plexmodule.py anilist.py custom_mappings.py || pylint-exit --error-fail --warn-fail $?
+        pylint PlexAniSync.py TautulliSyncHelper.py ./plexanisync || pylint-exit --error-fail --warn-fail $?
   build-docker-plexanisync:
     needs: lint
     uses: rickdb/plexanisync/.github/workflows/build-docker-image.yml@master

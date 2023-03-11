@@ -284,7 +284,3 @@ def get_first_episode_for_show_season(season: Season) -> int:
 
 def get_last_episode_for_show_season(season: Season) -> int:
     return season.episodes()[-1].index
-
-
-def get_season_rating_for_show_season(season: Season) -> int:
-    return int((season.userRating or 0) * 10)
