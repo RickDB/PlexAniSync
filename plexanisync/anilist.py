@@ -108,7 +108,7 @@ class Anilist:
                         # For multiple seasons with the same id
                         # If the start of this season has been mapped use that.
                         if mapped_start != 1:
-                            match["watched_episodes"] = (plex_season.watched_episodes - mapped_start + 1)
+                            match["watched_episodes"] = plex_season.watched_episodes - mapped_start + 1
                         else:
                             match["watched_episodes"] += plex_season.watched_episodes
 
@@ -798,7 +798,7 @@ class Anilist:
 
         for mapping in season_mappings:
             if watched_episodes >= mapping.start:
-                episodes_in_season = (watched_episodes - mapping.start + 1)
+                episodes_in_season = watched_episodes - mapping.start + 1
                 total_mapped_episodes += episodes_in_season
                 episodes_in_anilist_entry[mapping.anime_id] = episodes_in_season
 
