@@ -129,6 +129,8 @@ class Anilist:
                     )
 
                     season_ratings = match['ratings']
+                    # filter out unrated seasons
+                    season_ratings = [r for r in season_ratings if r != 0]
                     average_season_rating = mean(season_ratings)
 
                     self.__add_or_update_show_by_id(
