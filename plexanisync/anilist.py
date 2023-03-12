@@ -40,8 +40,8 @@ class AnilistMatch:
     anilist_id: int
     watched_episodes: int
     total_episodes: int
-    mapped_seasons: List[int] = []
-    ratings: List[int] = []
+    mapped_seasons: List[int]
+    ratings: List[int]
 
 
 class Anilist:
