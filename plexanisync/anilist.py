@@ -35,6 +35,15 @@ class AnilistSeries:
     score: float
 
 
+@dataclass
+class AnilistMatch:
+    anilist_id: int
+    watched_episodes: int
+    total_episodes: int
+    mapped_seasons: List[int] = []
+    ratings: List[int] = []
+
+
 class Anilist:
     def __init__(self, anilist_settings: SectionProxy, custom_mappings: Dict[str, List[AnilistCustomMapping]]):
         self.anilist_settings = anilist_settings
@@ -83,7 +92,7 @@ class Anilist:
 
             # Check if we have custom mappings for all seasons (One Piece for example)
             if len(plex_seasons) > 1:
-                anilist_matches = []
+                anilist_matches: List[AnilistMatch] = []
                 for plex_season in plex_seasons:
 
                     season_mappings: List[AnilistCustomMapping] = self.__retrieve_season_mappings(
@@ -95,40 +104,40 @@ class Anilist:
 
                         custom_mapped_seasons.append(plex_season.season_number)
                         match = next(
-                            (item for item in anilist_matches if item['anilist_id'] == matched_id),
+                            (item for item in anilist_matches if item.anilist_id == matched_id),
                             None,
                         )
 
                         if not match:
                             # Create first match dict for this anilist id
-                            anilist_matches.append({
-                                "anilist_id": matched_id,
-                                "watched_episodes": plex_season.watched_episodes - mapped_start + 1,
-                                "total_episodes": plex_season.last_episode,
-                                "mapped_seasons": [plex_season.season_number],
-                                "ratings": [plex_season.rating]
-                            })
+                            anilist_matches.append(AnilistMatch(
+                                matched_id,
+                                plex_season.watched_episodes - mapped_start + 1,
+                                plex_season.last_episode,
+                                [plex_season.season_number],
+                                [plex_season.rating]
+                            ))
                             continue
                         # For multiple seasons with the same id
                         # If the start of this season has been mapped use that.
                         if mapped_start != 1:
-                            match["watched_episodes"] = plex_season.watched_episodes - mapped_start + 1
+                            match.watched_episodes = plex_season.watched_episodes - mapped_start + 1
                         else:
-                            match["watched_episodes"] += plex_season.watched_episodes
+                            match.watched_episodes += plex_season.watched_episodes
 
                         # TODO support using number of last episode of the last season as a start
-                        match["mapped_seasons"].append(plex_season.season_number)
-                        match["ratings"].append(plex_season.rating)
+                        match.mapped_seasons.append(plex_season.season_number)
+                        match.ratings.append(plex_season.rating)
 
                 for match in anilist_matches:
                     logger.info(
                         "Custom Mapping of Title found | "
-                        f"title: {plex_title} | anilist id: {match['anilist_id']} | "
-                        f"total watched episodes: {match['watched_episodes']} | "
-                        f"seasons with the same anilist id: {match['mapped_seasons']}"
+                        f"title: {plex_title} | anilist id: {match.anilist_id} | "
+                        f"total watched episodes: {match.watched_episodes} | "
+                        f"seasons with the same anilist id: {match.mapped_seasons}"
                     )
 
-                    season_ratings = match['ratings']
+                    season_ratings = match.ratings
                     # filter out unrated seasons
                     season_ratings = [r for r in season_ratings if r != 0]
                     # mean only works on non-empty lists
@@ -139,8 +148,8 @@ class Anilist:
                         plex_title,
                         plex_year,
                         True,
-                        match['watched_episodes'],
-                        match['anilist_id'],
+                        match.watched_episodes,
+                        match.anilist_id,
                         average_season_rating or plex_show_rating
                     )
 
