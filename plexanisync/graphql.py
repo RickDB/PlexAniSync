@@ -1,5 +1,7 @@
 # coding=utf-8
 from configparser import SectionProxy
+from dataclasses import dataclass
+from typing import List
 import logging
 import time
 import requests
@@ -11,6 +13,25 @@ from plexanisync.anilist_schema import anilist_schema as schema
 from plexanisync.logger_adapter import PrefixLoggerAdapter
 
 logger = PrefixLoggerAdapter(logging.getLogger("PlexAniSync"), {"prefix": "GRAPHQL"})
+
+
+@dataclass
+class AnilistSeries:
+    anilist_id: int
+    series_type: str
+    series_format: str
+    source: str
+    status: str
+    media_status: str
+    progress: int
+    season: str
+    episodes: int
+    title_english: str
+    title_romaji: str
+    synonyms: List[str]
+    started_year: int
+    ended_year: int
+    score: int
 
 
 class GraphQL:
@@ -51,12 +72,11 @@ class GraphQL:
         data = self.__send_graphql_request(operation)
 
         media = (operation + data).media
-        return media
+        return self.__mediaitem_to_object(media) if media else None
 
-    def search_by_name(self, anilist_show_name: str):
+    def search_by_name(self, anilist_show_name: str) -> List[AnilistSeries]:
         operation = Operation(schema.Query)
-        page = operation.page(page=1, per_page=50)
-        media = page.media(search=anilist_show_name, type="ANIME")
+        media = operation.page(page=1, per_page=50).media(search=anilist_show_name, type="ANIME")
         media.__fields__(
             'id',
             'type',
@@ -74,11 +94,12 @@ class GraphQL:
         data = self.__send_graphql_request(operation)
 
         media = (operation + data).page.media
-        return media
+        return list(map(self.__mediaitem_to_object, media))
 
-    def fetch_user_list(self, username: str):
+    def fetch_user_list(self) -> List[AnilistSeries]:
         operation = Operation(schema.Query)
-        lists = operation.media_list_collection(user_name=username, type="ANIME").lists
+        user_name = self.anilist_settings.get("username")
+        lists = operation.media_list_collection(user_name=user_name, type="ANIME").lists
         lists.__fields__('name', 'status', 'is_custom_list')
         lists.entries.__fields__('id', 'progress', 'status', 'repeat')
         lists.entries.score(format="POINT_100")
@@ -97,7 +118,19 @@ class GraphQL:
         lists.entries.media.title.__fields__('romaji', 'english', 'native')
 
         data = self.__send_graphql_request(operation)
-        return (operation + data).media_list_collection
+        list_items = (operation + data).media_list_collection
+
+        anilist_series = []
+        for media_collection in list_items.lists:
+            if hasattr(media_collection, "entries"):
+                for list_entry in media_collection.entries:
+                    if (hasattr(list_entry, "status") and list_entry.media):
+                        series_obj = self.__mediaitem_to_object(list_entry.media)
+                        series_obj.status = list_entry.status
+                        series_obj.progress = list_entry.progress
+                        series_obj.score = list_entry.score
+                        anilist_series.append(series_obj)
+        return anilist_series
 
     def update_series(self, media_id: int, progress: int, status: str, score_raw: int):
         if self.skip_list_update:
@@ -149,3 +182,59 @@ class GraphQL:
                 # wait a bit to not overload AniList API
                 time.sleep(0.20)
                 return data
+
+    def __mediaitem_to_object(self, media_item) -> AnilistSeries:
+        anilist_id = media_item.id
+        series_type = ""
+        series_format = ""
+        source = ""
+        media_status = ""
+        season = ""
+        episodes = 0
+        title_english = ""
+        title_romaji = ""
+        synonyms = []
+        started_year = 0
+        ended_year = 0
+
+        if hasattr(media_item, "status"):
+            media_status = media_item.status
+        if hasattr(media_item, "type"):
+            series_type = media_item.type
+        if hasattr(media_item, "format"):
+            series_format = media_item.format
+        if hasattr(media_item, "source"):
+            source = media_item.source
+        if hasattr(media_item, "season"):
+            season = media_item.season
+        if hasattr(media_item, "episodes"):
+            episodes = media_item.episodes
+        if hasattr(media_item.title, "english"):
+            title_english = media_item.title.english
+        if hasattr(media_item.title, "romaji"):
+            title_romaji = media_item.title.romaji
+        if hasattr(media_item, "synonyms"):
+            synonyms = media_item.synonyms
+        if hasattr(media_item.start_date, "year"):
+            started_year = media_item.start_date.year
+        if hasattr(media_item.end_date, "year"):
+            ended_year = media_item.end_date.year
+
+        series = AnilistSeries(
+            anilist_id,
+            series_type,
+            series_format,
+            source,
+            "",
+            media_status,
+            0,
+            season,
+            episodes,
+            title_english,
+            title_romaji,
+            synonyms,
+            started_year,
+            ended_year,
+            0
+        )
+        return series
