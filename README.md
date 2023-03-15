@@ -213,6 +213,30 @@ When set to True it will update the AniList entry if Plex watched episode count 
 
 **Use this with caution as normally this isn't required and only meant for certain use cases.**
 
+### Use Plex ratings for Anilist scores
+
+In Plex you can currently rate shows, seasons and episodes with 1 to 5 stars. On the mobile app and if you're part of the [Discover Together Beta](https://www.plex.tv/de/discover-together-beta/), you can also rate in half star increments.
+
+Set `sync_ratings = True` to automatically set Anilist scores based on the Plex ratings. This will also change the score of shows you've completed in the past.
+
+If one or more Plex seasons are mapped to an Anilist entry, the average of the rated seasons will be used. The raw Anilist score will be `number of Plex stars * 20`. So if you rate 1 season with 3.5 stars and another season with 4 stars, the calculated Anilist score will be 75.
+
+If the seasons are not rated, the show rating will be used as fallback.
+
+Episode ratings are currently not used.
+
+The actual score shown in your anime list depends on the scoring system setting at https://anilist.co/settings/lists
+
+| Scoring system  | Score shown         |
+| --------------- | ------------------- |
+| 100 Point       | 75                  | 
+| 10 Point Decimal| 7.5                 |
+| 10 Point        | 7 (rounded down)    |
+| 5 Star          | 4 stars (rounded up)|
+| 3 Point Smiley  | 🙂                  |
+
+In all cases, Anilist stores the raw value of 75, so you can change the scoring system at any point without data loss. But beware that 3 Point Smiley scores cannot be accurately converted, so you should avoid it as best as you can.
+
 ### Skip list updating for testing
 
 In your settings file there's a setting called `skip_list_update` which you can set to True or False, if set to True it will **NOT** update your AniList which is useful if you want to do a test run to check if everything lines up properly.

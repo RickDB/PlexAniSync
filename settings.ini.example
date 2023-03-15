@@ -26,4 +26,4 @@ plex_episode_count_priority = False
 skip_list_update = False
 username = SomeUsername
 log_failed_matches = False
-sync_scores = True
+sync_scores = False

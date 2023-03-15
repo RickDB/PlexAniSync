@@ -50,7 +50,7 @@ class GraphQL:
         )
         self.endpoint.logger = logger
         self.skip_list_update = self.anilist_settings.getboolean("skip_list_update", False)
-        self.sync_scores = self.anilist_settings.getboolean("sync_scores", True)
+        self.sync_scores = self.anilist_settings.getboolean("sync_scores", False)
 
     def search_by_id(self, anilist_id: int):
         operation = Operation(schema.Query)
