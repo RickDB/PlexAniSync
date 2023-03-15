@@ -13,7 +13,6 @@ jobs:
         token: ${{ secrets.GITHUB_TOKEN }}
         user: ${{ github.repository_owner }}
         container: plexanisync
-        dry-run: true
         prune-untagged: true
         # remove all tags except for latest and semver
         prune-tags-regexes: |
@@ -27,7 +26,6 @@ jobs:
         token: ${{ secrets.GITHUB_TOKEN }}
         user: ${{ github.repository_owner }}
         container: tautulli-plexanisync
-        dry-run: true
         prune-untagged: true
         # remove all tags except for latest and semver
         prune-tags-regexes: |
