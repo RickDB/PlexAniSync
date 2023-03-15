@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  prune images:
+  prune-images:
     runs-on: ubuntu-latest
     steps:
     - name: Prune plexanisync
