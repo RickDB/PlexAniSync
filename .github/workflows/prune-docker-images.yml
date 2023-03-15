@@ -4,31 +4,34 @@ on:
   workflow_dispatch:
 
 jobs:
-  - name: Prune plexanisync
-    uses: vlaurin/action-ghcr-prune@v0.5.0
-    with:
-      token: ${{ secrets.GITHUB_TOKEN }}
-      user: ${{ github.repository_owner }}
-      container: plexanisync
-      dry-run: true
-      prune-untagged: true
-      # remove all tags except for latest and semver
-      prune-tags-regexes: |
-        .+
-      keep-tags-regexes: |
-        ^latest$
-        ^v\d+
-  - name: Prune tautulli
-    uses: vlaurin/action-ghcr-prune@v0.5.0
-    with:
-      token: ${{ secrets.GITHUB_TOKEN }}
-      user: ${{ github.repository_owner }}
-      container: tautulli-plexanisync
-      dry-run: true
-      prune-untagged: true
-      # remove all tags except for latest and semver
-      prune-tags-regexes: |
-        .+
-      keep-tags-regexes: |
-        ^latest$
-        ^v\d+
+  prune images:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Prune plexanisync
+      uses: vlaurin/action-ghcr-prune@v0.5.0
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        user: ${{ github.repository_owner }}
+        container: plexanisync
+        dry-run: true
+        prune-untagged: true
+        # remove all tags except for latest and semver
+        prune-tags-regexes: |
+          .+
+        keep-tags-regexes: |
+          ^latest$
+          ^v\d+
+    - name: Prune tautulli
+      uses: vlaurin/action-ghcr-prune@v0.5.0
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        user: ${{ github.repository_owner }}
+        container: tautulli-plexanisync
+        dry-run: true
+        prune-untagged: true
+        # remove all tags except for latest and semver
+        prune-tags-regexes: |
+          .+
+        keep-tags-regexes: |
+          ^latest$
+          ^v\d+
