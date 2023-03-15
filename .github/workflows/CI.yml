@@ -17,8 +17,6 @@ on:
   workflow_dispatch:
 
 jobs:
-    - name: Setup flake8 annotations
-      uses: rbialon/flake8-annotations@v1
   build-docker-plexanisync:
     uses: ./.github/workflows/build-docker-image.yml
     with:
