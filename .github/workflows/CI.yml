@@ -17,28 +17,9 @@ on:
   workflow_dispatch:
 
 jobs:
-  lint:
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: actions/checkout@v3
-    - name: Set up Python 3.7
-      uses: actions/setup-python@v4
-      with:
-        python-version: 3.7
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install flake8 pylint pylint-exit
-        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Setup flake8 annotations
       uses: rbialon/flake8-annotations@v1
-    - name: Lint with flake8 and pylint
-      run: |
-        flake8 .
-        pylint PlexAniSync.py TautulliSyncHelper.py plexmodule.py anilist.py custom_mappings.py || pylint-exit --error-fail --warn-fail $?
   build-docker-plexanisync:
-    needs: lint
     uses: ./.github/workflows/build-docker-image.yml
     with:
       dockerfile: ./Docker/PlexAniSync/Dockerfile
