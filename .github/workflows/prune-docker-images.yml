@@ -32,4 +32,4 @@ jobs:
           .+
         keep-tags-regexes: |
           ^latest$
-          ^v\d+
+          ^\d+
