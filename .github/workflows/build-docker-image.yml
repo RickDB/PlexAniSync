@@ -24,12 +24,12 @@ jobs:
       packages: write
 
     steps:
-        # Set IMAGE_NAMES to ghcr.io, also set to docker.io if building a tag
+        # Set IMAGE_NAMES to ghcr.io, also set to docker.io if building a tag or master
       - name: Set variables
         run: |
           EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
           echo "IMAGE_NAMES<<$EOF" >> $GITHUB_ENV
-          if [[ ${{ github.ref }} == *"refs/tags/"* ]]; then
+          if [[ ${{ github.ref }} == *"refs/tags/"* ]] || [[ ${{ github.ref }} == "refs/heads/master" ]]; then
             DOCKER_IO=true
             echo "${{ inputs.imagename }}" >> $GITHUB_ENV
           fi
