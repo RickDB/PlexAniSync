@@ -12,9 +12,9 @@ on:
       platforms:
         required: true
         type: string
-      push:
+      eventname:
         required: true
-        type: boolean
+        type: string
 
 jobs:
   build:
@@ -24,10 +24,20 @@ jobs:
       packages: write
 
     steps:
-        # first step is necessary because image names must be lowercase
-      - name: set lower case image name
+        # Set IMAGE_NAMES to ghcr.io, also set to docker.io if building a tag
+      - name: Set variables
         run: |
-          echo "IMAGE_NAME=${{ inputs.imagename }}" >>${GITHUB_ENV}
+          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+          echo "IMAGE_NAMES<<$EOF" >> $GITHUB_ENV
+          if [[ ${{ github.ref }} == *"refs/tags/"* ]]; then
+            DOCKER_IO=true
+            echo "${{ inputs.imagename }}" >> $GITHUB_ENV
+          fi
+          echo "ghcr.io/${{ inputs.imagename }}" >> $GITHUB_ENV
+          echo "$EOF" >> $GITHUB_ENV
+          if [[ -n "$DOCKER_IO" ]]; then
+            echo "DOCKER_IO=true" >> $GITHUB_ENV
+          fi
       - name: Checkout repository
         uses: actions/checkout@v3
       - name: Set up QEMU
@@ -39,17 +49,14 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
-          # Push to both docker.com and ghcr.io
-          images: |
-            ${{ env.IMAGE_NAME }}
-            ghcr.io/${{ env.IMAGE_NAME }}
+          images: "${{ env.IMAGE_NAMES }}"
           tags: |
             type=ref,event=branch
             type=ref,event=pr
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
       - name: Log into docker.com registry
-        if: ${{ inputs.push }}
+        if: ${{ env.DOCKER_IO }}
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
@@ -68,7 +75,7 @@ jobs:
           platforms: ${{ inputs.platforms }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          push: ${{ inputs.push }}
+          push: ${{ inputs.eventname != 'pull_request' }}
           pull: true
           cache-from: type=gha
           cache-to: type=gha,mode=max
