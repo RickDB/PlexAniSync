@@ -28,8 +28,7 @@ ENV PLEX_SECTION=Anime \
 
 # copy code itself from context to image
 COPY Docker/Tautulli/run/start.sh /app/
-COPY Docker/Tautulli/run/settingsupdater.py /plexanisync/
-COPY . .
+COPY TautulliSyncHelper.py plexanisync requirements.txt Docker/Tautulli/run/settingsupdater.py /plexanisync/
 
 # reset workdir to default one from tautulli
 WORKDIR /app
