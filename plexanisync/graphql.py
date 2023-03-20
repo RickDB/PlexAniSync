@@ -31,6 +31,7 @@ class AnilistSeries:
     synonyms: List[str]
     started_year: int
     ended_year: int
+    score: int
 
 
 class GraphQL:
@@ -48,6 +49,8 @@ class GraphQL:
             session=requests.Session()
         )
         self.endpoint.logger = logger
+        self.skip_list_update = self.anilist_settings.getboolean("skip_list_update", False)
+        self.sync_scores = self.anilist_settings.getboolean("sync_scores", False)
 
     def search_by_id(self, anilist_id: int):
         operation = Operation(schema.Query)
@@ -99,6 +102,7 @@ class GraphQL:
         lists = operation.media_list_collection(user_name=user_name, type="ANIME").lists
         lists.__fields__('name', 'status', 'is_custom_list')
         lists.entries.__fields__('id', 'progress', 'status', 'repeat')
+        lists.entries.score(format="POINT_100")
         lists.entries.media.__fields__(
             'id',
             'type',
@@ -124,19 +128,40 @@ class GraphQL:
                         series_obj = self.__mediaitem_to_object(list_entry.media)
                         series_obj.status = list_entry.status
                         series_obj.progress = list_entry.progress
+                        series_obj.score = list_entry.score
                         anilist_series.append(series_obj)
         return anilist_series
 
-    def update_series(self, media_id: int, progress: int, status: str):
-        if self.anilist_settings.getboolean("skip_list_update", False):
+    def update_series(self, media_id: int, progress: int, status: str, score_raw: int):
+        if self.skip_list_update:
+            logger.warning("Skip update is enabled in settings so not updating this item")
+            return
+
+        op = Operation(schema.Mutation)
+        if score_raw and self.sync_scores:
+            op.save_media_list_entry(
+                media_id=media_id,
+                status=status,
+                progress=progress,
+                score_raw=score_raw
+            )
+        else:
+            op.save_media_list_entry(
+                media_id=media_id,
+                status=status,
+                progress=progress
+            )
+        self.__send_graphql_request(op)
+
+    def update_score(self, media_id, score_raw: int):
+        if self.skip_list_update:
             logger.warning("Skip update is enabled in settings so not updating this item")
             return
 
         op = Operation(schema.Mutation)
         op.save_media_list_entry(
             media_id=media_id,
-            status=status,
-            progress=progress
+            score_raw=score_raw
         )
         self.__send_graphql_request(op)
 
@@ -209,6 +234,7 @@ class GraphQL:
             title_romaji,
             synonyms,
             started_year,
-            ended_year
+            ended_year,
+            0
         )
         return series

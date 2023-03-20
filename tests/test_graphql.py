@@ -22,6 +22,7 @@ def test_fetch_user_list():
     assert naruto.title_english == "Naruto"
     assert naruto.status == "CURRENT"
     assert naruto.progress == 4
+    assert naruto.score == 70
 
 
 def test_search_by_id():

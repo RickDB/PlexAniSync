@@ -21,6 +21,7 @@ logger = PrefixLoggerAdapter(logging.getLogger("PlexAniSync"), {"prefix": "PLEX"
 @dataclass
 class PlexSeason:
     season_number: int
+    rating: int
     watched_episodes: int
     first_episode: int
     last_episode: int
@@ -34,6 +35,7 @@ class PlexWatchedSeries:
     year: int
     seasons: List[PlexSeason]
     anilist_id: Optional[int]
+    rating: int
 
 
 class HostNameIgnoringAdapter(HTTPAdapter):
@@ -186,7 +188,9 @@ class PlexModule:
                         season_watchcount = self.__get_watched_episodes_for_show_season(season)
                         season_firstepisode = self.__get_first_episode_for_show_season(season)
                         season_lastepisode = self.__get_last_episode_for_show_season(season)
-                        seasons.append(PlexSeason(season.seasonNumber, season_watchcount, season_firstepisode, season_lastepisode))
+                        seasons.append(
+                            PlexSeason(season.seasonNumber, int((season.userRating or 0) * 10), season_watchcount, season_firstepisode, season_lastepisode)
+                        )
 
                     if seasons:
                         # Add year if we have one otherwise fallback
@@ -213,7 +217,8 @@ class PlexModule:
                             show.originalTitle.strip(),
                             year,
                             seasons,
-                            anilist_id
+                            anilist_id,
+                            int((show.userRating or 0) * 10)
                         )
                         watched_series.append(watched_show)
 
@@ -244,13 +249,15 @@ class PlexModule:
                         #    show.originalTitle = show.title
                         show.originalTitle = show.title
 
+                        rating = int(show.userRating * 10)
                         watched_show = PlexWatchedSeries(
                             show.title.strip(),
                             show.titleSort.strip(),
                             show.originalTitle.strip(),
                             year,
-                            [PlexSeason(1, 1, 1, 1)],
-                            anilist_id
+                            [PlexSeason(1, rating, 1, 1, 1)],
+                            anilist_id,
+                            rating
                         )
                         watched_series.append(watched_show)
                         ovas_found += 1
