@@ -168,16 +168,16 @@ class GraphQL:
     def __send_graphql_request(self, operation):
         while True:
             data = self.endpoint(operation)
-            if hasattr(data, 'errors'):
+            if "errors" in data:
                 error = data["errors"][0]
-                status = error.status
+                status = error["status"]
                 if status == 429:
-                    wait_time = int(error.headers.get('retry-after', 0))
+                    wait_time = int(data["headers"].get('retry-after', 0))
                     logger.warning(f"Rate limit hit, waiting for {wait_time}s")
                     time.sleep(wait_time + 1)
 
                 else:
-                    raise error.exception
+                    raise data["exception"]
             else:
                 # wait a bit to not overload AniList API
                 time.sleep(0.20)

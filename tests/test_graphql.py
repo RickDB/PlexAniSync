@@ -17,6 +17,7 @@ graphql = GraphQL(settings["ANILIST"])
 
 def test_fetch_user_list():
     medialist = graphql.fetch_user_list()
+    
     assert len(medialist) == 1
     naruto = medialist[0]
     assert naruto.title_english == "Naruto"
@@ -24,12 +25,14 @@ def test_fetch_user_list():
     assert naruto.progress == 4
     assert naruto.score == 70
 
+def test_too_many_requests():
+    for i in range(200):
+        graphql.fetch_user_list()
 
 def test_search_by_id():
     media = graphql.search_by_id(20)
     assert media
     assert media.title_english == "Naruto"
-
 
 def test_search_by_name():
     search_results = graphql.search_by_name("Naruto")
