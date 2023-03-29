@@ -583,7 +583,7 @@ class Anilist:
                 status = series.status
 
             if status == "COMPLETED":
-                if plex_rating and series.score != plex_rating and self.graphql.sync_scores:
+                if plex_rating and series.score != plex_rating and self.graphql.sync_ratings:
                     logger.info(
                         "Series is completed, but Plex rating is different than Anilist score. "
                         "The Anilist score will be updated to the Plex rating."
@@ -664,7 +664,7 @@ class Anilist:
                 self.__update_episode_incremental(series, watched_episode_count, anilist_episodes_watched, new_status, plex_rating)
                 return
             elif watched_episode_count == anilist_episodes_watched:
-                if plex_rating and series.score != plex_rating and self.graphql.sync_scores:
+                if plex_rating and series.score != plex_rating and self.graphql.sync_ratings:
                     logger.info(
                         "Episode count was up to date, but Plex score is different than Anilist score. "
                         "The Anilist score will be updated to the Plex rating."
@@ -697,7 +697,7 @@ class Anilist:
                         "However, the Plex watched count is 0 so the update is skipped."
                     )
             elif anilist_episodes_watched > watched_episode_count:
-                if plex_rating and series.score != plex_rating and self.graphql.sync_scores:
+                if plex_rating and series.score != plex_rating and self.graphql.sync_ratings:
                     logger.info(
                         f"Episodes watched was higher on AniList [{anilist_episodes_watched}] than on Plex [{watched_episode_count}]. "
                         "However, the Plex rating is different than the Anilist The Anilist score will be updated to the Plex rating."

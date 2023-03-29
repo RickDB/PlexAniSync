@@ -50,7 +50,7 @@ class GraphQL:
         )
         self.endpoint.logger = logger
         self.skip_list_update = self.anilist_settings.getboolean("skip_list_update", False)
-        self.sync_scores = self.anilist_settings.getboolean("sync_scores", False)
+        self.sync_ratings = self.anilist_settings.getboolean("sync_ratings", False)
 
     def search_by_id(self, anilist_id: int):
         operation = Operation(schema.Query)
@@ -138,7 +138,7 @@ class GraphQL:
             return
 
         op = Operation(schema.Mutation)
-        if score_raw and self.sync_scores:
+        if score_raw and self.sync_ratings:
             op.save_media_list_entry(
                 media_id=media_id,
                 status=status,
