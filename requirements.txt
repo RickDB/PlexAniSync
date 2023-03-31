@@ -13,4 +13,4 @@ pyrsistent==0.19.3
 requests==2.28.2
 ruyaml==0.91.0
 sgqlc==16.1
-urllib3==1.26.14
+urllib3==1.26.15
