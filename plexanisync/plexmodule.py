@@ -176,11 +176,10 @@ class PlexModule:
                     anilist_id = int(match.group(1))
 
                 if hasattr(show, "seasons"):
-                    show_seasons = show.seasons()
                     # ignore season 0 and unwatched seasons
-                    show_seasons = filter(
+                    show_seasons: filter[Season] = filter(
                         lambda season: season.seasonNumber > 0 and season.viewedLeafCount > 0,
-                        show_seasons
+                        show.seasons()
                     )
 
                     seasons = []
@@ -189,7 +188,13 @@ class PlexModule:
                         season_firstepisode = self.__get_first_episode_for_show_season(season)
                         season_lastepisode = self.__get_last_episode_for_show_season(season)
                         seasons.append(
-                            PlexSeason(season.seasonNumber, int((season.userRating or 0) * 10), season_watchcount, season_firstepisode, season_lastepisode)
+                            PlexSeason(
+                                int(season.seasonNumber),
+                                self.__get_plex_rating(season.userRating),
+                                season_watchcount,
+                                season_firstepisode,
+                                season_lastepisode
+                            )
                         )
 
                     if seasons:
@@ -218,7 +223,7 @@ class PlexModule:
                             year,
                             seasons,
                             anilist_id,
-                            int((show.userRating or 0) * 10)
+                            self.__get_plex_rating(show.userRating)
                         )
                         watched_series.append(watched_show)
 
@@ -249,7 +254,7 @@ class PlexModule:
                         #    show.originalTitle = show.title
                         show.originalTitle = show.title
 
-                        rating = int(show.userRating * 10)
+                        rating = self.__get_plex_rating(show.userRating)
                         watched_show = PlexWatchedSeries(
                             show.title.strip(),
                             show.titleSort.strip(),
@@ -290,3 +295,6 @@ class PlexModule:
 
     def __get_last_episode_for_show_season(self, season: Season) -> int:
         return season.episodes()[-1].index
+
+    def __get_plex_rating(self, original_rating) -> int:
+        return int((original_rating or 0) * 10)
