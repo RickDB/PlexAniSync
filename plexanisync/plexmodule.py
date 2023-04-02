@@ -249,7 +249,7 @@ class PlexModule:
                         #    show.originalTitle = show.title
                         show.originalTitle = show.title
 
-                        rating = int(show.userRating * 10)
+                        rating = int(show.userRating or 0) * 10
                         watched_show = PlexWatchedSeries(
                             show.title.strip(),
                             show.titleSort.strip(),
