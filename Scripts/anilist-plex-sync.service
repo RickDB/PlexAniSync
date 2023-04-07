@@ -6,7 +6,7 @@ Type=oneshot
 User=YOUR_USER
 Group=YOUR_USER
 WorkingDirectory=YOUR_PLEXANYSYNC_FOLDER_PATH
-ExecStart=/usr/bin/python3 /YOUR_PLEXANYSYNC_FOLDER_PATH/PlexAniSync.py
+ExecStart=$POETRY_HOME/bin/poetry python /YOUR_PLEXANYSYNC_FOLDER_PATH/sync.py
 RemainAfterExit=no
 
 [Install]

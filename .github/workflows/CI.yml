@@ -42,7 +42,7 @@ jobs:
     - name: Lint with flake8 and pylint
       run: |
         poetry run flake8 .
-        poetry run pylint PlexAniSync.py TautulliSyncHelper.py ./plexanisync || poetry run pylint-exit --error-fail --warn-fail $?
+        poetry run pylint sync.py TautulliSyncHelper.py ./plexanisync || poetry run pylint-exit --error-fail --warn-fail $?
     - run: poetry run pytest
         
   build-docker-plexanisync:
