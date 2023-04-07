@@ -1,0 +1,21 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+coloredlogs = "*"
+jsonschema = "~=4.17"
+plexapi = "~=4.13"
+requests = "*"
+ruyaml = "~=0.91"
+sgqlc = "~=16.1"
+inflect = "*"
+
+[dev-packages]
+flake8 = "*"
+pylint = "*"
+pylint-exit = "*"
+pytest = "*"
+
+[requires]

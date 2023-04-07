@@ -132,16 +132,19 @@ access_token = iLikeToastyGoblins.
 
 ### Step 4 - Install requirements
 
-Install the addtional requirements using the Python package installer (pip) from within the project folder:
+Install the addtional requirements using the Python package installer (pip) and pipenv from within the project folder:
 
-`pip install -r requirements.txt`
+```
+pip install pipenv
+pipenv install
+```
 
 
 ### Step 5 - Start syncing
 
 Now that configuration is finished and requirements have been installed we can finally start the sync script:
 
-`python PlexAniSync.py`
+`pipenv run python PlexAniSync.py`
 
 Depending on library size and server can take a few minutes to finish, for scheduled syncing you can create a cronjob, systemd timer or windows task which runs it every 30 minutes for instance.
 
