@@ -5,6 +5,7 @@ RUN apt-get update && \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 ENV POETRY_HOME=/opt/poetry
+ENV PATH="/opt/poetry/bin:$PATH"
 ENV POETRY_VIRTUALENVS_IN_PROJECT=true
 
 RUN curl -sSL https://install.python-poetry.org | python -
