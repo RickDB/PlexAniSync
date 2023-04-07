@@ -33,7 +33,7 @@ jobs:
     - name: Install dependencies
       run: |
         pip install pipenv
-        pipenv install --dev
+        pipenv install --deploy --dev
     - name: Setup flake8 annotations
       uses: rbialon/flake8-annotations@v1
     - name: Add pylint annotator
@@ -41,8 +41,8 @@ jobs:
     - name: Lint with flake8 and pylint
       run: |
         pipenv run flake8 .
-        pipenv run pylint PlexAniSync.py TautulliSyncHelper.py ./plexanisync || pylint-exit --error-fail --warn-fail $?
-    - run: pytest
+        pipenv run pylint PlexAniSync.py TautulliSyncHelper.py ./plexanisync || pipenv run pylint-exit --error-fail --warn-fail $?
+    - run: pipenv run pytest
         
   build-docker-plexanisync:
     needs: lint-and-test
