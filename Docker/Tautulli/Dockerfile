@@ -1,24 +1,24 @@
 FROM python:3.9 AS builder
 
 RUN apt-get update && \
-    apt-get install -y \
-    build-essential \
+    apt-get install -y build-essential curl \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-COPY requirements.txt .
-# install dependencies to the local user directory (eg. /root/.local)
-RUN pip install --user --no-warn-script-location -r requirements.txt
+ENV POETRY_HOME=/opt/poetry
+ENV POETRY_VIRTUALENVS_IN_PROJECT=true
+
+RUN curl -sSL https://install.python-poetry.org | python -
+COPY pyproject.toml poetry.lock /
+RUN poetry install --no-interaction --no-ansi --only main
 
 FROM tautulli/tautulli
 
 WORKDIR /plexanisync
 
-# copy only the dependencies installation from the 1st stage image
-COPY --from=builder /root/.local /root/.local
-RUN chmod -R a+rX /root
+# Copy virtual env from builder
+COPY --from=builder /.venv /.venv
 # update PATH environment variable
-ENV PATH=/root/.local:$PATH
-ENV PYTHONPATH=/root/.local/lib/python3.9/site-packages
+ENV PATH="/.venv/bin:$PATH"
 
 ENV PLEX_SECTION=Anime \
     PLEX_URL=http://127.0.0.1:32400 \
