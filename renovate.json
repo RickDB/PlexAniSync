@@ -6,8 +6,11 @@
   "automerge": true,
   "rebaseWhen": "conflicted",
   "pip_requirements": {
-    "extends": ["schedule:monthly"],
-    "ignoreDeps": ["inflect"]
+    "enabled": false
+  },
+  "lockFileMaintenance": {
+    "enabled": true,
+    "extends": ["schedule:monthly"]
   },
   "dockerfile": {
     "extends": ["schedule:monthly"]

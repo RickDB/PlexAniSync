@@ -17,7 +17,7 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: ${{ github.head_ref || github.ref_name }} 
+  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -30,7 +30,7 @@ jobs:
       uses: actions/setup-python@v4
       with:
         python-version: 3.7
-    - name: Run image
+    - name: Install poetry
       uses: abatilo/actions-poetry@v2
     - name: Install dependencies
       run: |
@@ -44,7 +44,11 @@ jobs:
         poetry run flake8 .
         poetry run pylint sync.py TautulliSyncHelper.py ./plexanisync || poetry run pylint-exit --error-fail --warn-fail $?
     - run: poetry run pytest
-        
+    - name: Update requirements.txt
+  update-requirements:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+
   build-docker-plexanisync:
     needs: lint-and-test
     uses: ./.github/workflows/build-docker-image.yml
