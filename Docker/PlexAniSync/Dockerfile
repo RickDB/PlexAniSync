@@ -1,8 +1,8 @@
 FROM python:3.11 AS builder
 
 RUN apt-get update && \
-    apt-get install -y build-essential python3-poetry \
-    && apt-get clean && rm -rf /var/lib/apt/lists/*
+    apt-get install -y build-essential python3-poetry && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
 ENV POETRY_VIRTUALENVS_IN_PROJECT=true
 COPY pyproject.toml poetry.lock /
