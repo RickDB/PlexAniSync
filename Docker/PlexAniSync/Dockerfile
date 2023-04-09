@@ -4,11 +4,9 @@ RUN apt-get update && \
     apt-get install -y build-essential curl \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-ENV POETRY_HOME=/opt/poetry
-ENV PATH="/opt/poetry/bin:$PATH"
 ENV POETRY_VIRTUALENVS_IN_PROJECT=true
 
-RUN curl -sSL https://install.python-poetry.org | python -
+RUN pip install poetry
 COPY pyproject.toml poetry.lock /
 RUN poetry install --no-interaction --no-ansi --only main
 
