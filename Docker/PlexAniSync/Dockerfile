@@ -1,24 +1,22 @@
 FROM python:3.11 AS builder
 
 RUN apt-get update && \
-    apt-get install -y \
-    build-essential \
-    && apt-get clean && rm -rf /var/lib/apt/lists/*
+    apt-get install -y build-essential
 
 COPY requirements.txt .
-# install dependencies to the local user directory (eg. /root/.local)
-RUN pip install --user --no-warn-script-location -r requirements.txt
+
+# install dependencies to /venv
+ENV PATH=/venv/bin:$PATH
+RUN python -m venv /venv
+RUN pip install -r requirements.txt
 
 FROM python:3.11-slim
 
 WORKDIR /plexanisync
 
-# copy only the dependencies installation from the 1st stage image
-COPY --from=builder /root/.local /root/.local
-RUN chmod -R a+rX /root
-# update PATH environment variable
-ENV PATH=/root/.local:$PATH
-ENV PYTHONPATH=/root/.local/lib/python3.11/site-packages
+# copy venv from builder
+COPY --from=builder /venv /venv
+ENV PATH=/venv/bin:$PATH
 
 ENV PLEX_SECTION=Anime \
     PLEX_URL=http://127.0.0.1:32400 \
