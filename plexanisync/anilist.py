@@ -67,7 +67,8 @@ class Anilist:
                     season_mappings: List[AnilistCustomMapping] = self.__retrieve_season_mappings(
                         plex_title, plex_season.season_number
                     )
-                    if season_mappings:
+                    # split season -> handle it in "any remaining seasons" section
+                    if season_mappings and len(season_mappings) == 1:
                         matched_id = season_mappings[0].anime_id
                         mapped_start = season_mappings[0].start
 

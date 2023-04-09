@@ -65,7 +65,7 @@ class GraphQL:
             'episodes',
             'synonyms'
         )
-        media.title.__fields__('romaji', 'english', 'native')
+        media.title.__fields__('romaji', 'english')
         media.start_date.year()
         media.end_date.year()
 
@@ -87,7 +87,7 @@ class GraphQL:
             'episodes',
             'synonyms'
         )
-        media.title.__fields__('romaji', 'english', 'native')
+        media.title.__fields__('romaji', 'english')
         media.start_date.year()
         media.end_date.year()
 
@@ -115,7 +115,7 @@ class GraphQL:
         )
         lists.entries.media.start_date.year()
         lists.entries.media.end_date.year()
-        lists.entries.media.title.__fields__('romaji', 'english', 'native')
+        lists.entries.media.title.__fields__('romaji', 'english')
 
         data = self.__send_graphql_request(operation)
         list_items = (operation + data).media_list_collection
