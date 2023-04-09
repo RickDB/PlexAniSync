@@ -27,7 +27,7 @@ ENV PLEX_SECTION=Anime \
     ANI_TOKEN='' \
     INTERVAL=3600
 
-COPY PlexAniSync.py requirements.txt custom_mappings_schema.json Docker/PlexAniSync/run/. /plexanisync/
+COPY sync.py requirements.txt custom_mappings_schema.json Docker/PlexAniSync/run/. /plexanisync/
 COPY plexanisync /plexanisync/plexanisync
 
 LABEL org.opencontainers.image.documentation=https://github.com/RickDB/PlexAniSync/blob/master/Docker/PlexAniSync/README.md
