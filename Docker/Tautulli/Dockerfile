@@ -1,10 +1,15 @@
 FROM python:3.9 AS builder
 
 RUN apt-get update && \
-    apt-get install -y build-essential python3-poetry && \
+    apt-get install -y build-essential libssl-dev libffi-dev python3-dev cargo && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
+ENV PIP_DEFAULT_TIMEOUT=100
+ENV PIP_DISABLE_PIP_VERSION_CHECK=1
+ENV PIP_NO_CACHE_DIR=1
 ENV POETRY_VIRTUALENVS_IN_PROJECT=true
+
+RUN pip install poetry
 COPY pyproject.toml poetry.lock /
 RUN poetry install --no-interaction --no-ansi --only main
 
