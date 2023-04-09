@@ -1,7 +1,7 @@
 FROM python:3.9 AS builder
 
 RUN apt-get update && \
-    apt-get install -y build-essential curl \
+    apt-get install -y build-essential libssl-dev libffi-dev python3-dev cargo pkg-config curl \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 ENV POETRY_HOME=/opt/poetry
