@@ -5,10 +5,10 @@ RUN apt-get update && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 ENV PIP_DEFAULT_TIMEOUT=100
-ENV PIP_DISABLE_PIP_VERSION_CHECK=1
 ENV PIP_NO_CACHE_DIR=1
 ENV POETRY_VIRTUALENVS_IN_PROJECT=true
 
+RUN python -m pip install --upgrade pip
 RUN pip install poetry
 COPY pyproject.toml poetry.lock /
 RUN poetry install --no-interaction --no-ansi --only main
