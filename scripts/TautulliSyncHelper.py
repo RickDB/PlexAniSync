@@ -31,7 +31,7 @@ def read_settings(settings_file) -> configparser.ConfigParser:
     return settings
 
 
-SETTINGS_FILE = os.getenv("SETTINGS_FILE") or "Data/settings.ini"
+SETTINGS_FILE = os.getenv("SETTINGS_FILE") or "data/settings.ini"
 
 if len(sys.argv) < 2:
     logger.error("No show title specified in arguments so cancelling updating")

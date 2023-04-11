@@ -12,7 +12,7 @@ chown -R tautulli:tautulli /plexanisync
 
 if [[ -z "${SETTINGS_FILE}" ]]; then
   echo "Updating settings.ini"
-  gosu tautulli "python" "/plexanisync/settingsupdater.py"
+  gosu tautulli "python" "/plexanisync/scripts/settingsupdater.py"
 else
   echo "Using custom config: "${SETTINGS_FILE}
 fi

@@ -34,7 +34,7 @@ https://github.com/RickDB/PlexAniSync/archive/master.zip
 
 ### Step 3 - Configuration
 
-From the project directory rename `settings.ini.example` to `settings.ini`, open `settings.ini` with your favorite text editor and edit where needed.
+In the `data` directory copy `settings.ini.example` to `settings.ini`, open `settings.ini` with your favorite text editor and edit where needed.
 
 
 #### Plex
@@ -141,7 +141,7 @@ Install the addtional requirements using the Python package installer (pip) from
 
 Now that configuration is finished and requirements have been installed we can finally start the sync script:
 
-`python PlexAniSync.py`
+`python scripts/PlexAniSync.py`
 
 Depending on library size and server can take a few minutes to finish, for scheduled syncing you can create a cronjob, systemd timer or windows task which runs it every 30 minutes for instance.
 
@@ -153,7 +153,7 @@ See [Systemd service](https://github.com/RickDB/PlexAniSync/wiki/Systemd-service
 
 You can manually link a Plex title and season to an AniList ID, to do so:
 
-- From the project folder copy `custom_mappings.yaml.example` to `custom_mappings.yaml`
+- In the `data` directory, copy `custom_mappings.yaml.example` to `custom_mappings.yaml`
 - Add new entries there in the following format:
 
 ```yaml
@@ -199,11 +199,11 @@ The feature of synonyms was introduced for the community mappings where you can 
 
 If you want to load a different settings.in file you can do so by supplying it in the first argument like so:
 
-`python PlexAniSync.py settings_alternate.ini`
+`python scripts/PlexAniSync.py data/settings_alternate.ini`
 
 In case of the Tautulli sync helper script you can do as well, first argument will then be settings filename and second will be the series name like so:
 
-`python TautulliSyncHelper.py  settings_alternate.ini <plex show name>`
+`python scripts/TautulliSyncHelper.py data/settings_alternate.ini <plex show name>`
 
 ### Make Plex watched episode count take priority
 
@@ -247,7 +247,7 @@ In the project folder you will find `TautulliSyncHelper.py` which you can use to
 
 Usage is as follows:
 
-`python TautulliSyncHelper.py <plex show name>`
+`python scripts/TautulliSyncHelper.py <plex show name>`
 
 Depending on your OS make sure to place the show name between single or double quotes, for more information see the wiki page:
 
@@ -258,11 +258,11 @@ https://github.com/RickDB/PlexAniSync/wiki/Tautulli-sync-script
 PlexAniSync is available as Docker image.
 
 [PlexAniSync](https://github.com/RickDB/PlexAniSync/pkgs/container/plexanisync)<br/>
-[Documentation](Docker/PlexAniSync/README.md)
+[Documentation](docker/PlexAniSync/README.md)
 
 Another docker container for Tautulli with built-in PlexAniSync can be found here:<br/>
 [Tautulli-PlexAniSync](https://github.com/RickDB/PlexAniSync/pkgs/container/tautulli-plexanisync)<br/> 
-[Documentation](Docker/Tautulli/README.md)
+[Documentation](docker/Tautulli/README.md)
 
 ## Requirements
 

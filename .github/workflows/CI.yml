@@ -42,14 +42,14 @@ jobs:
     - name: Lint with flake8 and pylint
       run: |
         poetry run flake8 .
-        poetry run pylint sync.py TautulliSyncHelper.py ./plexanisync || poetry run pylint-exit --error-fail --warn-fail $?
+        poetry run pylint ./scripts/*.py ./plexanisync || poetry run pylint-exit --error-fail --warn-fail $?
     - run: poetry run pytest
 
   build-docker-plexanisync:
     needs: lint-and-test
     uses: ./.github/workflows/build-docker-image.yml
     with:
-      dockerfile: ./Docker/PlexAniSync/Dockerfile
+      dockerfile: ./docker/PlexAniSync/Dockerfile
       imagename: ${{ github.repository_owner }}/plexanisync
       eventname: ${{ github.event_name }}
       platforms: linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64
@@ -59,7 +59,7 @@ jobs:
     needs: build-docker-plexanisync
     uses: ./.github/workflows/build-docker-image.yml
     with:
-      dockerfile: ./Docker/Tautulli/Dockerfile
+      dockerfile: ./docker/Tautulli/Dockerfile
       imagename: ${{ github.repository_owner }}/tautulli-plexanisync
       eventname: ${{ github.event_name }}
       platforms: linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64

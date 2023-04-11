@@ -25,11 +25,11 @@ ENV PLEX_SECTION=Anime \
     ANI_TOKEN='' \
     INTERVAL=3600
 
-COPY requirements.txt Docker/PlexAniSync/run/. /plexanisync/
-COPY Data /plexanisync/Data
-COPY Scripts /plexanisync/Scripts
+COPY requirements.txt docker/PlexAniSync/run/. /plexanisync/
+COPY data /plexanisync/data
+COPY scripts /plexanisync/scripts
 COPY plexanisync /plexanisync/plexanisync
 
-LABEL org.opencontainers.image.documentation=https://github.com/RickDB/PlexAniSync/blob/master/Docker/PlexAniSync/README.md
+LABEL org.opencontainers.image.documentation=https://github.com/RickDB/PlexAniSync/blob/master/docker/PlexAniSync/README.md
 
 CMD ["/plexanisync/runsync.sh"]

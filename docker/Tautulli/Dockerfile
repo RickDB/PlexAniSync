@@ -26,12 +26,14 @@ ENV PLEX_SECTION=Anime \
     ANI_TOKEN=''
 
 # copy code itself from context to image
-COPY Docker/Tautulli/run/start.sh /app/
-COPY TautulliSyncHelper.py custom_mappings_schema.json Docker/Tautulli/run/settingsupdater.py /plexanisync/
+COPY docker/Tautulli/run/start.sh /app/
+COPY data /plexanisync/data
+COPY scripts /plexanisync/scripts
+COPY plexanisync /plexanisync/plexanisync
 COPY plexanisync /plexanisync/plexanisync
 
 # reset workdir to default one from tautulli
 WORKDIR /app
 
 LABEL autoheal=true
-LABEL org.opencontainers.image.documentation=https://github.com/RickDB/PlexAniSync/blob/master/Docker/Tautulli/README.md
+LABEL org.opencontainers.image.documentation=https://github.com/RickDB/PlexAniSync/blob/master/docker/Tautulli/README.md

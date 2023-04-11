@@ -2,7 +2,7 @@
 run() {
   while true
   do
-    (cd /plexanisync && python Scripts/PlexAniSync.py)
+    (cd /plexanisync && python scriptsPlexAniSync.py)
     sleep ${INTERVAL}
   done
 }
@@ -13,7 +13,7 @@ run() {
 
 if [[ -z ${SETTINGS_FILE} ]]; then
   echo "Updating settings.ini"
-  python /plexanisync/settingsupdater.py
+  python /plexanisync/scripts/settingsupdater.py
   run
 else
   echo "Using custom config: "${SETTINGS_FILE}
