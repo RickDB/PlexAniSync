@@ -15,8 +15,7 @@ import ruyaml
 from plexanisync.logger_adapter import PrefixLoggerAdapter
 
 logger = PrefixLoggerAdapter(logging.getLogger("PlexAniSync"), {"prefix": "MAPPING"})
-MAPPING_FILE = "custom_mappings.yaml"
-REMOTE_MAPPING_FILE = "remote_mappings.yaml"
+MAPPING_FILE = "Data/custom_mappings.yaml"
 
 
 @dataclass
@@ -85,7 +84,7 @@ def read_custom_mappings() -> Dict[str, List[AnilistCustomMapping]]:
 
     yaml = YAML(typ='safe')
     yaml.Constructor = MyConstructor
-    with open('./custom_mappings_schema.json', 'r', encoding='utf-8') as f:
+    with open('Data/custom_mappings_schema.json', 'r', encoding='utf-8') as f:
         schema = json.load(f)
 
     # Create a Data object

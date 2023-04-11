@@ -1,9 +1,8 @@
-# coding=utf-8
 import configparser
 import logging
-from logging.handlers import RotatingFileHandler
 import os
 import sys
+from time import sleep
 
 import coloredlogs
 
@@ -13,28 +12,11 @@ from plexanisync.plexmodule import PlexModule
 from plexanisync.version import version
 
 # Logger settings
-LOG_FILENAME = "PlexAniSync.log"
 logger = logging.getLogger("PlexAniSync")
-
-# Add the rotating log message handler to the standard log
-handler = RotatingFileHandler(
-    LOG_FILENAME, maxBytes=10_000_000, backupCount=5, encoding="utf-8"
-)
-handler.setLevel(logging.INFO)
-logger.addHandler(handler)
-
-# Debug log
-logging.basicConfig(
-    level=logging.DEBUG,
-    format="%(asctime)s %(levelname)s %(name)s %(message)s",
-    handlers=[logging.FileHandler("PlexAniSync-DEBUG.log", "w", "utf-8")],
-)
-
-# Install colored logs
 coloredlogs.install(fmt="%(asctime)s %(message)s", logger=logger)
 
-
-# Enable this if you want to also log all messages coming from imported libraries
+# Enable this if you want to also log all messages coming from imported
+# libraries
 # coloredlogs.install(level='DEBUG')
 
 ## Settings section ##
@@ -49,11 +31,19 @@ def read_settings(settings_file) -> configparser.ConfigParser:
     return settings
 
 
-SETTINGS_FILE = os.getenv("SETTINGS_FILE") or "settings.ini"
+SETTINGS_FILE = os.getenv("SETTINGS_FILE") or "Data/settings.ini"
 
-if len(sys.argv) > 1:
+if len(sys.argv) < 2:
+    logger.error("No show title specified in arguments so cancelling updating")
+    sys.exit(1)
+elif len(sys.argv) > 2:
     SETTINGS_FILE = sys.argv[1]
     logger.warning(f"Found settings file parameter and using: {SETTINGS_FILE}")
+    # If we have custom settings file parameter use different arg index to
+    # keep legacy method intact
+    show_title = sys.argv[2]
+else:
+    show_title = sys.argv[1]
 
 settings = read_settings(SETTINGS_FILE)
 anilist_settings = settings["ANILIST"]
@@ -63,6 +53,7 @@ plex_settings = settings["PLEX"]
 ## Startup section ##
 def start():
     logger.info(f"PlexAniSync - version: {version()}")
+    logger.info(f"Updating single show: {show_title}")
 
     custom_mappings = read_custom_mappings()
 
@@ -85,8 +76,10 @@ def start():
             "Unable to retrieve AniList list, check your username and access token"
         )
     else:
+        # Wait a few a seconds to make sure Plex has processed watched states
+        sleep(5.0)
         plexmodule = PlexModule(plex_settings)
-        plex_anime_series = plexmodule.get_anime_shows()
+        plex_anime_series = plexmodule.get_anime_shows_filter(show_title)
 
         if plex_anime_series is None:
             logger.error("Found no Plex shows for processing")
@@ -99,7 +92,7 @@ def start():
         else:
             anilist.match_to_plex(anilist_series, plex_series_watched)
 
-    logger.info("Plex to AniList sync finished")
+        logger.info("Plex to AniList sync finished")
 
 
 if __name__ == "__main__":

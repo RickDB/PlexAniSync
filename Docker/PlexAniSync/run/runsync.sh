@@ -2,7 +2,7 @@
 run() {
   while true
   do
-    (cd /plexanisync && python sync.py)
+    (cd /plexanisync && python Scripts/PlexAniSync.py)
     sleep ${INTERVAL}
   done
 }
