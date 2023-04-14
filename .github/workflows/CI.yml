@@ -32,18 +32,12 @@ jobs:
         python-version: 3.7
     - name: Install poetry
       uses: abatilo/actions-poetry@v2
-    - name: Install dependencies
-      run: |
-        poetry install
     - name: Setup flake8 annotations
       uses: rbialon/flake8-annotations@v1
     - name: Add pylint annotator
       uses: pr-annotators/pylint-pr-annotator@v0.0.1
-    - name: Lint with flake8 and pylint
-      run: |
-        poetry run flake8 .
-        poetry run pylint ./scripts/*.py ./plexanisync || poetry run pylint-exit --error-fail --warn-fail $?
-    - run: poetry run pytest
+    - run: make lint
+    - run: make test
 
   build-docker-plexanisync:
     needs: lint-and-test

@@ -11,7 +11,7 @@ python = "^3.7.2"
 coloredlogs = "^15.0.1"
 requests = "^2.28.2"
 inflect = "^6.0.4"
-jsonschema = "^4.17"
+jsonschema = "^4.17.3"
 plexapi = "^4.13.4"
 ruyaml = "^0.91.0"
 sgqlc = "^16.1"
@@ -21,7 +21,7 @@ sgqlc = "^16.1"
 flake8 = "^5.0.4"
 pylint = "^2.17.2"
 pylint-exit = "^1.2.0"
-pytest = "^7.2.2"
+pytest = "^7.3.1"
 
 [build-system]
 requires = ["poetry-core"]
