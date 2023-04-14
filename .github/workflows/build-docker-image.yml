@@ -23,7 +23,7 @@ jobs:
       contents: read
       packages: write
     env:
-      DOCKER_IO: startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/master' 
+      DOCKER_IO: ${{ startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/master' }} 
     steps:
         # Set IMAGE_NAMES to ghcr.io, also set to docker.io if building a tag or master
       - name: Set image names
