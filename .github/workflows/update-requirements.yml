@@ -1,0 +1,32 @@
+name: update-requirements
+
+on:
+  push:
+    paths:
+      - 'pyproject.toml'
+      - 'poetry.lock'
+  pull_request:
+    paths:
+      - 'pyproject.toml'
+      - 'poetry.lock'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  update-requirements:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python 3.7
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.7
+    - name: Install poetry
+      uses: abatilo/actions-poetry@v2
+    - run: make update-requirements
+    - name: Commit requirements.txt changes
+      uses: stefanzweifel/git-auto-commit-action@v4
+      with:
+        commit_message: Update requirements.txt

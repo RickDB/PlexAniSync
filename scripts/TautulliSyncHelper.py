@@ -9,7 +9,7 @@ import coloredlogs
 from plexanisync.anilist import Anilist
 from plexanisync.custom_mappings import read_custom_mappings
 from plexanisync.plexmodule import PlexModule
-from plexanisync._version import __version__
+from plexanisync.version import version
 
 # Logger settings
 logger = logging.getLogger("PlexAniSync")
@@ -31,7 +31,7 @@ def read_settings(settings_file) -> configparser.ConfigParser:
     return settings
 
 
-SETTINGS_FILE = os.getenv("SETTINGS_FILE") or "settings.ini"
+SETTINGS_FILE = os.getenv("SETTINGS_FILE") or "data/settings.ini"
 
 if len(sys.argv) < 2:
     logger.error("No show title specified in arguments so cancelling updating")
@@ -52,7 +52,7 @@ plex_settings = settings["PLEX"]
 
 ## Startup section ##
 def start():
-    logger.info(f"PlexAniSync - version: {__version__}")
+    logger.info(f"PlexAniSync - version: {version()}")
     logger.info(f"Updating single show: {show_title}")
 
     custom_mappings = read_custom_mappings()

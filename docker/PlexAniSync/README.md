@@ -15,7 +15,7 @@ docker run -d \
   -e ANI_TOKEN=SomeToken \
   -e INTERVAL=3600 \
   -v /etc/localtime:/etc/localtime:ro \
-  -v /path/to/your/custom_mappings.yaml:/plexanisync/custom_mappings.yaml \
+  -v /path/to/your/custom_mappings.yaml:/plexanisync/data/custom_mappings.yaml \
   ghcr.io/rickdb/plexanisync:latest
 ```
 
@@ -37,7 +37,7 @@ services:
       - INTERVAL=3600
     volumes:
       - '/etc/localtime:/etc/localtime:ro'
-      - '/path/to/your/custom_mappings.yaml:/plexanisync/custom_mappings.yaml'
+      - '/path/to/your/custom_mappings.yaml:/plexanisync/data/custom_mappings.yaml'
 ```
 
 ### Environment Variables

@@ -17,7 +17,7 @@ docker run -d \
   -e ANI_TOKEN=<anilist-token> \
   -p 8181:8181 \
   -v <path to tautulli data directory>:/config \
-  -v <path to custom_mappings.yaml>:/plexanisync/custom_mappings.yaml \
+  -v <path to custom_mappings.yaml>:/plexanisync/data/custom_mappings.yaml \
   --restart unless-stopped \
   ghcr.io/rickdb/tautulli-plexanisync
 ```
@@ -40,7 +40,7 @@ services:
       - ANI_TOKEN=SomeToken
     volumes:
       - '/path/to/tautulli-data-directory:/config'
-      - '/path/to/your/custom_mappings.yaml:/plexanisync/custom_mappings.yaml'
+      - '/path/to/your/custom_mappings.yaml:/plexanisync/data/custom_mappings.yaml'
 
     ports:
       - '8181:8181'
@@ -53,7 +53,7 @@ Since this is a combination of docker images, environment variables of both imag
 See:
 
 - [Tautulli](https://github.com/Tautulli/Tautulli-Wiki/wiki/Installation#docker)
-- [PlexAniSync](https://github.com/RickDB/PlexAniSync/Docker/PlexAniSync/README.md#environment-variables)
+- [PlexAniSync](https://github.com/RickDB/PlexAniSync/docker/PlexAniSync/README.md#environment-variables)
 
 ### Configure Tautulli to use PlexAniSync
 

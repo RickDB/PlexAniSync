@@ -19,5 +19,5 @@ config['ANILIST'] = {
     'sync_ratings': os.environ.get('SYNC_RATINGS') or False
 }
 
-with open('/plexanisync/settings.ini', 'w', encoding="UTF-8") as configfile:
+with open('/plexanisync/data/settings.ini', 'w', encoding="UTF-8") as configfile:
     config.write(configfile)
