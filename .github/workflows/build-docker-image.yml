@@ -24,7 +24,8 @@ jobs:
       packages: write
 
     steps:
-        # Set IMAGE_NAMES to ghcr.io, also set to docker.io if building a tag or master
+        # Set IMAGE_NAMES to ghcr.io, additionally add docker.io if building a tag or master
+        # Limit platforms to amd64 if building for pull requests
       - name: Set variables
         run: |
           EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
@@ -37,6 +38,12 @@ jobs:
           echo "$EOF" >> $GITHUB_ENV
           if [[ -n "$DOCKER_IO" ]]; then
             echo "DOCKER_IO=true" >> $GITHUB_ENV
+          fi
+
+          if [[ ${{ inputs.eventname }} == 'pull_request' ]]; then
+            echo "PLATFORMS=linux/amd64" >> $GITHUB_ENV
+          else
+            echo "PLATFORMS=${{ inputs.platforms }}" >> $GITHUB_ENV
           fi
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -72,7 +79,7 @@ jobs:
         with:
           context: .
           file: ${{ inputs.dockerfile }}
-          platforms: ${{ inputs.platforms }}
+          platforms: ${{ env.PLATFORMS }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           push: ${{ inputs.eventname != 'pull_request' }}
