@@ -28,10 +28,18 @@ class AnilistSeries:
     episodes: int
     title_english: str
     title_romaji: str
+    title_native: str
     synonyms: List[str]
     started_year: int
     ended_year: int
     score: int
+
+    def titles(self) -> List[str]:
+        titles = [self.title_english, self.title_romaji, self.title_native]
+        if self.synonyms:
+            titles += self.synonyms
+        # filter out empty values
+        return [title for title in titles if title]
 
 
 class GraphQL:
@@ -65,7 +73,7 @@ class GraphQL:
             'episodes',
             'synonyms'
         )
-        media.title.__fields__('romaji', 'english')
+        media.title.__fields__('romaji', 'english', 'native')
         media.start_date.year()
         media.end_date.year()
 
@@ -87,7 +95,7 @@ class GraphQL:
             'episodes',
             'synonyms'
         )
-        media.title.__fields__('romaji', 'english')
+        media.title.__fields__('romaji', 'english', 'native')
         media.start_date.year()
         media.end_date.year()
 
@@ -115,7 +123,7 @@ class GraphQL:
         )
         lists.entries.media.start_date.year()
         lists.entries.media.end_date.year()
-        lists.entries.media.title.__fields__('romaji', 'english')
+        lists.entries.media.title.__fields__('romaji', 'english', 'native')
 
         data = self.__send_graphql_request(operation)
         list_items = (operation + data).media_list_collection
@@ -193,6 +201,7 @@ class GraphQL:
         episodes = 0
         title_english = ""
         title_romaji = ""
+        title_native = ""
         synonyms = []
         started_year = 0
         ended_year = 0
@@ -213,6 +222,8 @@ class GraphQL:
             title_english = media_item.title.english
         if hasattr(media_item.title, "romaji"):
             title_romaji = media_item.title.romaji
+        if hasattr(media_item.title, "native"):
+            title_native = media_item.title.native
         if hasattr(media_item, "synonyms"):
             synonyms = media_item.synonyms
         if hasattr(media_item.start_date, "year"):
@@ -232,6 +243,7 @@ class GraphQL:
             episodes,
             title_english,
             title_romaji,
+            title_native,
             synonyms,
             started_year,
             ended_year,
