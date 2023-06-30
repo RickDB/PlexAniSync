@@ -13,5 +13,5 @@ pyrsistent==0.19.3
 regex==2023.6.3 
 requests==2.31.0
 ruyaml==0.91.0
-sgqlc==16.1
+sgqlc==16.3
 urllib3==1.26.16
