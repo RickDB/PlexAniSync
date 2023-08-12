@@ -122,6 +122,8 @@ https://anilist.co/api/v2/oauth/authorize?client_id=1549&response_type=token
 
 Make sure to copy the entire key as it is pretty long and paste that in the settings file under 'access_token', no need to enclose it just paste it as-is.
 
+The token is valid for one year from retrieval, so you'll need to create a new token each year and update your configuration.
+
 Afterwards make sure to also fill in your AniList username as well which is your actual username not your e-mail address like for example:
 
 ```
