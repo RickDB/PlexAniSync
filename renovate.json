@@ -14,7 +14,14 @@
   },
   "github-actions": {
     "extends": ["group:all"],
-    "branchTopic": "github-actions",
-    "commitMessageTopic": "github-actions"
+    "groupName": "github-actions",
+    "groupSlug": "github-actions",
+    "packageRules": [
+      {
+        "groupName": "all dependencies",
+        "groupSlug": "all",
+        "matchPackagePatterns": ["*"]
+      }
+    ],
   }
 }
