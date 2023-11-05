@@ -1,10 +1,13 @@
 # coding=utf-8
 from configparser import SectionProxy
 from dataclasses import dataclass
+from datetime import datetime
 from typing import List
+import base64
+import json
 import logging
-import time
 import requests
+import time
 
 from sgqlc.endpoint.requests import RequestsEndpoint
 from sgqlc.operation import Operation
@@ -46,6 +49,9 @@ class GraphQL:
     def __init__(self, anilist_settings: SectionProxy):
         self.anilist_settings = anilist_settings
         anilist_token = anilist_settings["access_token"].strip()
+
+        self.check_token_expiry(anilist_token)
+
         self.endpoint = RequestsEndpoint(
             url="https://graphql.anilist.co",
             base_headers={
@@ -59,6 +65,15 @@ class GraphQL:
         self.endpoint.logger = logger
         self.skip_list_update = self.anilist_settings.getboolean("skip_list_update", False)
         self.sync_ratings = self.anilist_settings.getboolean("sync_ratings", False)
+
+    def check_token_expiry(self, anilist_token):
+        # pad the body with == so the base64 pad validation always passes
+        base64_body = anilist_token.split(".")[1] + "=="
+        anilist_token_body = json.loads(base64.urlsafe_b64decode(base64_body))
+        token_expiry = int(anilist_token_body["exp"])
+        if datetime.fromtimestamp(token_expiry) < datetime.now():
+            # token expired in the past
+            raise RuntimeError("Anilist token is expired")
 
     def search_by_id(self, anilist_id: int):
         operation = Operation(schema.Query)
