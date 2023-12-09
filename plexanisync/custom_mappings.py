@@ -148,13 +148,13 @@ def __add_mappings(custom_mappings, mapping_location, file_mappings):
             season = file_season['season']
             anilist_id = file_season['anilist-id']
             start = file_season.get('start', 1)
-            logger.info(
+            logger.debug(
                 f"Adding custom mapping from {mapping_location} "
                 f"| title: {series_title} | season: {season} | anilist id: {anilist_id}"
             )
             series_mappings.append(AnilistCustomMapping(season, anilist_id, start))
         if synonyms:
-            logger.info(f"{series_title} has synonyms: {synonyms}")
+            logger.debug(f"{series_title} has synonyms: {synonyms}")
         for title in [series_title] + synonyms:
             title_lower = title.lower()
             if title_lower in custom_mappings:

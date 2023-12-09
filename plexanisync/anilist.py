@@ -446,17 +446,24 @@ class Anilist:
     ):
         series = self.__find_mapped_series(anilist_series, anime_id)
         if series:
-            logger.info(
-                f"Updating series: {series.title_english} | Episodes watched: {watched_episodes}"
-            )
-            self.__update_entry(
-                plex_title,
-                plex_year,
-                watched_episodes,
-                [series],
-                skip_year_check,
-                plex_rating
-            )
+            if series.progress < watched_episodes:
+                logger.info(
+                    f"Updating series: {series.title_english} | Episodes watched: {watched_episodes}"
+                )
+                self.__update_entry(
+                    plex_title,
+                    plex_year,
+                    watched_episodes,
+                    [series],
+                    skip_year_check,
+                    plex_rating
+                )
+            elif series.progress == watched_episodes:
+                logger.debug("Episodes watched was the same on AniList and Plex so skipping update")
+            else:
+                logger.debug(
+                    f"Episodes watched was higher on AniList [{series.progress}] than on Plex [{watched_episodes}] so skipping update"
+                )
         else:
             logger.warning(
                 f"Adding new series id to list: {anime_id} | Episodes watched: {watched_episodes}"
@@ -506,7 +513,7 @@ class Anilist:
                     )
                     self.graphql.update_score(series.anilist_id, plex_rating)
                 else:
-                    logger.info(
+                    logger.debug(
                         "Series is already marked as completed on AniList so skipping update"
                     )
                 return
@@ -587,7 +594,7 @@ class Anilist:
                     )
                     self.graphql.update_score(series.anilist_id, plex_rating)
                 else:
-                    logger.info(
+                    logger.debug(
                         "Episodes watched was the same on AniList and Plex so skipping update"
                     )
                 return
@@ -620,7 +627,7 @@ class Anilist:
                     )
                     self.graphql.update_score(series.anilist_id, plex_rating)
                 else:
-                    logger.info(
+                    logger.debug(
                         f"Episodes watched was higher on AniList [{anilist_episodes_watched}] than on Plex [{watched_episode_count}] so skipping update"
                     )
             elif anilist_total_episodes <= 0:
@@ -660,9 +667,12 @@ class Anilist:
         total_mapped_episodes = 0
         season = season_mappings[0].season
 
-        for mapping in season_mappings:
+        # sort mappings so the one with the highest start comes first
+        sorted_mapping = sorted(season_mappings, key=lambda x: x.start, reverse=True)
+
+        for mapping in sorted_mapping:
             if watched_episodes >= mapping.start:
-                episodes_in_season = watched_episodes - mapping.start + 1
+                episodes_in_season = watched_episodes - mapping.start - total_mapped_episodes + 1
                 total_mapped_episodes += episodes_in_season
                 episodes_in_anilist_entry[mapping.anime_id] = episodes_in_season
 
