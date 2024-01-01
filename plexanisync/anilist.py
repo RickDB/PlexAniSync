@@ -570,7 +570,7 @@ class Anilist:
                     "AniList entry to completed"
                 )
 
-                self.__update_episode_incremental(series, watched_episode_count, anilist_episodes_watched, "COMPLETED", plex_rating)
+                self.__update_episodes(series, watched_episode_count, "COMPLETED", plex_rating)
                 return
             elif (
                 watched_episode_count > anilist_episodes_watched
@@ -584,7 +584,7 @@ class Anilist:
                     f"episodes | updating AniList entry to {new_status}"
                 )
 
-                self.__update_episode_incremental(series, watched_episode_count, anilist_episodes_watched, new_status, plex_rating)
+                self.__update_episodes(series, watched_episode_count, new_status, plex_rating)
                 return
             elif watched_episode_count == anilist_episodes_watched:
                 if plex_rating and series.score != plex_rating and self.graphql.sync_ratings:
@@ -635,19 +635,10 @@ class Anilist:
                     "AniList total episodes was 0 so most likely invalid data"
                 )
 
-    def __update_episode_incremental(
-        self, series: AnilistSeries, watched_episode_count: int, anilist_episodes_watched: int, new_status: str,
-        plex_rating: int
+    def __update_episodes(
+        self, series: AnilistSeries, watched_episode_count: int, new_status: str, plex_rating: int
     ):
-        # calculate episode difference and iterate up so activity stream lists
-        # episodes watched if episode difference exceeds 32 only update most
-        # recent as otherwise will flood the notification feed
-        episode_difference = watched_episode_count - anilist_episodes_watched
-        if episode_difference > 32:
-            self.graphql.update_series(series.anilist_id, watched_episode_count, new_status, plex_rating)
-        else:
-            for current_episodes_watched in range(anilist_episodes_watched + 1, watched_episode_count + 1):
-                self.graphql.update_series(series.anilist_id, current_episodes_watched, new_status, plex_rating)
+        self.graphql.update_series(series.anilist_id, watched_episode_count, new_status, plex_rating)
 
     def __retrieve_season_mappings(self, title: str, season: int) -> List[AnilistCustomMapping]:
         season_mappings: List[AnilistCustomMapping] = []
