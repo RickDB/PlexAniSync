@@ -20,7 +20,7 @@ This version is based on my previous project  [PlexMalSync](https://github.com/R
 
 ### Step 1 - install Python
 
-Make sure you have Python 3.7 or higher installed:
+Make sure you have Python 3.8 or higher installed:
 
 [Python homepage](https://www.python.org/)
 
@@ -268,7 +268,7 @@ Another docker container for Tautulli with built-in PlexAniSync can be found her
 
 ## Requirements
 
-[Python 3.7 or higher](https://www.python.org/)
+[Python 3.8 or higher](https://www.python.org/)
 
 ## Support
 
