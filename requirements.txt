@@ -9,7 +9,7 @@ inflect==5.6.2
 jsonschema==4.17.3
 PlexAPI==4.14.0
 pyreadline3==3.4.1
-pyrsistent==0.19.3
+pyrsistent==0.20.0
 regex==2023.8.8 
 requests==2.31.0
 ruyaml==0.91.0
