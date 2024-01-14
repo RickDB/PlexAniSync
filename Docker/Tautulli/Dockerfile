@@ -1,8 +1,10 @@
 FROM python:3.9 AS builder
 
+ENV CARGO_REGISTRIES_CRATES_IO_PROTOCOL=sparse
+
 RUN apt-get update && \
     apt-get install -y \
-    build-essential rustc \
+    build-essential rustc git \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 RUN pip install --upgrade pip

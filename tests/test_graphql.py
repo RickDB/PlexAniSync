@@ -25,9 +25,14 @@ def test_fetch_user_list():
     assert naruto.progress == 4
     assert naruto.score == 70
 
-def test_too_many_requests():
-    for i in range(100):
+def test_too_many_requests(caplog):
+    for i in range(200):
         graphql.fetch_user_list()
+        if "Rate limit hit, waiting for" in caplog.text:
+            break
+    
+    assert "Rate limit hit, waiting for" in caplog.text
+
 
 def test_search_by_id():
     media = graphql.search_by_id(20)
