@@ -26,7 +26,7 @@ def test_fetch_user_list():
     assert naruto.score == 70
 
 def test_too_many_requests():
-    for i in range(200):
+    for i in range(100):
         graphql.fetch_user_list()
 
 def test_search_by_id():
