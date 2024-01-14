@@ -1,13 +1,12 @@
 FROM python:3.9 AS builder
 
-ENV CARGO_REGISTRIES_CRATES_IO_PROTOCOL=sparse
-
 RUN apt-get update && \
     apt-get install -y \
     build-essential rustc git \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 RUN pip install --upgrade pip
+COPY Docker/Tautulli/pip.conf /etc/pip.conf
 COPY requirements.txt .
 # install dependencies to the local user directory (eg. /root/.local)
 RUN pip install --user --no-warn-script-location -r requirements.txt
