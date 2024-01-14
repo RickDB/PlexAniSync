@@ -90,7 +90,8 @@ class Anilist:
                             continue
                         # For multiple seasons with the same id
                         # If the start of this season has been mapped use that.
-                        if mapped_start != 1:
+                        # Also use the watched episode count directly for series like TMDB One Piece
+                        if mapped_start != 1 or plex_season.first_episode > match.watched_episodes:
                             match.watched_episodes = plex_season.watched_episodes - mapped_start + 1
                         else:
                             match.watched_episodes += plex_season.watched_episodes
