@@ -189,6 +189,8 @@ class GraphQL:
         self.__send_graphql_request(op)
 
     def __send_graphql_request(self, operation):
+        retries = 10
+
         while True:
             data = self.endpoint(operation)
             if "errors" in data:
@@ -199,11 +201,14 @@ class GraphQL:
                     logger.warning(f"Rate limit hit, waiting for {wait_time}s")
                     time.sleep(wait_time + 1)
 
+                elif retries > 0:
+                    retries = retries - 1
+                    time.sleep(1)
                 else:
                     raise data["exception"]
             else:
                 # wait a bit to not overload AniList API
-                time.sleep(1)
+                time.sleep(0.2)
                 return data
 
     def __mediaitem_to_object(self, media_item) -> AnilistSeries:
