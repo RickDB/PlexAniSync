@@ -203,7 +203,7 @@ class GraphQL:
                     raise data["exception"]
             else:
                 # wait a bit to not overload AniList API
-                time.sleep(0.20)
+                time.sleep(1)
                 return data
 
     def __mediaitem_to_object(self, media_item) -> AnilistSeries:
