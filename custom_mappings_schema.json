@@ -31,6 +31,21 @@
               "Shaman King (2021)"
             ]
           },
+          "synonyms": {
+            "type": "array",
+            "default": [],
+            "items": {
+              "type": "string"
+            }
+          },
+          "guid": {
+            "type": "string",
+            "format": "uri",
+            "pattern": "^plex://",
+            "examples": [
+              "plex://show/5d9c0845ffd9ef001e990bb2"
+            ]
+          },
           "seasons": {
             "type": "array",
             "minItems": 1,
@@ -54,13 +69,6 @@
                 }
               },
               "additionalProperties": false
-            }
-          },
-          "synonyms": {
-            "type": "array",
-            "default": [],
-            "items": {
-              "type": "string"
             }
           }
         },
