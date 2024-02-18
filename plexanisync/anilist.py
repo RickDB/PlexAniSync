@@ -640,13 +640,14 @@ class Anilist:
         self, series: AnilistSeries, watched_episode_count: int, anilist_episodes_watched: int, new_status: str,
         plex_rating: int
     ):
-        # calculate episode difference and iterate up so activity stream lists
-        # episodes watched if episode difference exceeds 32 only update most
-        # recent as otherwise will flood the notification feed
+        # calculate episode difference
         episode_difference = watched_episode_count - anilist_episodes_watched
-        if episode_difference > 32:
+        # If episode difference exceeds 32 only update most recent as otherwise will flood the notification feed.
+        # Also set it to the max episode count directly if the series was completed.
+        if episode_difference > 32 or new_status == "COMPLETED":
             self.graphql.update_series(series.anilist_id, watched_episode_count, new_status, plex_rating)
         else:
+            # send 1 update per watched episode for the activity feed
             for current_episodes_watched in range(anilist_episodes_watched + 1, watched_episode_count + 1):
                 self.graphql.update_series(series.anilist_id, current_episodes_watched, new_status, plex_rating)
 
