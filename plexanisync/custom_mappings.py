@@ -77,6 +77,7 @@ class MyConstructor(ruyaml.constructor.RoundTripConstructor):
 
 def read_custom_mappings() -> Dict[str, List[AnilistCustomMapping]]:
     custom_mappings: Dict[str, List[AnilistCustomMapping]] = {}
+    title_guid_mappings: Dict[str, str] = {}
     if not os.path.isfile(MAPPING_FILE):
         logger.info(f"Custom map file not found: {MAPPING_FILE}")
         return custom_mappings
@@ -112,9 +113,9 @@ def read_custom_mappings() -> Dict[str, List[AnilistCustomMapping]]:
             logger.error(f'Custom Mappings {mapping_location} validation failed!')
             __handle_yaml_error(file_mappings_remote, e)
 
-        __add_mappings(custom_mappings, mapping_location, file_mappings_remote)
+        __add_mappings(custom_mappings, title_guid_mappings, mapping_location, file_mappings_remote)
 
-    __add_mappings(custom_mappings, MAPPING_FILE, file_mappings_local)
+    __add_mappings(custom_mappings, title_guid_mappings, MAPPING_FILE, file_mappings_local)
 
     return custom_mappings
 
@@ -137,12 +138,15 @@ def __handle_yaml_error(file_mappings_local, error):
     sys.exit(1)
 
 
-def __add_mappings(custom_mappings, mapping_location, file_mappings):
+def __add_mappings(custom_mappings: Dict[str, List[AnilistCustomMapping]],
+                   title_guid_mappings: Dict[str, str],
+                   mapping_location, file_mappings):
     # handles missing and empty 'entries'
     entries = file_mappings.get('entries', []) or []
     for file_entry in entries:
         series_title = str(file_entry['title'])
         synonyms: List[str] = file_entry.get('synonyms', [])
+        guid: str = str(file_entry.get('guid', ""))
         series_mappings: List[AnilistCustomMapping] = []
         for file_season in file_entry['seasons']:
             season = file_season['season']
@@ -155,11 +159,23 @@ def __add_mappings(custom_mappings, mapping_location, file_mappings):
             series_mappings.append(AnilistCustomMapping(season, anilist_id, start))
         if synonyms:
             logger.debug(f"{series_title} has synonyms: {synonyms}")
+
+        if guid:
+            # store the mapping under the guid if one is set
+            custom_mappings[guid] = series_mappings
+
         for title in [series_title] + synonyms:
             title_lower = title.lower()
             if title_lower in custom_mappings:
                 logger.info(f"Overwriting previous mapping for {title}")
+                if title_lower in title_guid_mappings and not guid:
+                    # if the current mapping doesn't have a guid, remove the guid mapping with the same title
+                    # this ensures that users can override community mappings without specifying the guid field
+                    custom_mappings.pop(title_guid_mappings[title_lower], None)
             custom_mappings[title_lower] = series_mappings
+
+            if guid:
+                title_guid_mappings[title_lower] = guid
 
 
 # Get the custom mappings from the web.

@@ -32,6 +32,7 @@ class PlexWatchedSeries:
     title: str
     title_sort: str
     title_original: str
+    guid: str
     year: int
     seasons: List[PlexSeason]
     anilist_id: Optional[int]
@@ -220,6 +221,7 @@ class PlexModule:
                             show.title.strip(),
                             show.titleSort.strip(),
                             show.originalTitle.strip(),
+                            show.guid,
                             year,
                             seasons,
                             anilist_id,
@@ -259,6 +261,7 @@ class PlexModule:
                             show.title.strip(),
                             show.titleSort.strip(),
                             show.originalTitle.strip(),
+                            show.guid,
                             year,
                             [PlexSeason(1, rating, 1, 1, 1)],
                             anilist_id,

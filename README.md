@@ -189,6 +189,38 @@ https://anilist.co/anime/99263/Tate-no-Yuusha-no-Nariagari
 - You can remove any existing entries from the example file as they are purely instructional
 - Upon startup it will check if the file is a valid YAML file. The most likely reason it's not is because you didn't put quotes around an anime title with special characters (e.g. ":") in it.
 
+#### Duplicate Plex Titles
+
+For Plex shows and movies with the same title, use the optional `guid` field in the mapping.
+
+For example, both of these Rurouni Kenshin shows are shown as "Rurouni Kenshin" in Plex: 
+
+```yaml
+  - title: "Rurouni Kenshin"
+    guid: plex://show/5d9c07ece264b7001fc38094
+    seasons:
+      - season: 1
+        anilist-id: 45
+      - season: 2
+        anilist-id: 45
+      - season: 3
+        anilist-id: 45
+
+  - title: "Rurouni Kenshin (2023)"
+    guid: plex://show/6330a57e9705fab2b34f656d
+    seasons:
+      - season: 1
+        anilist-id: 142877
+```
+
+When the `guid` field is set, the `title` and `synonyms` fields are ignored. However, you should still use different titles for human readability.
+
+To find the guid, perform the following steps:
+1. Open this URL in an **incognito browser window**: https://app.plex.tv/desktop/#!/search?pivot=top&query=
+2. Search for your series or movie and click on the correct entry
+3. Copy everything after `metadata%2F`, so for https://app.plex.tv/desktop/#!/provider/tv.plex.provider.discover/details?key=%2Flibrary%2Fmetadata%2F6330a57e9705fab2b34f656d copy `6330a57e9705fab2b34f656d`
+4. If it's a TV show, add `plex://show/` before that identifier, for movies use `plex://movie/`
+
 #### Community mappings
 
 There are some mappings provided by the Github community at https://github.com/RickDB/PlexAniSync-Custom-Mappings/. You can use them by specifying `remote-urls` like in the example mapping file.
