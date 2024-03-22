@@ -41,7 +41,7 @@
           "guid": {
             "type": "string",
             "format": "uri",
-            "pattern": "^plex://[a-f0-9]{24}$",
+            "pattern": "^plex://(show|movie)/[a-f0-9]{24}$",
             "examples": [
               "plex://show/5d9c0845ffd9ef001e990bb2"
             ]
