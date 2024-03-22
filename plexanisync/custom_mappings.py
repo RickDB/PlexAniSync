@@ -108,7 +108,7 @@ def read_custom_mappings() -> Dict[str, List[AnilistCustomMapping]]:
         yaml_content = value[1]
         file_mappings_remote = yaml.load(yaml_content)
         try:
-            validate(file_mappings_local, schema)
+            validate(file_mappings_remote, schema)
         except ValidationError as e:
             logger.error(f'Custom Mappings {mapping_location} validation failed!')
             __handle_yaml_error(file_mappings_remote, e)
