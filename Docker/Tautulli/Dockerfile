@@ -16,7 +16,7 @@ FROM tautulli/tautulli
 WORKDIR /plexanisync
 
 # copy only the dependencies installation from the 1st stage image
-COPY --from=builder --chown tautulli:tautulli /root/.local /home/tautulli/.local
+COPY --from=builder --chown=tautulli:tautulli /root/.local /home/tautulli/.local
 # update PATH environment variable
 ENV PATH=/home/tautulli/.local:$PATH
 ENV PYTHONPATH=/home/tautulli/.local/lib/python3.9/site-packages
