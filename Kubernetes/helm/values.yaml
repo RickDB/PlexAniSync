@@ -1,0 +1,34 @@
+nameOverride:
+fullnameOverride:
+namespaceOverride:
+
+custom_mappings:
+envVars: []
+
+image: ghcr.io/rickdb/plexanisync:latest
+
+resources:
+  limits:
+    cpu: '1'
+    memory: 1Gi
+  requests:
+    cpu: 100m
+    memory: 256Mi
+
+settings:
+  plex_section: Anime|Anime Movies
+  plex_url:
+  ani_username:
+  plex_episode_count_priority:
+  sync_ratings:
+  skip_list_update:  
+  interval:
+
+securityContext:
+
+tokens:
+  ani:
+  plex:
+
+volumes: []
+volumeMounts: []
