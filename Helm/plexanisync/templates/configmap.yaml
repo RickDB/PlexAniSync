@@ -1,0 +1,11 @@
+{{- if .Values.custom_mappings }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "common.names.fullname" . }}
+  namespace: {{ include "common.names.namespace" . }}
+  labels: {{- include "common.labels.standard" . | nindent 4}}
+data:
+  custom_mappings.yaml: |
+    {{- .Values.custom_mappings | nindent 4 }}
+{{- end }}    

@@ -1,0 +1,9 @@
+apiVersion: v2
+name: plexanisync
+version: 0.1.0
+description: Plex AniSync helm chart
+type: "application"
+maintainers:
+  - name: Brad Holland
+    email: hollanbm@gmail.com
+    url: https://www.github.com/hollanbm
