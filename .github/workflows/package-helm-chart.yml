@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - add_helm_chart
 
 jobs:
   release:
@@ -29,6 +30,6 @@ jobs:
       - name: Run chart-releaser
         uses: helm/chart-releaser-action@v1.6.0
         with:
-          charts_dir: Kubernetes/helm
+          charts_dir: Helm
         env:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
