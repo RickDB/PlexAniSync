@@ -5,6 +5,10 @@ RUN apt-get update && \
     build-essential rustc git \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
+# Install rust compiler for certifi
+RUN curl https://sh.rustup.rs -sSf | sh -s -- --default-toolchain -y
+ENV PATH /root/.cargo/bin:$PATH
+
 RUN pip install --upgrade pip
 COPY Docker/Tautulli/pip.conf /etc/pip.conf
 COPY requirements.txt .
