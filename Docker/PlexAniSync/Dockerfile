@@ -6,7 +6,7 @@ RUN apt-get update && \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install rust compiler for certifi
-RUN curl https://sh.rustup.rs -sSf | sh -s -- --default-toolchain -y
+RUN curl https://sh.rustup.rs -sSf | sh -s -- -y
 ENV PATH /root/.cargo/bin:$PATH
 
 RUN pip install --upgrade pip
