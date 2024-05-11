@@ -5,10 +5,6 @@ RUN apt-get update && \
     build-essential \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Install rust compiler for certifi
-RUN curl https://sh.rustup.rs -sSf | sh -s -- -y
-ENV PATH /root/.cargo/bin:$PATH
-
 RUN pip install --upgrade pip
 COPY Docker/PlexAniSync/pip.conf /etc/pip.conf
 COPY requirements.txt .
