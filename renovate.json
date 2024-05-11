@@ -10,7 +10,8 @@
     "ignoreDeps": ["inflect"]
   },
   "dockerfile": {
-    "extends": ["schedule:monthly"]
+    "extends": ["schedule:monthly"],
+    "automerge": false
   },
   "github-actions": {
     "extends": ["group:all"],

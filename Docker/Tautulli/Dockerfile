@@ -1,13 +1,9 @@
-FROM python:3.12 AS builder
+FROM python:3.9 AS builder
 
 RUN apt-get update && \
     apt-get install -y \
     build-essential rustc git \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
-
-# Install rust compiler for certifi
-RUN curl https://sh.rustup.rs -sSf | sh -s -- -y
-ENV PATH /root/.cargo/bin:$PATH
 
 RUN pip install --upgrade pip
 COPY Docker/Tautulli/pip.conf /etc/pip.conf
