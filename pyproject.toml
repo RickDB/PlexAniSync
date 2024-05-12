@@ -1,0 +1,48 @@
+[project]
+requires-python = ">= 3.8.1"
+
+[tool.poetry]
+package-mode = false
+
+[tool.poetry.dependencies]
+python = ">=3.8.1,<4.0"
+attrs = "23.2.0"
+certifi = "2023.11.17"
+charset-normalizer = "3.3.2"
+coloredlogs = "15.0.1"
+distro = "1.9.0"
+humanfriendly = "10.0"
+idna = "3.7"
+inflect = "5.6.2"
+jsonschema = "4.21.1"
+plexapi = "4.15.11"
+pyreadline3 = "3.4.1"
+pyrsistent = "0.20.0"
+rpds-py = "0.18.0"
+regex = "2023.12.25"
+requests = "2.31.0"
+ruyaml = "0.91.0"
+sgqlc = "16.3"
+urllib3 = "2.2.1"
+
+[tool.poetry.group.dev.dependencies]
+flake8 = "^7.0.0"
+pylint = "^3.1.0"
+
+[tool.poetry.group.test.dependencies]
+pytest = "^8.2.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.pytest.ini_options]
+pythonpath = [
+    "./src",
+    "./src/config",
+    "./src/models"
+]
+testpaths = [
+    "./tests",
+]

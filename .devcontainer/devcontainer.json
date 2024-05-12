@@ -1,0 +1,75 @@
+{
+  "$schema": "https://raw.githubusercontent.com/devcontainers/spec/main/schemas/devContainer.base.schema.json",
+  "name": "plexanisync devContainer",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "args": {
+      "PYTHON_VERSION": "3.11"
+    }
+  },
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {},
+    "ghcr.io/devcontainers-contrib/features/zsh-plugins:0": {
+      "plugins": "git zsh-syntax-highlighting zsh-autosuggestions poetry poetry-env gpg-agent pip",
+      "omzPlugins": "https://github.com/zsh-users/zsh-syntax-highlighting https://github.com/zsh-users/zsh-autosuggestions"
+    },
+    "ghcr.io/stuartleeks/dev-container-features/shell-history:0": {},
+    "ghcr.io/devcontainers/features/github-cli:1": {}
+  },
+  "containerEnv": {
+    "GH_TOKEN": "${localEnv:GH_TOKEN}"
+  },
+  "mounts": [],
+  "postCreateCommand": "zsh .devcontainer/postCreateCommand.sh",
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "editor.formatOnSave": true,
+        "terminal.integrated.defaultProfile.linux": "zsh",
+        "terminal.integrated.profiles.linux": {
+          "zsh": {
+            "path": "/usr/bin/zsh"
+          }
+        },
+        "files": {
+          "eol": "\n",
+          "trimTrailingWhitespace": true,
+          "trimTrailingWhitespaceInRegexAndStrings": true,
+          "insertFinalNewline": true
+        },
+        "vscode-yaml-sort.sortArrays": true,
+        "git": {
+          "enableCommitSigning": true,
+          "autofetch": true
+        },
+        "python": {
+          "analysis": {
+            "autoFormatStrings": true
+          },
+          "defaultInterpreterPath": "${containerWorkspaceFolder}/.venv/bin/python",
+          "testing": {
+            "unittestEnabled": false,
+            "pytestEnabled": true,
+            "pytestArgs": [
+              "tests"
+            ]
+          }
+        }
+      },
+      "extensions": [
+        "eamodio.gitlens",
+        "KevinRose.vsc-python-indent",
+        "ms-python.debugpy",
+        "ms-python.flake8",
+        "ms-python.pylint",
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "mutantdino.resourcemonitor",
+        "njpwerner.autodocstring",
+        "njqdev.vscode-python-typehint",
+        "oderwat.indent-rainbow",
+        "VisualStudioExptTeam.vscodeintellicode"
+      ]
+    }
+  }
+}
