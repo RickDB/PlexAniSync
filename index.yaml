@@ -1,0 +1,17 @@
+apiVersion: v1
+entries:
+  plexanisync:
+  - apiVersion: v2
+    created: "2024-05-12T19:45:07.541173869Z"
+    description: Plex AniSync helm chart
+    digest: 75bfa29954101eb9bfe57ebd4ae1e550a51512d36572913127fb03129cd345be
+    maintainers:
+    - email: hollanbm@gmail.com
+      name: Brad Holland
+      url: https://www.github.com/hollanbm
+    name: plexanisync
+    type: application
+    urls:
+    - https://github.com/RickDB/PlexAniSync/releases/download/plexanisync-0.1.0/plexanisync-0.1.0.tgz
+    version: 0.1.0
+generated: "2024-05-12T19:45:07.541195189Z"
