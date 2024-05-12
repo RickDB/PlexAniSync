@@ -54,7 +54,7 @@ services:
 | SKIP_LIST_UPDATE            | -                      | &#10005;  | If set to True, it will NOT update your AniList which is useful if you want to do a test run to check if everything lines up properly. (default = False)                             |
 | LOG_FAILED_MATCHES          | -                      | &#10005;  | If set to True, failed matches will be written to /plexanisync/failed_matches.txt (default = False)                                                                                  |
 | SETTINGS_FILE               | -                      | &#10005;  | Location of a custom settings.ini for more advanced configuration. Makes all settings above obsolete. See section below for usage.                                                   |
-| INTERVAL                    | 3600                   | &#10005;  | The time in between syncs in seconds                                                                                                                                                 |
+| INTERVAL                    | 3600                   | &#10005;  | The time in between syncs in seconds. If this value is set to <= 0, the container will stop after the first sync.                                                                    |
 
 ### Custom mappings
 
