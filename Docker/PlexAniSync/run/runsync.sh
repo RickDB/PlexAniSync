@@ -21,11 +21,5 @@ if [[ -z ${SETTINGS_FILE} ]]; then
   run
 else
   echo "Using custom config: "${SETTINGS_FILE}
-
-  if [ ${INTERVAL} -gt 0 ]; then
-    run_interval_loop
-  else
-    run
-  fi
+  run
 fi
-

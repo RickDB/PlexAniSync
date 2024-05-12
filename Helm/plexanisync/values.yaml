@@ -7,10 +7,8 @@ custom_mappings:
 envVars: []
 
 cronjob:
-  enabled: true
   concurrencyPolicy: Forbid
   failedJobsHistoryLimit: 2
-  schedule: '* */1 * * *'
   startingDeadlineSeconds: 300
   successfulJobsHistoryLimit: 1
 
@@ -31,10 +29,11 @@ settings:
   plex_episode_count_priority:
   sync_ratings:
   skip_list_update:
-  # interval is forced to 0 when cronjob.enabled
-  interval:
+  schedule: "* */1 * * *"
 
-securityContext:
+containerSecurityContext:
+
+podSecurityContext:
 
 tokens:
   ani:
