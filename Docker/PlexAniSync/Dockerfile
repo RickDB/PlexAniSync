@@ -13,7 +13,10 @@ RUN pip install --upgrade pip
 COPY Docker/PlexAniSync/pip.conf /etc/pip.conf
 COPY requirements.txt .
 # install dependencies to the local user directory (eg. /root/.local)
-RUN pip install --user --no-warn-script-location -r requirements.txt
+RUN --mount=type=tmpfs,target=/root/.cargo \
+    CARGO_REGISTRIES_CRATES_IO_PROTOCOL=sparse \
+    CARGO_HOME=/root/.cargo \
+    pip install --user --no-warn-script-location -r requirements.txt
 
 FROM python:3.12-slim
 

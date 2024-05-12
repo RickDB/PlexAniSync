@@ -40,7 +40,11 @@ jobs:
             echo "DOCKER_IO=true" >> $GITHUB_ENV
           fi
 
-          echo "PLATFORMS=${{ inputs.platforms }}" >> $GITHUB_ENV
+          if [[ ${{ inputs.eventname }} == 'pull_request' ]]; then
+            echo "PLATFORMS=linux/arm/v6" >> $GITHUB_ENV
+          else
+            echo "PLATFORMS=${{ inputs.platforms }}" >> $GITHUB_ENV
+          fi
       - name: Checkout repository
         uses: actions/checkout@v4
       - name: Set up QEMU
