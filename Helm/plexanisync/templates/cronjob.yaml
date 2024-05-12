@@ -1,0 +1,35 @@
+{{- if .Values.cronjob.enabled }}
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "common.names.fullname" . }}
+  namespace: {{ include "common.names.namespace" . | quote }}
+  labels: {{- include "common.labels.standard" . | nindent 4}}
+spec:
+  concurrencyPolicy: {{ .Values.cronjob.concurrencyPolicy }}
+  failedJobsHistoryLimit: {{ .Values.cronjob.failedJobsHistoryLimit }}
+  schedule: {{ .Values.cronjob.schedule | quote }}
+  startingDeadlineSeconds: {{ .Values.cronjob.startingDeadlineSeconds }}
+  successfulJobsHistoryLimit: {{ .Values.cronjob.successfulJobsHistoryLimit }}
+  metadata:
+    labels: {{- include "common.labels.standard" . | nindent 6 }}
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          metadata:
+            labels: {{- include "common.labels.standard" . | nindent 14 }}
+          {{- with .Values.securityContext }}
+          securityContext: {{ toYaml . | nindent 8 -}}
+          {{ end }}
+          containers:
+            - env: {{- include "container.env" . | nindent 14 }}
+              - name: INTERVAL
+                value: "0"
+              image: {{ .Values.image }}
+              name: {{ include "common.names.name" . }}
+              resources: {{- toYaml .Values.resources | nindent 16 }}
+              {{- include "container.volumeMounts" . | indent 14 -}}
+          {{- include "pod.volumes" . | nindent 10 -}}
+{{- end }}
