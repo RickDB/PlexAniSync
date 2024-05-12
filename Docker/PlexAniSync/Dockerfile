@@ -1,8 +1,9 @@
-FROM python:3.11 AS builder
+FROM python:3.12 AS builder
 
 RUN apt-get update && \
     apt-get install -y \
     build-essential \
+    rustc \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 RUN pip install --upgrade pip
@@ -11,7 +12,7 @@ COPY requirements.txt .
 # install dependencies to the local user directory (eg. /root/.local)
 RUN pip install --user --no-warn-script-location -r requirements.txt
 
-FROM python:3.11-slim
+FROM python:3.12-slim
 
 WORKDIR /plexanisync
 
