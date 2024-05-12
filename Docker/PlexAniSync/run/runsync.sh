@@ -23,4 +23,3 @@ else
   echo "Using custom config: "${SETTINGS_FILE}
   run
 fi
-

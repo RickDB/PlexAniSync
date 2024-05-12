@@ -1,0 +1,43 @@
+nameOverride:
+fullnameOverride:
+namespaceOverride:
+
+custom_mappings:
+
+envVars: []
+
+cronjob:
+  concurrencyPolicy: Forbid
+  failedJobsHistoryLimit: 2
+  startingDeadlineSeconds: 300
+  successfulJobsHistoryLimit: 1
+
+image: ghcr.io/rickdb/plexanisync:latest
+
+resources:
+  limits:
+    cpu: '1'
+    memory: 1Gi
+  requests:
+    cpu: 100m
+    memory: 256Mi
+
+settings:
+  plex_section: Anime|Anime Movies
+  plex_url:
+  ani_username:
+  plex_episode_count_priority:
+  sync_ratings:
+  skip_list_update:
+  schedule: "* */1 * * *"
+
+containerSecurityContext:
+
+podSecurityContext:
+
+tokens:
+  ani:
+  plex:
+
+volumes: []
+volumeMounts: []

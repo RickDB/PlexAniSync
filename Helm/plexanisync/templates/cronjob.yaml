@@ -1,0 +1,91 @@
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "common.names.fullname" . }}
+  namespace: {{ include "common.names.namespace" . | quote }}
+  labels: {{- include "common.labels.standard" . | nindent 4}}
+spec:
+  concurrencyPolicy: {{ .Values.cronjob.concurrencyPolicy }}
+  failedJobsHistoryLimit: {{ .Values.cronjob.failedJobsHistoryLimit }}
+  schedule: {{ .Values.settings.schedule | quote }}
+  startingDeadlineSeconds: {{ .Values.cronjob.startingDeadlineSeconds }}
+  successfulJobsHistoryLimit: {{ .Values.cronjob.successfulJobsHistoryLimit }}
+  metadata:
+    labels: {{- include "common.labels.standard" . | nindent 6 }}
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          metadata:
+            labels: {{- include "common.labels.standard" . | nindent 14 }}
+          {{- with .Values.podSecurityContext }}
+          securityContext: {{ toYaml . | nindent 8 -}}
+          {{ end }}
+          restartPolicy: Never
+          containers:
+            - name: {{ include "common.names.name" . }}
+              image: {{ .Values.image }}
+              {{- with .Values.containerSecurityContext }}
+              securityContext: {{ toYaml . | nindent 14 -}}
+              {{ end }}
+              env:
+              - name: INTERVAL
+                value: "0"
+              - name: PLEX_SECTION
+                value: {{ .Values.settings.plex_section | quote }}
+              - name: PLEX_URL
+                value: {{ .Values.settings.plex_url | required ".Values.settings.plex_url is required" | quote }}
+              - name: ANI_USERNAME
+                value: {{ .Values.settings.ani_username | required ".Values.settings.ani_username is required" | quote }}
+              - name: PLEX_TOKEN
+                valueFrom:
+                  secretKeyRef:
+                    key: plex-token
+                    name: {{ include "common.names.fullname" . }}
+              - name: ANI_TOKEN
+                valueFrom:
+                  secretKeyRef:
+                    key: ani-token
+                    name: {{ include "common.names.fullname" . }}
+              {{- if .Values.settings.plex_episode_count_priority }}
+              - name: PLEX_EPISODE_COUNT_PRIORITY
+                value: {{ .Values.settings.plex_episode_count_priority | quote }}
+              {{- end }}
+              {{- if .Values.settings.sync_ratings }}
+              - name: SYNC_RATINGS
+                value: {{ .Values.settings.sync_ratings | quote }}
+              {{- end }}
+              {{- if .Values.settings.skip_list_update }}
+              - name: SKIP_LIST_UPDATE
+                value: {{ .Values.settings.skip_list_update | quote }}
+              {{- end }}
+              {{- with .Values.envVars }}
+                {{- toYaml . | nindent 8 }}
+              {{- end }}
+              {{ with .Values.resources -}}
+              resources: {{- toYaml . | nindent 16 }}
+              {{- end }}
+              {{- if or .Values.custom_mappings .Values.volumeMounts }}
+              volumeMounts:
+                {{- if .Values.custom_mappings }}
+                - mountPath: /plexanisync/custom_mappings.yaml
+                  name: {{ include "common.names.fullname" . }}
+                  subPath: custom_mappings.yaml
+                {{- end }}
+                {{- if .Values.volumeMounts }}
+                  {{- toYaml .Values.volumeMounts | nindent 2 -}}
+                {{- end }}
+              {{- end }}
+          {{- if or .Values.custom_mappings .Values.volumes }}
+          volumes:
+            {{- if .Values.custom_mappings }}
+            - configMap:
+                defaultMode: 0777
+                name: {{ include "common.names.fullname" . }}
+              name: {{ include "common.names.fullname" . }}
+            {{- end }}
+            {{- if .Values.volumes }}
+              {{- toYaml .Values.volumes | nindent 2 }}
+            {{- end }}
+          {{- end }}
