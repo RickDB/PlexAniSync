@@ -16,6 +16,8 @@ RUN pipx --global install poetry
 # setup user, bash default shell
 RUN useradd app -m -s /bin/bash
 RUN mkdir -p /config && chown -R app /config
+
+# switch user and shell used following commands
 USER app
 SHELL ["/bin/bash", "-c"]
 
@@ -26,7 +28,7 @@ COPY pyproject.toml poetry.lock PlexAniSync.py custom_mappings_schema.json Docke
 COPY plexanisync /plexanisync/plexanisync
 
 # install app dependencies
-RUN poetry install --no-interaction --no-ansi --no-cache --quiet
+RUN poetry install --without dev,test --no-interaction --no-ansi --no-cache --quiet
 
 # activate venv
 RUN source $(poetry env info --path)/bin/activate
