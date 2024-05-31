@@ -10,7 +10,7 @@ jsonschema==4.22.0
 PlexAPI==4.15.12
 pyreadline3==3.4.1
 pyrsistent==0.20.0
-rpds-py==0.18.0
+rpds-py==0.18.1
 regex==2023.12.25 
 requests==2.31.0
 ruyaml==0.91.0
