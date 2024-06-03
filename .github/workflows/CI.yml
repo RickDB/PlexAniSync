@@ -52,7 +52,7 @@ jobs:
       dockerfile: ./Docker/PlexAniSync/Dockerfile
       imagename: ${{ github.repository_owner }}/plexanisync
       eventname: ${{ github.event_name }}
-      platforms: linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64
+      platforms: linux/amd64,linux/arm/v7,linux/arm64
     secrets: inherit
           
   build-docker-tautulli:
@@ -62,5 +62,5 @@ jobs:
       dockerfile: ./Docker/Tautulli/Dockerfile
       imagename: ${{ github.repository_owner }}/tautulli-plexanisync
       eventname: ${{ github.event_name }}
-      platforms: linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64
+      platforms: linux/amd64,linux/arm/v7,linux/arm64
     secrets: inherit
