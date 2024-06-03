@@ -5,7 +5,7 @@ ENV CARGO_REGISTRIES_CRATES_IO_PROTOCOL=sparse
 RUN apt-get update && \
     apt-get install -y \
     build-essential \
-    rustc \
+    rustc/testing \
     git \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
