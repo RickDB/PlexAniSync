@@ -1,4 +1,4 @@
-FROM python:3.11 AS builder
+FROM python:3.12 AS builder
 
 RUN apt-get update && \
     apt-get install -y \
@@ -11,7 +11,7 @@ COPY requirements.txt .
 # install dependencies to the local user directory (eg. /root/.local)
 RUN pip install --user --no-warn-script-location -r requirements.txt
 
-FROM python:3.11-slim
+FROM python:3.12-slim
 
 WORKDIR /plexanisync
 
@@ -20,7 +20,7 @@ COPY --from=builder /root/.local /root/.local
 RUN chmod -R a+rX /root
 # update PATH environment variable
 ENV PATH=/root/.local:$PATH
-ENV PYTHONPATH=/root/.local/lib/python3.11/site-packages
+ENV PYTHONPATH=/root/.local/lib/python3.12/site-packages
 
 ENV PLEX_SECTION=Anime \
     PLEX_URL=http://127.0.0.1:32400 \
