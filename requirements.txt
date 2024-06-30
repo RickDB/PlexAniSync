@@ -7,7 +7,7 @@ humanfriendly==10.0
 idna==3.7
 inflect==5.6.2
 jsonschema==4.22.0
-PlexAPI==4.15.13
+PlexAPI==4.15.14
 pyreadline3==3.4.1
 pyrsistent==0.20.0
 rpds-py==0.18.1
