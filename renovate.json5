@@ -23,6 +23,6 @@
         "groupSlug": "all",
         "matchPackagePatterns": ["*"]
       }
-    ],
+    ]
   }
 }
