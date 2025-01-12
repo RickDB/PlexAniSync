@@ -1,4 +1,4 @@
-FROM python:3.9 AS builder
+FROM ghcr.io/tautulli/tautulli-baseimage:python3 AS builder
 
 RUN apt-get update && \
     apt-get install -y \
