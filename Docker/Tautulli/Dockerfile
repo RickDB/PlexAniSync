@@ -19,7 +19,10 @@ WORKDIR /plexanisync
 COPY --from=builder --chown=tautulli:tautulli /root/.local /home/tautulli/.local
 # update PATH environment variable
 ENV PATH=/home/tautulli/.local:$PATH
-ENV PYTHONPATH=/home/tautulli/.local/lib/python3.9/site-packages
+ENV PYTHONPATH=/home/tautulli/.local/lib/python3.11/site-packages
+
+# Check if the PYTHONPATH is set correctly
+RUN pip list | grep PlexAPI
 
 ENV PLEX_SECTION=Anime \
     PLEX_URL=http://127.0.0.1:32400 \
