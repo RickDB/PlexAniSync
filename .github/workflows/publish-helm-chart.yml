@@ -27,7 +27,7 @@ jobs:
         uses: azure/setup-helm@v4.2.0
 
       - name: Run chart-releaser
-        uses: helm/chart-releaser-action@v1.6.0
+        uses: helm/chart-releaser-action@v1.7.0
         with:
           charts_dir: Helm
           mark_as_latest: false
