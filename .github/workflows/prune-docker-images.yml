@@ -33,3 +33,26 @@ jobs:
         keep-tags-regexes: |
           ^latest$
           ^\d+
+    - name: Prune helm image
+      uses: vlaurin/action-ghcr-prune@v0.6.0
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        user: ${{ github.repository_owner }}
+        container: helm/plexanisync
+        prune-untagged: true
+        # remove all tags except for latest and semver
+        prune-tags-regexes: |
+          .+
+        keep-tags-regexes: |
+          ^latest$
+          ^\d+
+    - name: Prune helm image
+      uses: vlaurin/action-ghcr-prune@v0.6.0
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        user: ${{ github.repository_owner }}
+        container: plexanisync-helm/plexanisync
+        prune-untagged: true
+        # remove all tags except for latest and semver
+        prune-tags-regexes: |
+          .+
