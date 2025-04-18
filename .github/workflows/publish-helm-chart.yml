@@ -22,7 +22,7 @@ jobs:
         with:
           name: plexanisync
           repository: rickdb/plexanisync-helm
-          tag: latest
+          tag: 0.1.0
           path: Helm/plexanisync
           registry: ghcr.io
           registry_username: ${{ github.actor }}
