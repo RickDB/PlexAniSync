@@ -11,7 +11,7 @@ COPY requirements.txt .
 # install dependencies to the local user directory (eg. /root/.local)
 RUN pip install --user --no-warn-script-location -r requirements.txt
 
-FROM python:3.12-slim
+FROM gcr.io/distroless/python3-debian12:latest
 
 WORKDIR /plexanisync
 
