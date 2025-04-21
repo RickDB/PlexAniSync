@@ -11,13 +11,12 @@ COPY requirements.txt .
 # install dependencies to the local user directory (eg. /root/.local)
 RUN pip install --user --no-warn-script-location -r requirements.txt
 
-FROM python:3.12-slim
+FROM gcr.io/distroless/python3-debian12:latest
 
 WORKDIR /plexanisync
 
 # copy only the dependencies installation from the 1st stage image
 COPY --from=builder /root/.local /root/.local
-RUN chmod -R a+rX /root
 # update PATH environment variable
 ENV PATH=/root/.local:$PATH
 ENV PYTHONPATH=/root/.local/lib/python3.12/site-packages
