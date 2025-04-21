@@ -17,7 +17,6 @@ WORKDIR /plexanisync
 
 # copy only the dependencies installation from the 1st stage image
 COPY --from=builder /root/.local /root/.local
-RUN chmod -R a+rX /root
 # update PATH environment variable
 ENV PATH=/root/.local:$PATH
 ENV PYTHONPATH=/root/.local/lib/python3.12/site-packages
