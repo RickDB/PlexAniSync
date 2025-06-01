@@ -6,7 +6,7 @@ distro==1.9.0
 humanfriendly==10.0
 idna==3.10
 inflect==5.6.2
-jsonschema==4.23.0
+jsonschema==4.24.0
 PlexAPI==4.16.1
 pyreadline3==3.5.4
 pyrsistent==0.20.0
