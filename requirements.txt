@@ -14,5 +14,5 @@ rpds-py==0.25.1
 regex==2024.11.6 
 requests==2.32.4
 ruyaml==0.91.0
-sgqlc==16.4
+sgqlc==16.5
 urllib3==2.5.0
