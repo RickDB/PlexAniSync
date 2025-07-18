@@ -1,0 +1,40 @@
+[project]
+name = "PlexAniSync"
+version = "v1.4.2"
+description = "Sync Plex anime library to AniList"
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.9"
+dependencies = [
+    "attrs==25.3.0",
+    "certifi==2025.6.15",
+    "charset-normalizer==3.4.2",
+    "coloredlogs==15.0.1",
+    "distro==1.9.0",
+    "humanfriendly==10.0",
+    "idna==3.10",
+    "inflect==5.6.2",
+    "jsonschema==4.24.0",
+    "plexapi==4.17.0",
+    "pyreadline3==3.5.4",
+    "pyrsistent==0.20.0",
+    "regex==2024.11.6",
+    "requests==2.32.4",
+    "rpds-py==0.25.1",
+    "ruyaml==0.91.0",
+    "sgqlc==16.5",
+    "urllib3==2.5.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project.scripts]
+plex_ani_sync = "PlexAniSync:start"
+
+[tool.ruff]
+line-length = 160
+
+[tool.ruff.lint]
+# Supported rules https://github.com/charliermarsh/ruff/#supported-rules
