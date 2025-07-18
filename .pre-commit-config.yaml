@@ -1,0 +1,21 @@
+---
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+default_install_hook_types: [pre-commit, commit-msg]
+repos:
+  - repo: https://github.com/charliermarsh/ruff-pre-commit
+    rev: "v0.12.1"
+    hooks:
+      - id: ruff-check
+      - id: ruff-format
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace
+        exclude_types: [ts]
+      - id: end-of-file-fixer
+        exclude_types: [ts]
+  - repo: https://github.com/python-jsonschema/check-jsonschema
+    rev: 0.33.1
+    hooks:
+      - id: check-renovate
