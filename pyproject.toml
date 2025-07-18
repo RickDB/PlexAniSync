@@ -38,3 +38,22 @@ line-length = 160
 
 [tool.ruff.lint]
 # Supported rules https://github.com/charliermarsh/ruff/#supported-rules
+select = ["E", "F", "B", "W", "PL"]
+
+ignore = [
+    "PLR2004", # Unused variable in f-string
+    "PLR5501",
+    "PLR0912", # Too many branches
+    "PLR0915", # Too many statements
+    "PLR0913", # Too many args to function
+    "PLW2901",
+]
+
+[dependency-groups]
+dev = [
+    "pre-commit>=4.2.0",
+    "ruff>=0.12.4",
+    "pytest>=8.4.0",
+    "pylint>=3.3.7",
+    "pylint-exit>=1.2.0",
+]
