@@ -11,3 +11,4 @@ settings\.ini
 update_anilist\.bat
 update_anilist_test\.bat
 uv.lock
+.ruff_cache
