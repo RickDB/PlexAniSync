@@ -25,11 +25,12 @@ class AnilistCustomMapping:
     anime_id: int
     start: int
 
+
 # Some classes for parsing YAML with line numbers
 
 
 class Str(ruyaml.scalarstring.ScalarString):
-    __slots__ = ("lc", )
+    __slots__ = ("lc",)
 
     style = ""
 
@@ -39,26 +40,23 @@ class Str(ruyaml.scalarstring.ScalarString):
 
 
 class MyPreservedScalarString(ruyaml.scalarstring.PreservedScalarString):
-    __slots__ = ("lc", )
+    __slots__ = ("lc",)
 
 
 class MyDoubleQuotedScalarString(ruyaml.scalarstring.DoubleQuotedScalarString):
-    __slots__ = ("lc", )
+    __slots__ = ("lc",)
 
 
 class MySingleQuotedScalarString(ruyaml.scalarstring.SingleQuotedScalarString):
-    __slots__ = ("lc", )
+    __slots__ = ("lc",)
 
 
 class MyConstructor(ruyaml.constructor.RoundTripConstructor):
     def construct_scalar(self, node):
         if not isinstance(node, ruyaml.nodes.ScalarNode):
-            raise ruyaml.constructor.ConstructorError(
-                None, None,
-                f"expected a scalar node, but found {node.id}",
-                node.start_mark)
+            raise ruyaml.constructor.ConstructorError(None, None, f"expected a scalar node, but found {node.id}", node.start_mark)
 
-        if node.style == '|' and isinstance(node.value, str):
+        if node.style == "|" and isinstance(node.value, str):
             ret_val = MyPreservedScalarString(node.value)
         elif bool(self._preserve_quotes) and isinstance(node.value, str):
             if node.style == "'":
@@ -75,28 +73,32 @@ class MyConstructor(ruyaml.constructor.RoundTripConstructor):
         return ret_val
 
 
-def read_custom_mappings() -> Dict[str, List[AnilistCustomMapping]]:
+def read_custom_mappings(mapping_file=MAPPING_FILE) -> Dict[str, List[AnilistCustomMapping]]:
     custom_mappings: Dict[str, List[AnilistCustomMapping]] = {}
     title_guid_mappings: Dict[str, str] = {}
-    if not os.path.isfile(MAPPING_FILE):
-        logger.info(f"Custom map file not found: {MAPPING_FILE}")
+    if not os.path.isfile(mapping_file):
+        logger.info(f"Custom map file not found: {mapping_file}")
         return custom_mappings
 
-    logger.info(f"Custom mapping found locally, using: {MAPPING_FILE}")
+    logger.info(f"Custom mapping found locally, using: {mapping_file}")
 
-    yaml = YAML(typ='safe')
+    yaml = YAML(typ="safe")
     yaml.Constructor = MyConstructor
-    with open('./custom_mappings_schema.json', 'r', encoding='utf-8') as f:
+
+    if not os.path.isfile("./custom_mappings_schema.json"):
+        logger.info("Maping schema not found")
+        return custom_mappings
+    with open("./custom_mappings_schema.json", "r", encoding="utf-8") as f:
         schema = json.load(f)
 
     # Create a Data object
-    with open(MAPPING_FILE, 'r', encoding='utf-8') as f:
+    with open(mapping_file, "r", encoding="utf-8") as f:
         file_mappings_local = yaml.load(f)
     try:
         # Validate data against the schema same as before.
         validate(file_mappings_local, schema)
     except ValidationError as e:
-        logger.error('Custom Mappings validation failed!')
+        logger.error("Custom Mappings validation failed!")
 
         __handle_yaml_error(file_mappings_local, e)
 
@@ -110,12 +112,12 @@ def read_custom_mappings() -> Dict[str, List[AnilistCustomMapping]]:
         try:
             validate(file_mappings_remote, schema)
         except ValidationError as e:
-            logger.error(f'Custom Mappings {mapping_location} validation failed!')
+            logger.error(f"Custom Mappings {mapping_location} validation failed!")
             __handle_yaml_error(file_mappings_remote, e)
 
         __add_mappings(custom_mappings, title_guid_mappings, mapping_location, file_mappings_remote)
 
-    __add_mappings(custom_mappings, title_guid_mappings, MAPPING_FILE, file_mappings_local)
+    __add_mappings(custom_mappings, title_guid_mappings, mapping_file, file_mappings_local)
 
     return custom_mappings
 
@@ -127,35 +129,30 @@ def __handle_yaml_error(file_mappings_local, error):
     while len(error.path) > 0:
         key = error.path.popleft()
         # only objects and strings have line numbers
-        if hasattr(value[key], 'lc'):
+        if hasattr(value[key], "lc"):
             line = value.lc.line
         value = value[key]
 
-    if hasattr(value, 'lc'):
+    if hasattr(value, "lc"):
         logger.error(f"Line {line}: {error.message}")
     else:
         logger.error(f"Line {line}, Attribute '{key}': {error.message}")
     sys.exit(1)
 
 
-def __add_mappings(custom_mappings: Dict[str, List[AnilistCustomMapping]],
-                   title_guid_mappings: Dict[str, str],
-                   mapping_location, file_mappings):
+def __add_mappings(custom_mappings: Dict[str, List[AnilistCustomMapping]], title_guid_mappings: Dict[str, str], mapping_location, file_mappings):
     # handles missing and empty 'entries'
-    entries = file_mappings.get('entries', []) or []
+    entries = file_mappings.get("entries", []) or []
     for file_entry in entries:
-        series_title = str(file_entry['title'])
-        synonyms: List[str] = file_entry.get('synonyms', [])
-        guid: str = str(file_entry.get('guid', ""))
+        series_title = str(file_entry["title"])
+        synonyms: List[str] = file_entry.get("synonyms", [])
+        guid: str = str(file_entry.get("guid", ""))
         series_mappings: List[AnilistCustomMapping] = []
-        for file_season in file_entry['seasons']:
-            season = file_season['season']
-            anilist_id = file_season['anilist-id']
-            start = file_season.get('start', 1)
-            logger.debug(
-                f"Adding custom mapping from {mapping_location} "
-                f"| title: {series_title} | season: {season} | anilist id: {anilist_id}"
-            )
+        for file_season in file_entry["seasons"]:
+            season = file_season["season"]
+            anilist_id = file_season["anilist-id"]
+            start = file_season.get("start", 1)
+            logger.debug(f"Adding custom mapping from {mapping_location} | title: {series_title} | season: {season} | anilist id: {anilist_id}")
             series_mappings.append(AnilistCustomMapping(season, anilist_id, start))
         if synonyms:
             logger.debug(f"{series_title} has synonyms: {synonyms}")
@@ -182,11 +179,11 @@ def __add_mappings(custom_mappings: Dict[str, List[AnilistCustomMapping]],
 def __get_custom_mapping_remote(file_mappings) -> List[Tuple[str, str]]:
     custom_mappings_remote: List[Tuple[str, str]] = []
     # handles missing and empty 'remote-urls'
-    remote_mappings_urls: List[str] = file_mappings.get('remote-urls', []) or []
+    remote_mappings_urls: List[str] = file_mappings.get("remote-urls", []) or []
 
     # Get url and read the data
     for url in remote_mappings_urls:
-        file_name = url.split('/')[-1]
+        file_name = url.split("/")[-1]
         logger.info(f"Adding remote mapping url: {url}")
 
         response = requests.get(url, timeout=10)  # 10 second timeout
