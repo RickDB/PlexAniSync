@@ -17,7 +17,7 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: ${{ github.head_ref || github.ref_name }} 
+  group: ${{ github.head_ref || github.ref_name }}
   cancel-in-progress: true
 
 jobs:
@@ -44,7 +44,48 @@ jobs:
         flake8 .
         pylint PlexAniSync.py TautulliSyncHelper.py ./plexanisync || pylint-exit --error-fail --warn-fail $?
     - run: pytest
-        
+
+  test-and-list-v2:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      matrix:
+        python-version: ["3.9", "3.10", "3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4.2.2
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6.3.1
+        with:
+          version: 0.7.21
+
+      - name: Install dependencies
+        run: uv sync --python ${{ matrix.python-version }}
+
+      # Note: pyright rules are linted on the pre-commit job.
+      - name: lint
+        run: uv run pylint PlexAniSync.py TautulliSyncHelper.py ./plexanisync || uv run pylint-exit --error-fail --warn-fail $?
+
+      - name: test
+        run: uv run pytest
+
+  pre-commit:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v4.2.2
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6.3.1
+        with:
+          version: 0.7.21
+
+      - name: Get current branch state to compare in pre-commit
+        run: git fetch origin ${{ github.base_ref }}
+
+      - name: Run pre-commit
+        run: uv run pre-commit run --from-ref origin/${{ github.base_ref }} --to-ref HEAD --show-diff-on-failure
+
   build-docker-plexanisync:
     needs: lint-and-test
     uses: ./.github/workflows/build-docker-image.yml
@@ -54,7 +95,7 @@ jobs:
       eventname: ${{ github.event_name }}
       platforms: linux/amd64,linux/arm/v7,linux/arm64
     secrets: inherit
-          
+
   build-docker-tautulli:
     needs: build-docker-plexanisync
     uses: ./.github/workflows/build-docker-image.yml
