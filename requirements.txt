@@ -12,7 +12,7 @@ pyreadline3==3.5.4
 pyrsistent==0.20.0
 rpds-py==0.25.1
 regex==2024.11.6 
-requests==2.32.4
+requests==2.33.0
 ruyaml==0.91.0
 sgqlc==16.5
 urllib3==2.5.0
