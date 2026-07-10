@@ -1,4 +1,5 @@
-FROM tautulli/tautulli AS builder
+FROM tautulli/tautulli:v2.17.2 AS tautulli
+FROM tautulli AS builder
 
 RUN apt-get update && \
     apt-get install -y \
@@ -11,7 +12,7 @@ COPY requirements.txt .
 # install dependencies to the local user directory (eg. /root/.local)
 RUN pip install --user --no-warn-script-location -r requirements.txt
 
-FROM tautulli/tautulli
+FROM tautulli
 
 WORKDIR /plexanisync
 

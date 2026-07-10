@@ -13,6 +13,13 @@
     "extends": ["schedule:monthly"],
     "automerge": false
   },
+  "packageRules": [
+    {
+      "matchManagers": ["dockerfile"],
+      "matchPackageNames": ["tautulli/tautulli"],
+      "automerge": true
+    }
+  ],
   "github-actions": {
     "extends": ["group:all"],
     "groupName": "github-actions",
