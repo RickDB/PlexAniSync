@@ -3,6 +3,8 @@ __pycache__/
 *.pyc
 *.log
 venv
+*.egg-info/
+build/
 ApplyPEP8\.bat
 custom_mappings.yaml
 failed_matches\.txt

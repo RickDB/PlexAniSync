@@ -300,7 +300,7 @@ Another docker container for Tautulli with built-in PlexAniSync can be found her
 
 ## Requirements
 
-[Python 3.8 or higher](https://www.python.org/)
+[Python 3.9 or higher](https://www.python.org/)
 
 ## Support
 

@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "plexanisync"
+description = "Syncs watched Anime episodes from a Plex library to AniList"
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.9"
+dynamic = ["version", "dependencies"]
+
+[project.urls]
+Homepage = "https://github.com/RickDB/PlexAniSync"
+
+[project.optional-dependencies]
+dev = [
+    "flake8",
+    "pylint==3.3.9",
+    "pylint-exit",
+    "pytest",
+]
+
+[tool.setuptools]
+packages = ["plexanisync"]
+
+[tool.setuptools.dynamic]
+version = { attr = "plexanisync._version.__version__" }
+dependencies = { file = ["requirements.txt"] }

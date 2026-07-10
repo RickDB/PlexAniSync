@@ -10,6 +10,10 @@ usermod -o -u "$PUID" tautulli
 chown -R tautulli:tautulli /config
 chown -R tautulli:tautulli /plexanisync
 
+# Computed at runtime rather than hardcoded: tautulli/tautulli is an unpinned upstream
+# base image and can change its bundled Python version at any time.
+export PYTHONPATH=$(gosu tautulli python -c "import site; print(site.getusersitepackages())")
+
 if [[ -z "${SETTINGS_FILE}" ]]; then
   echo "Updating settings.ini"
   gosu tautulli "python" "/plexanisync/settingsupdater.py"
