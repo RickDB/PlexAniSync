@@ -16,13 +16,6 @@
   "github-actions": {
     "extends": ["group:all"],
     "groupName": "github-actions",
-    "groupSlug": "github-actions",
-    "packageRules": [
-      {
-        "groupName": "all dependencies",
-        "groupSlug": "all",
-        "matchPackagePatterns": ["*"]
-      }
-    ]
+    "groupSlug": "github-actions"
   }
 }
