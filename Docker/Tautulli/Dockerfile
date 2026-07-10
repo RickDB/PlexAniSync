@@ -19,10 +19,13 @@ WORKDIR /plexanisync
 COPY --from=builder --chown=tautulli:tautulli /root/.local /home/tautulli/.local
 # update PATH environment variable
 ENV PATH=/home/tautulli/.local:$PATH
-ENV PYTHONPATH=/home/tautulli/.local/lib/python3.11/site-packages
 
-# Check if the PYTHONPATH is set correctly
-RUN pip list | grep PlexAPI
+# PYTHONPATH is intentionally not hardcoded to a Python version here: tautulli/tautulli
+# is an unpinned upstream base image and can change its bundled Python version at any
+# time, which would silently break a hardcoded lib/pythonX.Y/site-packages path.
+# start.sh computes and exports PYTHONPATH at container start instead.
+# This check re-derives the same path to confirm the copied dependencies are importable.
+RUN HOME=/home/tautulli PYTHONPATH=$(HOME=/home/tautulli python -c "import site; print(site.getusersitepackages())") pip list | grep PlexAPI
 
 ENV PLEX_SECTION=Anime \
     PLEX_URL=http://127.0.0.1:32400 \
