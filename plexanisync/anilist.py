@@ -1,10 +1,10 @@
 # coding=utf-8
 from configparser import SectionProxy
 from dataclasses import dataclass
+from statistics import mean
 from typing import Dict, List, Optional
 import logging
 import regex as re
-from statistics import mean
 import inflect
 
 from plexanisync.custom_mappings import AnilistCustomMapping
