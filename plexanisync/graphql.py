@@ -6,8 +6,8 @@ from typing import List
 import base64
 import json
 import logging
-import requests
 import time
+import requests
 
 from sgqlc.endpoint.requests import RequestsEndpoint
 from sgqlc.operation import Operation
