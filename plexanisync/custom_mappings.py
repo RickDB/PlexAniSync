@@ -75,14 +75,14 @@ class MyConstructor(ruyaml.constructor.RoundTripConstructor):
         return ret_val
 
 
-def read_custom_mappings() -> Dict[str, List[AnilistCustomMapping]]:
+def read_custom_mappings(mapping_file=MAPPING_FILE) -> Dict[str, List[AnilistCustomMapping]]:
     custom_mappings: Dict[str, List[AnilistCustomMapping]] = {}
     title_guid_mappings: Dict[str, str] = {}
-    if not os.path.isfile(MAPPING_FILE):
-        logger.info(f"Custom map file not found: {MAPPING_FILE}")
+    if not os.path.isfile(mapping_file):
+        logger.info(f"Custom map file not found: {mapping_file}")
         return custom_mappings
 
-    logger.info(f"Custom mapping found locally, using: {MAPPING_FILE}")
+    logger.info(f"Custom mapping found locally, using: {mapping_file}")
 
     yaml = YAML(typ='safe')
     yaml.Constructor = MyConstructor
@@ -90,7 +90,7 @@ def read_custom_mappings() -> Dict[str, List[AnilistCustomMapping]]:
         schema = json.load(f)
 
     # Create a Data object
-    with open(MAPPING_FILE, 'r', encoding='utf-8') as f:
+    with open(mapping_file, 'r', encoding='utf-8') as f:
         file_mappings_local = yaml.load(f)
     try:
         # Validate data against the schema same as before.
@@ -115,7 +115,7 @@ def read_custom_mappings() -> Dict[str, List[AnilistCustomMapping]]:
 
         __add_mappings(custom_mappings, title_guid_mappings, mapping_location, file_mappings_remote)
 
-    __add_mappings(custom_mappings, title_guid_mappings, MAPPING_FILE, file_mappings_local)
+    __add_mappings(custom_mappings, title_guid_mappings, mapping_file, file_mappings_local)
 
     return custom_mappings
 
