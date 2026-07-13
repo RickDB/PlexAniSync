@@ -8,9 +8,7 @@ PLEXANISYNC_DIR = os.path.dirname(os.path.abspath(__file__))
 
 def run():
     while True:
-        subprocess.run(
-            [sys.executable, os.path.join(PLEXANISYNC_DIR, "PlexAniSync.py")], check=True
-        )
+        subprocess.run([sys.executable, os.path.join(PLEXANISYNC_DIR, "PlexAniSync.py")])
         interval = int(os.environ.get("INTERVAL", 0))
         if interval > 0:
             time.sleep(interval)
