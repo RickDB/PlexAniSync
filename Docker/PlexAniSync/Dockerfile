@@ -1,15 +1,13 @@
-FROM python:3.13-trixie AS builder
+ARG PYTHON_VERSION=3.13
+
+FROM python:${PYTHON_VERSION}-trixie AS builder
 
 RUN apt-get update && \
     apt-get install -y \
     build-essential \
-    && apt-get clean && rm -rf /var/lib/apt/lists/* && \
-    # distroless keeps its python3 binary at /usr/bin/python; symlinking it here
-    # to this image's /usr/local/bin/python before creating the venv means the
-    # venv's interpreter symlink still resolves once /venv is copied there.
-    ln -s /usr/local/bin/python /usr/bin/python
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-RUN /usr/bin/python -m venv /venv
+RUN python -m venv /venv
 RUN /venv/bin/pip install --upgrade pip
 
 # Build the venv as a separate stage so it's only rebuilt when requirements.txt changes
@@ -22,7 +20,11 @@ FROM gcr.io/distroless/python3-debian13:latest
 
 WORKDIR /plexanisync
 
-COPY --from=build-venv /venv /venv
+# Only the venv's site-packages are needed; distroless's own python3 runs the
+# code, with PYTHONPATH pointing at these installed dependencies.
+ARG PYTHON_VERSION
+COPY --from=build-venv /venv/lib/python${PYTHON_VERSION}/site-packages /venv/lib/python${PYTHON_VERSION}/site-packages
+ENV PYTHONPATH=/venv/lib/python${PYTHON_VERSION}/site-packages
 
 ENV PLEX_SECTION=Anime \
     PLEX_URL=http://127.0.0.1:32400 \
@@ -36,4 +38,4 @@ COPY plexanisync /plexanisync/plexanisync
 
 LABEL org.opencontainers.image.documentation=https://github.com/RickDB/PlexAniSync/blob/master/Docker/PlexAniSync/README.md
 
-ENTRYPOINT ["/venv/bin/python3", "/plexanisync/runsync.py"]
+CMD ["/plexanisync/runsync.py"]
