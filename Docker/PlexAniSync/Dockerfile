@@ -1,4 +1,4 @@
-ARG PYTHON_VERSION=3.13
+ARG PYTHON_VERSION=3.14
 
 FROM python:${PYTHON_VERSION}-trixie AS builder
 
@@ -20,11 +20,13 @@ COPY plexanisync ./plexanisync
 
 RUN pyinstaller --onefile --name plexanisync runsync.py
 
-# staticx needs patchelf to rewrite the ELF for static linking, but the latest
+# staticx needs patchelf to rewrite the ELF for static linking. The latest
 # patchelf PyPI wheel (0.17.2.4) crashes staticx with
-# "Assertion `splitIndex != -1' failed" during that rewrite; pin the last
-# version confirmed to work with staticx until that's resolved upstream.
-RUN pip install "patchelf==0.13.1.0" staticx
+# "Assertion `splitIndex != -1' failed" during that rewrite, and older 0.13.x
+# has no prebuilt armv7l wheel (forcing a from-source cmake build there);
+# 0.15.5.0 has a prebuilt wheel for every arch this image targets and doesn't
+# hit the staticx crash.
+RUN pip install "patchelf==0.15.5.0" staticx
 RUN python -m staticx dist/plexanisync dist/plexanisync-static
 
 FROM busybox:latest
