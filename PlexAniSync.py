@@ -49,19 +49,18 @@ def read_settings(settings_file) -> configparser.ConfigParser:
     return settings
 
 
-SETTINGS_FILE = os.getenv("SETTINGS_FILE") or "settings.ini"
-
-if len(sys.argv) > 1:
-    SETTINGS_FILE = sys.argv[1]
-    logger.warning(f"Found settings file parameter and using: {SETTINGS_FILE}")
-
-settings = read_settings(SETTINGS_FILE)
-anilist_settings = settings["ANILIST"]
-plex_settings = settings["PLEX"]
-
-
 ## Startup section ##
 def start():
+    settings_file = os.getenv("SETTINGS_FILE") or "settings.ini"
+
+    if len(sys.argv) > 1:
+        settings_file = sys.argv[1]
+        logger.warning(f"Found settings file parameter and using: {settings_file}")
+
+    settings = read_settings(settings_file)
+    anilist_settings = settings["ANILIST"]
+    plex_settings = settings["PLEX"]
+
     logger.info(f"PlexAniSync - version: {__version__}")
 
     custom_mappings = read_custom_mappings()
