@@ -1,28 +1,40 @@
 {
-  "extends": [
-    "config:base"
+  extends: [
+    'config:recommended',
   ],
-  "timezone": "Europe/Berlin",
-  "automerge": true,
-  "rebaseWhen": "conflicted",
-  "pip_requirements": {
-    "extends": ["schedule:monthly"],
-    "ignoreDeps": ["inflect"]
+  timezone: 'Europe/Berlin',
+  automerge: true,
+  rebaseWhen: 'conflicted',
+  pip_requirements: {
+    extends: [
+      'schedule:monthly',
+    ],
+    ignoreDeps: [
+      'inflect',
+    ],
   },
-  "dockerfile": {
-    "extends": ["schedule:monthly"],
-    "automerge": false
+  dockerfile: {
+    extends: [
+      'schedule:monthly',
+    ],
+    automerge: false,
   },
-  "packageRules": [
+  packageRules: [
     {
-      "matchManagers": ["dockerfile"],
-      "matchPackageNames": ["tautulli/tautulli"],
-      "automerge": true
-    }
+      matchManagers: [
+        'dockerfile',
+      ],
+      matchPackageNames: [
+        'tautulli/tautulli',
+      ],
+      automerge: true,
+    },
   ],
-  "github-actions": {
-    "extends": ["group:all"],
-    "groupName": "github-actions",
-    "groupSlug": "github-actions"
-  }
+  'github-actions': {
+    extends: [
+      'group:all',
+    ],
+    groupName: 'github-actions',
+    groupSlug: 'github-actions',
+  },
 }
