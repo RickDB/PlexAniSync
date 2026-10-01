@@ -15,4 +15,4 @@ regex==2026.7.19
 requests==2.34.2
 ruyaml==0.91.0
 sgqlc==18
-urllib3==2.7.0
+urllib3==2.8.0
