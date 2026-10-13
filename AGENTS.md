@@ -22,7 +22,7 @@ PlexAniSync syncs a user's watched Anime episodes from a Plex library to their [
 
 - Requires Python 3.9+ (README) — CI actually runs on 3.14; keep new code compatible with 3.9+ syntax unless told otherwise.
 - The real floor is whatever Python version `Docker/Tautulli/Dockerfile`'s base image (`FROM tautulli/tautulli`) bundles — an upstream image PlexAniSync doesn't control the version of. That Dockerfile and `Docker/Tautulli/run/start.sh` derive the site-packages path dynamically at build/runtime (via `site.getusersitepackages()`) rather than hardcoding a version, specifically so upstream Python bumps don't silently break it — don't reintroduce a hardcoded `pythonX.Y` path there. Run `docker run --rm tautulli/tautulli python --version` if you need to know the current floor.
-- Install deps: `pip install -r requirements.txt`
+- Install deps: `pip install -r requirements.txt` (or `uv pip install -r requirements.txt` for a faster install — same `requirements.txt`, no project/lockfile changes)
 - Copy `settings.ini.example` → `settings.ini` (Plex + AniList credentials) and, if needed, `custom_mappings.yaml.example` → `custom_mappings.yaml`. Both real files are gitignored — **never commit them or paste real tokens into commits, logs, or chat.**
 
 ## Build / lint / test

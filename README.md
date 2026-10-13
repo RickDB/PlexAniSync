@@ -138,6 +138,8 @@ Install the addtional requirements using the Python package installer (pip) from
 
 `pip install -r requirements.txt`
 
+Alternatively, if you have [uv](https://docs.astral.sh/uv/) installed, `uv pip install -r requirements.txt` does the same thing faster.
+
 
 ### Step 5 - Start syncing
 
